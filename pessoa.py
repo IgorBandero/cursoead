@@ -3,7 +3,6 @@ from abc import ABC, abstractmethod
 
 class Pessoa(ABC):
 
-    @abstractmethod
     def __init__(self, nome: str, cpf: int, telefone: str, email: str, usuario: str, senha: str, rua: str, num_residencia: int, bairro: str, cidade: str, cep: str):
         if isinstance(nome, str):
             self.__nome = nome
@@ -92,3 +91,6 @@ class Pessoa(ABC):
     def endereco(self,rua, num_residencia, bairro, cidade, cep):
         self.__endereco = Endereco(rua, num_residencia, bairro, cidade, cep)
     
+    @abstractmethod
+    def mostra_funcao(self):
+        pass
