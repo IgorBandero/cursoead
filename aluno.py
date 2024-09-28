@@ -43,5 +43,5 @@ class Aluno(Pessoa):
     def estado_aluno(self) -> (EstadoAluno):
         return self.__estado_aluno
     
-    def busca_funcao(self):
+    def mostra_funcao(self):
         return f"Usuário: ${self.nome} é aluno de ${self.matricula.curso} na universidade."
