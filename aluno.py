@@ -2,20 +2,16 @@ from pessoa import Pessoa
 from matricula import Matricula
 from estadoAluno import EstadoAluno
 from professor import Professor
+from curso import Curso
 
 class Aluno(Pessoa):
 
     def __init__(self, nome: str, cpf: str, telefone: str, email: str, usuario: str, senha: str, rua: str, 
-                 num_residencia: int, bairro: str, cidade: str, cep: str, matricula: Matricula):
+                 num_residencia: int, bairro: str, cidade: str, cep: str, curso: Curso, codigo: str, data_inicio: datetime):
 
         super().__init__(nome, cpf, telefone, email, usuario, senha, rua, num_residencia, bairro, cidade, cep)
-
-        if isinstance(matricula, Matricula):
-            self.__matricula = matricula
-        else:
-            raise TypeError("Matricula deve ser do tipo Matricula.")
-
-        self.__estado_aluno = EstadoAluno(matricula.curso.carga_horaria)
+        self.__matricula = Matricula(curso, codigo, data_inicio)
+        self.__estado_aluno = EstadoAluno(curso.carga_horaria)
         self.__orientador = None
 
 
