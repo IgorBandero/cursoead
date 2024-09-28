@@ -53,3 +53,6 @@ class Professor(Pessoa):
             orientandos_str += f" - {orientacao.aluno.nome}\n"
         
         return orientandos_str
+    
+    def mostra_funcao(self):
+        return f"Usuário:{self.nome} é professor de {self.especialidade} na universidade."
