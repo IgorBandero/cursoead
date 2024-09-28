@@ -59,13 +59,26 @@ class EstadoAluno:
     def adicionar_modulo_atual(self, modulo: Modulo):
         if not isinstance(modulo, Modulo):
             raise TypeError("Modulo deve ser um objeto do tipo Modulo.")
-        self.__modulos_atuais.append(modulo)
+        if modulo not in self.__modulos_atuais:
+            self.__modulos_atuais.append(modulo)
+
+    def remover_modulo_atual(self, modulo: Modulo):
+        for item in self.__modulos_atuais:
+            if(item.codigo == modulo.codigo):
+                self.__modulos_atuais.remove(modulo)
 
     def adicionar_modulo_finalizado(self, modulo: Modulo):
         if not isinstance(modulo, Modulo):
             raise TypeError("Modulo deve ser um objeto do tipo Modulo.")
-        self.__modulos_finalizados.append(modulo)
-        self.__progresso = self.calcular_progresso()
+        if modulo not in self.__modulos_finalizados:
+            self.__modulos_finalizados.append(modulo)
+            self.__progresso = self.calcular_progresso()
+
+    def remover_modulo_finalizado(self, modulo: Modulo):
+        for item in self.__modulos_finalizados:
+            if(item.codigo == modulo.codigo):
+                self.__modulos_finalizados.remove(modulo)
+                self.__progresso = self.calcular_progresso()
 
     def adicionar_certificado(self, certificado: Certificado):
         if not isinstance(certificado, Certificado):
