@@ -2,7 +2,7 @@ from Modulo import Modulo
 
 class Curso:
     
-    def __init__(self, nome: str, descricao: str, carga_horaria: int, min_semestres: int, max_semestres: int, modulos: list[Modulo], mensalidade: float):
+    def __init__(self, nome: str, descricao: str, carga_horaria: int, min_semestres: int, max_semestres: int, mensalidade: float):
         
         if isinstance(nome, str):
             self.__nome = nome
@@ -29,15 +29,12 @@ class Curso:
         else:
             raise TypeError("Máximo de semestres deve ser um inteiro.")
         
-        if isinstance(modulos, list) and all(isinstance(modulo, Modulo) for modulo in modulos):
-            self.__modulos = modulos
-        else:
-            raise TypeError("Modulos deve ser uma lista de objetos do tipo Modulo.")
-        
         if isinstance(mensalidade, float):
             self.__mensalidade = mensalidade
         else:
             raise TypeError("Mensalidade deve ser um número decimal.")
+        
+        self.__modulos = []
 
     @property
     def nome(self) -> str:
@@ -97,7 +94,8 @@ class Curso:
     def modulos(self, modulos: list[Modulo]):
         if not isinstance(modulos, list) or not all(isinstance(modulo, Modulo) for modulo in modulos):
             raise TypeError("Modulos deve ser uma lista de objetos do tipo Modulo.")
-        self.__modulos = modulos
+        for modulo in modulos:
+            self.__modulos.adicionar_modulo(modulo)
 
     @property
     def mensalidade(self) -> float:
@@ -108,3 +106,21 @@ class Curso:
         if not isinstance(mensalidade, float):
             raise TypeError("Mensalidade deve ser um número decimal (float).")
         self.__mensalidade = mensalidade
+
+    def adicionar_modulo(self, modulo: Modulo):
+        if not isinstance(modulo, Modulo):
+            raise TypeError("Modulo deve ser um objeto do tipo Modulo.")
+        if modulo not in self.__modulos:
+            self.__modulos.append(modulo)
+
+    def remover_modulo(self, modulo: Modulo):
+        for item in self.__modulos:
+            if(item.codigo == modulo.codigo):
+                self.__modulos.remove(modulo)
+
+    def avaliacao_media_curso(self):
+        num_modulos = len(self.__modulos)
+        soma_avaliacoes = 0
+        for modulo in self.__modulos:
+            soma += modulo.avaliacao_media
+        return soma_avaliacoes / num_modulos
