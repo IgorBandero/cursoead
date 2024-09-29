@@ -20,6 +20,14 @@ class Pessoa(ABC):
             self.__email = email
         else:
             raise TypeError("Emdereco deve ser uma string.")
+        if isinstance(usuario,str):
+            self.__usuario = usuario
+        else:
+            raise TypeError("usuario deve ser uma string.")
+        if isinstance(senha,str):
+            self.__senha = senha
+        else:
+            raise TypeError("senha deve ser uma string.")
         
         self.__endereco = Endereco(rua, num_residencia, bairro, cidade, cep)
         
