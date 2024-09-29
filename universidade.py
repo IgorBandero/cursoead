@@ -72,15 +72,21 @@ class Universidade:
     def listar_administradores(self):
         return self.__administradores
     
-    # Método para listar os alunos que receberam certificados
     def certificados_emitidos(self):
+
         alunos_com_certificado = []
+        
         for aluno in self.__alunos:
-            if aluno.estado_aluno.carga_horaria_cumprida() and aluno.estado_aluno.aproveitamento_minimo():
-                alunos_com_certificado.append(aluno)
+            estado_aluno = aluno.estado_aluno
+            
+            # Verifica se o progresso do aluno é 100% (curso concluído)
+            if estado_aluno.calcular_progresso() == 100:
+                # Verifica se o aluno já tem um certificado emitido
+                if len(estado_aluno.certificados) > 0:
+                    alunos_com_certificado.append(aluno)
+        
         return alunos_com_certificado
 
-    
     # Método para calcular o tempo médio de conclusão dos alunos
     def tempo_media_conclusao(self):
         total_tempo = 0
