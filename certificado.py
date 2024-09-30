@@ -1,4 +1,4 @@
-from aluno import Aluno
+import aluno as Aluno
 from Modulo import Modulo
 import datetime as Date
 

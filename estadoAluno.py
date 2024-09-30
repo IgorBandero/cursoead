@@ -1,4 +1,4 @@
-from modulo import Modulo
+from Modulo import Modulo
 from certificado import Certificado
 
 class EstadoAluno:
@@ -16,7 +16,7 @@ class EstadoAluno:
     @property
     def modulos_atuais(self) -> (list[Modulo]):
         return self.__modulos_atuais 
-   
+
     @modulos_atuais.setter
     def modulos_atuais(self, modulos_atuais: list[Modulo]):
         if not isinstance(modulos_atuais, list):
@@ -37,7 +37,7 @@ class EstadoAluno:
     @property
     def modulos_finalizados(self) -> (list[Modulo]):
         return self.__modulos_finalizados 
-   
+
     @modulos_finalizados.setter
     def modulos_finalizados(self, modulos_finalizados: list[Modulo]):
         if not isinstance(modulos_finalizados, list):
@@ -48,7 +48,7 @@ class EstadoAluno:
     @property
     def certificados(self) -> (list[Certificado]):
         return self.__certificados 
-   
+
     @certificados.setter
     def certificados(self, certificados: list[Certificado]):
         if not isinstance(certificados, list):

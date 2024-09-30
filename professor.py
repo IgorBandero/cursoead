@@ -2,7 +2,7 @@ from pessoa import Pessoa
 from orientacao import Orientacao
 
 class Professor(Pessoa):
-    def __init__(self, nome: str, cpf: int, telefone: str, email: str, usuario: str, senha: str, formacao: str, especialidade: str, rua: str, num_residencia: int, bairro: str, cidade: str, cep: str):
+    def __init__(self, nome: str, cpf: str, telefone: str, email: str, usuario: str, senha: str, formacao: str, especialidade: str, rua: str, num_residencia: int, bairro: str, cidade: str, cep: str):
 
         super().__init__(nome, cpf, telefone, email, usuario, senha, rua, num_residencia, bairro, cidade, cep)
         

@@ -1,5 +1,5 @@
-from aluno import Aluno
-from professor import Professor
+import aluno as Aluno
+import professor as Professor
 
 class Orientacao:
     def __init__(self, aluno: Aluno, professor: Professor):

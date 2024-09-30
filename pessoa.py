@@ -3,15 +3,15 @@ from abc import ABC, abstractmethod
 
 class Pessoa(ABC):
 
-    def __init__(self, nome: str, cpf: int, telefone: str, email: str, usuario: str, senha: str, rua: str, num_residencia: int, bairro: str, cidade: str, cep: str):
+    def __init__(self, nome: str, cpf: str, telefone: str, email: str, usuario: str, senha: str, rua: str, num_residencia: int, bairro: str, cidade: str, cep: str):
         if isinstance(nome, str):
             self.__nome = nome
         else: 
             raise TypeError("Nome deve ser uma string.")
-        if isinstance(cpf, int):
+        if isinstance(cpf, str):
             self.__cpf = cpf
         else: 
-            raise TypeError("Cpf deve ser um inteiro.")
+            raise TypeError("Cpf deve ser uma string.")
         if isinstance(telefone, str):
             self.__telefone = telefone
         else:
