@@ -4,6 +4,7 @@ from professor import Professor
 from orientacao import Orientacao
 from curso import Curso
 from datetime import date
+from questao import Questao
 
 # Tentativa de instanciar um objeto de classe abstrata, deve dar erro
 # pessoa1 = Pessoa("Ana", "000.111.222-33", "48 998877111", "ana@contato.com", "ana123", "12345", "Rua de cima", 250, "Trindade", "Florianópolis", "88040-170")
@@ -35,3 +36,18 @@ professor1.adicionar_orientando(orientacao2)
 # Listando orientandos de cada professor
 print(professor1.listar_orientandos())
 print(professor2.listar_orientandos())
+
+print("\n")
+
+# Criando questões
+questao1 = Questao("Marque a opção correta: ", ["Letra A", "Letra B", "Letra C", "Letra D"], ["Letra B"])
+print("Enunciado da questão 1: ", questao1.enunciado)
+print("Opção correta da questão 1: ", questao1.respostas_corretas[0])
+
+print("\n")
+
+questao2 = Questao("Verdadeiro ou Falso" , ["Verdadeiro", "Falso"], ["Verdadeiro"])
+print("Enunciado da questão 2: ", questao2.enunciado)
+print("Opção correta da questão 2: ", questao2.respostas_corretas[0])
+
+print("\n")
