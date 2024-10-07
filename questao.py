@@ -1,7 +1,11 @@
 class Questao:
 
-    def __init__(self, enunciado: str, alternativas: list[str], respostas_corretas: list[str]):
+    def __init__(self, id: int, enunciado: str, alternativas: list[str], respostas_corretas: list[str]):
 
+        if isinstance(id, int):
+            self.__id = id
+        else:
+            raise TypeError("Id deve ser um número inteiro.")
         if isinstance(enunciado, str):
             self.__enunciado = enunciado
         else:
@@ -17,6 +21,17 @@ class Questao:
         else:
             raise TypeError("Respostas corretas deve ser uma lista de inteiros.")
 
+    @property
+    def id(self) -> (int):
+        return self.__id
+
+    @id.setter
+    def id(self, id: int):
+        if isinstance(id, int):
+            self.__id = id
+        else:
+            raise TypeError("Id deve ser um número inteiro.")
+        
     @property
     def enunciado(self) -> (str):
         return self.__enunciado
