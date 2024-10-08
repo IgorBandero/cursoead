@@ -1,4 +1,5 @@
 from telaquestao import TelaQuestao
+from questao import Questao 
 
 class ControladorQuestao():
     def __init__(self):
@@ -15,7 +16,7 @@ class ControladorQuestao():
         dados_questao = self.__tela_questao.pega_dados_questao()
         q = self.pega_questao_por_id(dados_questao["id"])
         if q is None:
-            questao = Livro(dados_questao["id"], dados_questao["enunciado"],dados_questao["alternativas"],dados_questao["resposta_correta"])
+            questao = Questao(dados_questao["id"], dados_questao["enunciado"],dados_questao["alternativas"],dados_questao["resposta_correta"])
             self.__questoes.append(questao)
         else:
             self.__tela_questao.mostra_mensagem("ATENCAO: Questao já existente")
