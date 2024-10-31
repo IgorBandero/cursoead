@@ -2,9 +2,11 @@ from views.telaquestao import TelaQuestao
 from models.questao import Questao
 
 class ControladorQuestao:
-    def __init__(self):
+    
+    def __init__(self, controlador_sistema):
         self.__questoes = []
         self.__tela_questao = TelaQuestao()
+        self.__controlador_sistema = controlador_sistema
 
     def pega_questao_por_id(self, id: int):
         for questao in self.__questoes:
