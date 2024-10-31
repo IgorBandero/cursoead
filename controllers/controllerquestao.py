@@ -1,5 +1,5 @@
-from telaquestao import TelaQuestao
-from questao import Questao
+from views.telaquestao import TelaQuestao
+from models.questao import Questao
 
 class ControladorQuestao:
     def __init__(self):

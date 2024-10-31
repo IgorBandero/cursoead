@@ -1,4 +1,4 @@
-from questao import Questao
+from models.questao import Questao
 
 class AtividadeAvaliativa:
 
