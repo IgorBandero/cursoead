@@ -1,4 +1,4 @@
-from atividadeavaliativa import AtividadeAvaliativa
+from models.atividadeavaliativa import AtividadeAvaliativa
 
 class Modulo:
     def __init__(self, codigo: str, nome: str, area: str, carga_horaria: int, aulas: list, atividades: list):
