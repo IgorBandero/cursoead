@@ -13,7 +13,6 @@ class TelaProfessor:
         print("Cadastro de Professor")
         
         nome = input("Nome: ")
-        cpf = input("CPF: ")
         telefone = input("Telefone: ")
         email = input("Email: ")
         usuario = input("Usuário: ")
@@ -62,7 +61,12 @@ class TelaProfessor:
         print(f"Formação: {dados_professor['formacao']}\n")
 
     def seleciona_professor(self):
-        return input("CPF do professor que deseja selecionar: ")
+        while True:
+            try:
+                cpf = int(input("CPF do professor que deseja selecionar: "))
+                return cpf
+            except ValueError:
+                print("CPF deve ser um valor inteiro. Por favor, tente novamente.")
 
     def mostra_mensagem(self, msg: str):
         print(msg)

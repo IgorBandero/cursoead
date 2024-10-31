@@ -39,20 +39,58 @@ class ControladorProfessor:
         cpf = self.__tela_professor.seleciona_professor()
         professor = self.buscar_professor_por_cpf(cpf)
         if professor:
-            novos_dados = self.__tela_professor.pega_dados_professor()
-            professor.nome = novos_dados["nome"]
-            professor.telefone = novos_dados["telefone"]
-            professor.email = novos_dados["email"]
-            professor.usuario = novos_dados["usuario"]
-            professor.senha = novos_dados["senha"]
-            professor.formacao = novos_dados["formacao"]
-            professor.especialidade = novos_dados["especialidade"]
-            professor.rua = novos_dados["rua"]
-            professor.num_residencia = novos_dados["num_residencia"]
-            professor.bairro = novos_dados["bairro"]
-            professor.cidade = novos_dados["cidade"]
-            professor.cep = novos_dados["cep"]
-            self.__tela_professor.mostra_mensagem("Professor editado com sucesso!")
+            while True:
+                print("\nEscolha o campo que deseja editar:")
+                print("1 - Nome")
+                print("2 - Telefone")
+                print("3 - Email")
+                print("4 - Usuário")
+                print("5 - Senha")
+                print("6 - Formação")
+                print("7 - Especialidade")
+                print("8 - Rua")
+                print("9 - Número da Residência")
+                print("10 - Bairro")
+                print("11 - Cidade")
+                print("12 - CEP")
+                print("0 - Finalizar Edição")
+
+                opcao = int(input("Escolha uma opção: "))
+
+                if opcao == 1:
+                    professor.nome = input("Novo nome: ")
+                elif opcao == 2:
+                    professor.telefone = input("Novo telefone: ")
+                elif opcao == 3:
+                    professor.email = input("Novo email: ")
+                elif opcao == 4:
+                    professor.usuario = input("Novo usuário: ")
+                elif opcao == 5:
+                    professor.senha = input("Nova senha: ")
+                elif opcao == 6:
+                    professor.formacao = input("Nova formação: ")
+                elif opcao == 7:
+                    professor.especialidade = input("Nova especialidade: ")
+                elif opcao == 8:
+                    professor.rua = input("Nova rua: ")
+                elif opcao == 9:
+                    while True:
+                        try:
+                            professor.num_residencia = int(input("Novo número da residência: "))
+                            break
+                        except ValueError:
+                            print("Número da residência deve ser um valor inteiro. Tente novamente.")
+                elif opcao == 10:
+                    professor.bairro = input("Novo bairro: ")
+                elif opcao == 11:
+                    professor.cidade = input("Nova cidade: ")
+                elif opcao == 12:
+                    professor.cep = input("Novo CEP: ")
+                elif opcao == 0:
+                    self.__tela_professor.mostra_mensagem("Edição finalizada.")
+                    break
+                else:
+                    self.__tela_professor.mostra_mensagem("Opção inválida. Tente novamente.")
         else:
             self.__tela_professor.mostra_mensagem("Professor não encontrado.")
 
