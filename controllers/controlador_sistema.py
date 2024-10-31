@@ -2,13 +2,15 @@ from views.tela_sistema import TelaSistema
 from controllers.controlador_alunos import ControladorAluno
 from controllers.controlador_questao import ControladorQuestao
 from controllers.controlador_atividadeavaliativa import ControladorAtividadeAvaliativa
+from controllers.controlador_professor import ControladorProfessor 
 
 class ControladorSistema:
 
     def __init__(self):
         self.__controlador_alunos = ControladorAluno(self)
-        self.__controlador_questoes = ControladorQuestao(self)  # Passa 'self' para ControladorQuestao
-        self.__controlador_atividade = ControladorAtividadeAvaliativa(self.__controlador_questoes)  # Passa ControladorQuestao para ControladorAtividadeAvaliativa
+        self.__controlador_questoes = ControladorQuestao(self)  
+        self.__controlador_atividade = ControladorAtividadeAvaliativa(self.__controlador_questoes)  
+        self.__controlador_professor = ControladorProfessor(self) 
         self.__tela_sistema = TelaSistema()
 
     @property
@@ -23,6 +25,10 @@ class ControladorSistema:
     def controlador_atividade(self):
         return self.__controlador_atividade
 
+    @property
+    def controlador_professor(self):
+        return self.__controlador_professor
+
     def inicializar_sistema(self):
         self.abrir_tela()
 
@@ -35,6 +41,9 @@ class ControladorSistema:
     def opcoes_atividade(self):
         self.__controlador_atividade.mostrar_menu()
 
+    def opcoes_professor(self):
+        self.__controlador_professor.abrir_tela()  
+
     def encerrar_sistema(self):
         exit(0)
 
@@ -43,6 +52,7 @@ class ControladorSistema:
             1: self.opcoes_aluno,
             2: self.opcoes_atividade,
             3: self.opcoes_questao,
+            4: self.opcoes_professor,
             0: self.encerrar_sistema
         }
 

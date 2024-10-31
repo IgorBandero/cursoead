@@ -6,6 +6,7 @@ class TelaSistema:
         print("1 - Alunos")
         print("2 - Atividades Avaliativas")
         print("3 - Questões")
+        print("4 - Professores")
         print("0 - Finalizar sistema")
         
         try:

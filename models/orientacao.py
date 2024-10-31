@@ -1,5 +1,5 @@
 import models.aluno as Aluno
-import professor as Professor
+import models.professor as Professor
 
 class Orientacao:
     def __init__(self, aluno: Aluno, professor: Professor):
