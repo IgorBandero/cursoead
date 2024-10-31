@@ -7,8 +7,8 @@ class ControladorAtividadeAvaliativa:
     def __init__(self, controlador_questao):
         self.__atividades = []
         self.__tela_atividade = TelaAtividadeAvaliativa()
-        self.__controlador_questao = controlador_questao  # Referência ao controlador de questões
-        self.__id_atual = 1  # Inicializa o ID único para as atividades
+        self.__controlador_questao = controlador_questao
+        self.__id_atual = 1 
 
     def gerar_id(self):
         """Gera um ID único para cada nova atividade e incrementa o contador."""
@@ -21,11 +21,11 @@ class ControladorAtividadeAvaliativa:
         nota_maxima = dados_atividade["nota_maxima"]
         quantidade_questoes = dados_atividade["quantidade_questoes"]
         
-        # Passe a quantidade de questões desejada para o método de seleção
+       
         questoes = self.selecionar_questoes_existentes(quantidade_questoes)
 
         if questoes:
-            # Gera um ID para a nova atividade e cria o objeto `AtividadeAvaliativa`
+            
             id_atividade = self.gerar_id()
             atividade = AtividadeAvaliativa(id_atividade, questoes, nota_maxima)
             self.__atividades.append(atividade)
@@ -36,7 +36,6 @@ class ControladorAtividadeAvaliativa:
     def selecionar_questoes_existentes(self, quantidade):
         questoes_selecionadas = []
 
-        # Lista as questões existentes para o usuário
         questoes_existentes = self.__controlador_questao.listar_questoes_disponiveis()
 
         if questoes_existentes:
@@ -44,7 +43,7 @@ class ControladorAtividadeAvaliativa:
                 try:
                     id_questao = int(input("Informe o ID da questão para adicionar à atividade (0 para finalizar): "))
                     if id_questao == 0:
-                        break  # Permite ao usuário finalizar antes de atingir a quantidade desejada
+                        break  
                     questao_selecionada = self.__controlador_questao.pega_questao_por_id(id_questao)
                     if questao_selecionada:
                         questoes_selecionadas.append(questao_selecionada)

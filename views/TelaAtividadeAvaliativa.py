@@ -15,7 +15,7 @@ class TelaAtividadeAvaliativa:
 
     def mostra_atividade(self, dados_atividade):
         print("-------- ATIVIDADE AVALIATIVA ----------")
-        print("ID:", dados_atividade["id"])  # Exibe o ID da atividade
+        print("ID:", dados_atividade["id"]) 
         print("Nota Máxima:", dados_atividade["nota_maxima"])
         print("Questões:")
         for questao in dados_atividade["questoes"]:
