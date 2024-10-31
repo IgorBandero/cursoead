@@ -2,7 +2,7 @@ from pessoa import Pessoa
 from matricula import Matricula
 from estadoAluno import EstadoAluno
 from professor import Professor
-from curso import Curso
+from models.curso import Curso
 from datetime import date
 
 class Aluno(Pessoa):

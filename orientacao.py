@@ -1,4 +1,4 @@
-import aluno as Aluno
+import models.aluno as Aluno
 import professor as Professor
 
 class Orientacao:

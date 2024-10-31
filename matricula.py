@@ -1,5 +1,5 @@
 from datetime import date
-from curso import Curso
+from models.curso import Curso
     
 class Matricula:
     

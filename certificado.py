@@ -1,4 +1,4 @@
-import aluno as Aluno
+import models.aluno as Aluno
 from Modulo import Modulo
 import datetime as Date
 

@@ -1,8 +1,8 @@
 from pessoa import Pessoa
-from aluno import Aluno
+from models.aluno import Aluno
 from professor import Professor
 from orientacao import Orientacao
-from curso import Curso
+from models.curso import Curso
 from datetime import date
 from questao import Questao
 

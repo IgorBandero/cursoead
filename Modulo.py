@@ -1,4 +1,3 @@
-from aula import Aula
 from atividadeavaliativa import AtividadeAvaliativa
 
 class Modulo:
