@@ -1,4 +1,4 @@
-from pessoa import Pessoa
+from models.pessoa import Pessoa
 from matricula import Matricula
 from estadoAluno import EstadoAluno
 from models.professor import Professor

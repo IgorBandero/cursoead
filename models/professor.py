@@ -1,4 +1,4 @@
-from pessoa import Pessoa
+from models.pessoa import Pessoa
 
 class Professor(Pessoa):
     def __init__(self, nome: str, cpf: str, telefone: str, email: str, usuario: str, senha: str, formacao: str, especialidade: str, rua: str, num_residencia: int, bairro: str, cidade: str, cep: str):

@@ -16,7 +16,7 @@ class ControladorAluno():
             curso = Curso(aluno["curso"], "Curso da Universidade", 3500, 8, 16, 750.00)
             novoAluno = Aluno(aluno["nome"], aluno["cpf"], aluno["telefone"], aluno["email"], aluno["usuario"], aluno["senha"], aluno["rua"], aluno["num_residencia"], aluno["bairro"], aluno["cidade"], aluno["cep"], curso, aluno["codigo"], aluno["data_inicio"])
             self.__alunos.append(novoAluno)
-            print(self.__alunos[0])
+            print("\nAluno: ", self.__alunos[0].nome, " cadastrado com sucesso!")
         else:
             self.__tela_aluno.mostrar_mensagem("ATENCAO: Aluno já cadastrado!")
 
