@@ -17,6 +17,13 @@ class ControladorAluno():
             self.__tela_aluno.mostrar_mensagem("\n****** ATENÇÃO: Nenhum curso disponível! ******")
             return 
         aluno = self.__tela_aluno.cadastrar_aluno()
+
+        try:
+            cpf = int(aluno["cpf"])
+        except ValueError:
+            self.__tela_aluno.mostrar_mensagem("Erro: CPF deve ser um número inteiro válido.")
+            return
+
         curso = self.__controlador_curso.selecionar_curso()
         if (curso is not None):
             codigo = self.gerar_codigo_matricula()

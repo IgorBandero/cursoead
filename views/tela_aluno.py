@@ -14,7 +14,6 @@ class TelaAluno():
     def cadastrar_aluno(self):
         print("\n------------ DADOS DO ALUNO ------------")
         nome = input("Nome: ")
-        cpf = input("CPF: ")
         telefone = input("Telefone: ")
         email = input("E-mail: ")
         usuario = input("Usuario: ")
@@ -24,6 +23,13 @@ class TelaAluno():
         bairro = input("Bairro: ")
         cidade = input("Cidade: ")
         cep = input("CEP: ")
+
+        while True:
+            try:
+                cpf = int(input("CPF: "))
+                break
+            except ValueError:
+                print("CPF deve ser um valor inteiro. Por favor, tente novamente.")
         
         return {
             "nome": nome, "cpf": cpf, "telefone": telefone, "email": email, "usuario": usuario,

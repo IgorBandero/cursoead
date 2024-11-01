@@ -1,5 +1,5 @@
-import models.aluno as Aluno
-import models.professor as Professor
+from models.aluno import Aluno
+from models.professor import Professor
 class Orientacao:
     def __init__(self, aluno: Aluno, professor: Professor):
         self.aluno = aluno  # Chamando diretamente o setter para validação
