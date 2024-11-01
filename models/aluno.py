@@ -1,6 +1,5 @@
 from models.pessoa import Pessoa
-from matricula import Matricula
-from estadoAluno import EstadoAluno
+from models.matricula import Matricula
 from models.professor import Professor
 from models.curso import Curso
 from datetime import date
@@ -12,7 +11,6 @@ class Aluno(Pessoa):
 
         super().__init__(nome, cpf, telefone, email, usuario, senha, rua, num_residencia, bairro, cidade, cep)
         self.__matricula = Matricula(curso, codigo, data_inicio)
-        self.__estado_aluno = EstadoAluno(curso.carga_horaria)
         self.__orientador = None
 
 
@@ -23,7 +21,7 @@ class Aluno(Pessoa):
     @matricula.setter
     def matricula(self, matricula: Matricula):
         if not isinstance(matricula, Matricula):
-            raise TypeError("matricula deve ser um objeto do tipo Matricula.")
+            raise TypeError("Matricula deve ser um objeto do tipo Matricula.")
         self.__matricula = matricula
 
     @property
@@ -35,10 +33,6 @@ class Aluno(Pessoa):
         if not isinstance(orientador, Professor):
             raise TypeError("Orientador deve ser um objeto do tipo Professor.")
         self.__orientador = orientador
-
-    @property
-    def estado_aluno(self) -> (EstadoAluno):
-        return self.__estado_aluno
     
     def mostra_funcao(self):
         return f"Usuário: ${self.nome} é aluno de ${self.matricula.curso} na universidade."

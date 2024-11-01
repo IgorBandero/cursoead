@@ -1,7 +1,7 @@
 from Modulo import Modulo
-
+from models.atividadeavaliativa import AtividadeAvaliativa
 class Curso:
-    
+
     def __init__(self, nome: str, descricao: str, carga_horaria: int, min_semestres: int, max_semestres: int, mensalidade: float):
         
         if isinstance(nome, str):
@@ -87,17 +87,6 @@ class Curso:
         self.__max_semestres = max_semestres
 
     @property
-    def modulos(self) -> list[Modulo]:
-        return self.__modulos
-
-    @modulos.setter
-    def modulos(self, modulos: list[Modulo]):
-        if not isinstance(modulos, list) or not all(isinstance(modulo, Modulo) for modulo in modulos):
-            raise TypeError("Modulos deve ser uma lista de objetos do tipo Modulo.")
-        for modulo in modulos:
-            self.__modulos.adicionar_modulo(modulo)
-
-    @property
     def mensalidade(self) -> float:
         return self.__mensalidade
 
@@ -106,6 +95,10 @@ class Curso:
         if not isinstance(mensalidade, float):
             raise TypeError("Mensalidade deve ser um número decimal (float).")
         self.__mensalidade = mensalidade
+
+    @property
+    def modulos(self) -> list[Modulo]:
+        return self.__modulos
 
     def adicionar_modulo(self, modulo: Modulo):
         if not isinstance(modulo, Modulo):
@@ -116,11 +109,11 @@ class Curso:
     def remover_modulo(self, modulo: Modulo):
         for item in self.__modulos:
             if(item.codigo == modulo.codigo):
-                self.__modulos.remove(modulo)
+                self.__modulos.remove(item)
 
     def avaliacao_media_curso(self):
         num_modulos = len(self.__modulos)
         soma_avaliacoes = 0
         for modulo in self.__modulos:
-            soma += modulo.avaliacao_media
+            soma_avaliacoes += modulo.avaliacao_media()
         return soma_avaliacoes / num_modulos
