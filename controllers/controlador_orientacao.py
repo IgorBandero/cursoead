@@ -8,6 +8,12 @@ class ControladorOrientacao:
         self.__tela_orientacao = TelaOrientacao()
         self.__controlador_sistema = controlador_sistema
 
+    def buscar_orientacao_por_aluno(self, cpf_aluno):
+        for orientacao in self.__orientacoes:
+            if orientacao.aluno.cpf == cpf_aluno:
+                return orientacao
+        return None
+
     def cadastrar_orientacao(self):
         dados_orientacao = self.__tela_orientacao.pega_dados_orientacao()
         
