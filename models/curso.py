@@ -1,4 +1,4 @@
-from Modulo import Modulo
+from models.Modulo import Modulo
 from models.atividadeavaliativa import AtividadeAvaliativa
 class Curso:
 

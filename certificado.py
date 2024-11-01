@@ -1,5 +1,5 @@
 import models.aluno as Aluno
-from Modulo import Modulo
+from models.Modulo import Modulo
 import datetime as Date
 
 class Certificado:
