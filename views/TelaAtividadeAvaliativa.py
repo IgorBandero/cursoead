@@ -22,6 +22,7 @@ class TelaAtividadeAvaliativa:
             print("  Enunciado:", questao["enunciado"])
             print("  Alternativas:", ", ".join(questao["alternativas"]))
             print("  Resposta Correta:", ", ".join(questao["respostas_corretas"]))
+            print(' ')
         print("\n")
 
     def mostra_mensagem(self, msg):
