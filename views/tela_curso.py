@@ -1,4 +1,3 @@
-
 class TelaCurso():
 
     def mostrar_menu_opcoes(self):

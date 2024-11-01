@@ -8,14 +8,17 @@ class Matricula:
             self.__curso = curso
         else:
             raise TypeError("Curso deve ser um objeto do tipo Curso.")
+        
         if isinstance(codigo, str):
             self.__codigo = codigo
         else:
             raise TypeError("Codigo deve ser uma string.")
+        
         if isinstance(data_inicio, date):
             self.__data_inicio = data_inicio
         else:
             raise TypeError("Data_inicio deve ser uma data (Date).")
+        
         self.__data_final = None
         
     @property
@@ -31,7 +34,7 @@ class Matricula:
     @property
     def codigo(self) -> (str):
         return self.__codigo
-
+    
     @codigo.setter
     def codigo(self, codigo: str):
         if not isinstance(codigo, str):

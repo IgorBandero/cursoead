@@ -23,8 +23,6 @@ class ControladorCurso():
         if(curso is not None):
                 self.__cursos.remove(curso)
                 self.__tela_curso.mostrar_mensagem(f"\nCurso: {curso.nome} foi removido da lista de cursos da universidade.")
-        #else:
-        #    self.__tela_curso.mostrar_mensagem("********* ATENÇÃO: Curso não encontrado! *********")
 
     def editar_curso(self):
         curso = self.selecionar_curso()
@@ -38,11 +36,9 @@ class ControladorCurso():
                     item.min_semestres = curso_atualizado["min_semestres"]
                     item.min_semestres = curso_atualizado["min_semestres"]
                     item.mensalidade = curso_atualizado["mensalidade"]
-        #else:
-        #    self.__tela_curso.mostrar_mensagem("********* ATENÇÃO: Curso não encontrado! *********")
 
     def selecionar_curso(self):
-        print("Selecione o curso:")
+        print("\nSelecione o curso:")
         self.listar_cursos()
         indice_curso_escolhido = self.__tela_curso.selecionar_curso(len(self.__cursos))
         if (indice_curso_escolhido is not None):
