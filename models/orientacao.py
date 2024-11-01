@@ -1,37 +1,26 @@
 import models.aluno as Aluno
 import models.professor as Professor
-
 class Orientacao:
     def __init__(self, aluno: Aluno, professor: Professor):
-        self.__aluno = aluno
-        self.__professor = professor
+        self.aluno = aluno  # Chamando diretamente o setter para validação
+        self.professor = professor  # Chamando diretamente o setter para validação
 
     @property
-    def aluno(self):
+    def aluno(self) -> Aluno:
         return self.__aluno
     
     @aluno.setter
     def aluno(self, aluno: Aluno):
         if not isinstance(aluno, Aluno):
-            raise TypeError("aluno deve ser uma instancia da classe Aluno.")
-        self.__aluno = Aluno
-    
-    @property
-    def aluno(self):
-        return self.__aluno
-    
-    @aluno.setter
-    def aluno(self, aluno: Aluno):
-        if not isinstance(aluno, Aluno):
-            raise TypeError("aluno deve ser uma instancia da classe Aluno.")
+            raise TypeError("aluno deve ser uma instância da classe Aluno.")
         self.__aluno = aluno
 
     @property
-    def professor(self):
+    def professor(self) -> Professor:
         return self.__professor
     
     @professor.setter
     def professor(self, professor: Professor):
         if not isinstance(professor, Professor):
-            raise TypeError("professor deve ser uma instancia da classe Professor.")
+            raise TypeError("professor deve ser uma instância da classe Professor.")
         self.__professor = professor
