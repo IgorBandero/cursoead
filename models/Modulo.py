@@ -1,7 +1,7 @@
 from models.atividadeavaliativa import AtividadeAvaliativa
 
 class Modulo:
-    def __init__(self, codigo: str, nome: str, area: str, carga_horaria: int, aulas: list, atividades: list):
+    def __init__(self, codigo: str, nome: str, area: str, carga_horaria: int):
         if isinstance(codigo, str):
             self.__codigo = codigo
         else:
@@ -21,18 +21,6 @@ class Modulo:
             self.__carga_horaria = carga_horaria
         else:
             raise TypeError("Carga horária deve ser um número inteiro.")
-        
-        if isinstance(aulas, list):
-            self.__aulas = aulas
-        else:
-            raise TypeError("Aulas deve ser uma lista de objetos Aula.")
-        
-        if isinstance(atividades, list):
-            self.__atividades = atividades
-        else:
-            raise TypeError("Atividades deve ser uma lista de objetos AtividadesAvaliativas.")
-        
-        self.__lista_avaliacoes = []
 
     @property
     def codigo(self) -> str:
@@ -73,46 +61,3 @@ class Modulo:
         if not isinstance(carga_horaria, int):
             raise TypeError("A carga horária deve ser um número inteiro.")
         self.__carga_horaria = carga_horaria
-    
-    @property
-    def aulas(self) -> list:
-        return self.__aulas
-    
-    @aulas.setter
-    def aulas(self, aulas: list):
-        if not isinstance(aulas, list):
-            raise TypeError("Aulas deve ser uma lista de objetos Aula.")
-        self.__aulas = aulas
-    
-    @property
-    def atividades(self) -> list:
-        return self.__atividades
-    
-    @atividades.setter
-    def atividades(self, atividades: list):
-        if not isinstance(atividades, list):
-            raise TypeError("Atividades deve ser uma lista de objetos AtividadesAvaliativas.")
-        self.__atividades = atividades
-    
-    @property
-    def lista_avaliacoes(self) -> list:
-        return self.__lista_avaliacoes
-    
-    @lista_avaliacoes.setter
-    def lista_avaliacoes(self, lista_avaliacoes: list):
-        if not isinstance(lista_avaliacoes, list):
-            raise TypeError("Lista de avaliações deve ser uma lista de números (floats ou inteiros).")
-        for avaliacao in lista_avaliacoes:
-            if not isinstance(avaliacao, (float, int)):
-                raise TypeError("Cada avaliação deve ser um número (float ou int).")
-        self.__lista_avaliacoes = lista_avaliacoes
-
-    def adicionar_avaliacao(self, avaliacao: float):
-        if not isinstance(avaliacao, (float, int)):
-            raise TypeError("A avaliação deve ser um número (float ou int).")
-        self.__lista_avaliacoes.append(float(avaliacao))
-    
-    def avaliacao_media(self) -> float:
-        if not self.__lista_avaliacoes:
-            return 0.0  
-        return sum(self.__lista_avaliacoes) / len(self.__lista_avaliacoes)
