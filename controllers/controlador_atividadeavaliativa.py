@@ -2,13 +2,15 @@ from models.questao import Questao
 from models.atividadeavaliativa import AtividadeAvaliativa 
 from views.TelaAtividadeAvaliativa import TelaAtividadeAvaliativa
 from controllers.controlador_questao import ControladorQuestao
-
 class ControladorAtividadeAvaliativa:
-    def __init__(self, controlador_questao):
+    def __init__(self, controlador_questao, controlador_aluno):
         self.__atividades = []
         self.__tela_atividade = TelaAtividadeAvaliativa()
         self.__controlador_questao = controlador_questao
-        self.__id_atual = 1 
+        self.__controlador_aluno = controlador_aluno  # Atribui o controlador de alunos
+        self.__id_atual = 1
+        self.__notas_atividade = {}  # Inicializa o dicionário para armazenar as notas
+
 
     def gerar_id(self):
         """Gera um ID único para cada nova atividade e incrementa o contador."""
@@ -32,6 +34,58 @@ class ControladorAtividadeAvaliativa:
             self.__tela_atividade.mostra_mensagem("Atividade Avaliativa adicionada com sucesso!")
         else:
             self.__tela_atividade.mostra_mensagem("Nenhuma questão foi adicionada à atividade.")
+
+    def adicionar_nota_para_aluno(self):
+        dados_nota = self.__tela_atividade.pega_dados_nota()
+        if not dados_nota:
+            return
+
+        atividade = self.buscar_atividade_por_id(dados_nota["atividade_id"])
+        aluno = self.__controlador_aluno.buscar_aluno_pelo_cpf(dados_nota["aluno_cpf"])
+
+        if atividade and aluno:
+            if dados_nota["nota"] <= atividade.nota_maxima:
+                # Inicializa o dicionário da atividade se não existir
+                if atividade.id not in self.__notas_atividade:
+                    self.__notas_atividade[atividade.id] = {}
+
+                # Atribui a nota para o aluno na atividade
+                self.__notas_atividade[atividade.id][aluno.cpf] = dados_nota["nota"]
+                self.__tela_atividade.mostra_mensagem("Nota adicionada com sucesso!")
+            else:
+                self.__tela_atividade.mostra_mensagem("Nota excede a nota máxima da atividade.")
+        else:
+            self.__tela_atividade.mostra_mensagem("Atividade ou Aluno não encontrados.")
+    
+    def gerar_relatorio_atividade(self):
+        id_atividade = self.__tela_atividade.seleciona_atividade()
+        atividade = self.buscar_atividade_por_id(id_atividade)
+        
+        if atividade:
+            notas = list(self.__notas_atividade[id_atividade].values())
+            if notas:
+                dados_relatorio = {
+                    "nota_maxima": max(notas),
+                    "nota_minima": min(notas),
+                    "quantidade_alunos": len(notas),
+                    "nota_media": sum(notas) / len(notas)
+                }
+            else:
+                dados_relatorio = {
+                    "nota_maxima": 0,
+                    "nota_minima": 0,
+                    "quantidade_alunos": 0,
+                    "nota_media": 0
+                }
+            self.__tela_atividade.mostrar_relatorio(dados_relatorio)
+        else:
+            self.__tela_atividade.mostra_mensagem("Atividade não encontrada.")
+
+    def buscar_atividade_por_id(self, atividade_id):
+        for atividade in self.__atividades:
+            if atividade.id == atividade_id:
+                return atividade
+        return None
 
     def selecionar_questoes_existentes(self, quantidade):
         questoes_selecionadas = []
@@ -88,11 +142,14 @@ class ControladorAtividadeAvaliativa:
         else:
             self.__tela_atividade.mostra_mensagem("ID de atividade inválido.")
 
+    
     def mostrar_menu(self):
         lista_opcoes = {
             1: self.adicionar_atividade,
             2: self.remover_atividade,
-            3: self.listar_atividades
+            3: self.listar_atividades,
+            4: self.adicionar_nota_para_aluno,  # Adicionar nota
+            5: self.gerar_relatorio_atividade   # Gerar relatório
         }
         
         while True:
@@ -106,5 +163,3 @@ class ControladorAtividadeAvaliativa:
                 break
             else:
                 self.__tela_atividade.mostra_mensagem("Opção inválida. Tente novamente.")
-
-

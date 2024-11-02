@@ -16,7 +16,7 @@ class ControladorSistema:
         self.__controlador_alunos = ControladorAluno(self, self.__controlador_curso)
         self.__controlador_questoes = ControladorQuestao(self)
         self.__controlador_professores = ControladorProfessor(self)
-        self.__controlador_atividade = ControladorAtividadeAvaliativa(self.__controlador_questoes)
+        self.__controlador_atividade = ControladorAtividadeAvaliativa(self.__controlador_questoes,self.__controlador_alunos)
         self.__controlador_orientacao = ControladorOrientacao(self)
 
     # Propriedades para acessar os controladores no sistema

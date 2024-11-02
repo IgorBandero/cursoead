@@ -62,9 +62,9 @@ class ControladorAluno():
         for indice, aluno in enumerate(self.__alunos):
             self.__tela_aluno.mostrar_opcao_aluno({"indice": indice, "nome": aluno.nome, "matricula": aluno.matricula.codigo, "curso": aluno.matricula.curso.nome})
 
-    def buscar_aluno_pelo_cpf(self, cpf: str):
+    def buscar_aluno_pelo_cpf(self, cpf):
         for aluno in self.__alunos:
-            if(aluno.cpf == cpf):
+            if aluno.cpf == cpf:
                 return aluno
         return None
     
