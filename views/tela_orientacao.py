@@ -41,7 +41,7 @@ class TelaOrientacao:
     def seleciona_orientacao(self):
         while True:
             try:
-                cpf_aluno = int(input("Digite o CPF do aluno para selecionar a orientação: "))
+                cpf_aluno = int(input("Digite o CPF do aluno: "))
                 return cpf_aluno
             except ValueError:
                 print("CPF deve ser um número inteiro. Por favor, tente novamente.")

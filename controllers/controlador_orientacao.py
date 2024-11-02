@@ -80,7 +80,7 @@ class ControladorOrientacao:
 
                 elif opcao == 2:
                     # Alterar orientando (aluno)
-                    cpf_novo_aluno = self.__tela_orientacao.pegar_cpf_aluno()
+                    cpf_novo_aluno = self.__tela_orientacao.seleciona_orientacao()
                     novo_aluno = self.__controlador_sistema.controlador_alunos.buscar_aluno_pelo_cpf(cpf_novo_aluno)
                     if novo_aluno:
                         orientacao.aluno = novo_aluno
