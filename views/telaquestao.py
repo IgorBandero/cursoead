@@ -9,23 +9,27 @@ class TelaQuestao:
         print("0. Voltar")
         print("----------------------------")
         opcao = input("Escolha a opção: ")
-        if (opcao == "1" or opcao == "2" or opcao == "3" or opcao == "4" or  opcao == "5" or opcao == "0"):
+        if opcao in {"1", "2", "3", "0"}:
             return int(opcao)
         else:
             print("\n***** OPÇÃO INVÁLIDA! TENTE NOVAMENTE... *****")
+            return None
 
     def pega_dados_questao(self):
-        print("-------- DADOS DA QUESTÃO ----------")
+        print("-------- DADOS DA QUESTAO ----------")
         id = self.pegar_id()
         enunciado = self.pegar_enunciado()
         alternativas = self.pegar_alternativas()
         resposta_correta = self.pegar_resposta_correta(alternativas)
         
+        # Transforme resposta_correta em uma lista
+        respostas_corretas = [resposta_correta]
+        
         return {
             "id": id,
             "enunciado": enunciado,
             "alternativas": alternativas,
-            "resposta_correta": resposta_correta
+            "respostas_corretas": respostas_corretas
         }
 
     def pegar_id(self):
@@ -71,12 +75,15 @@ class TelaQuestao:
             except ValueError:
                 print("Código inválido! Insira um número inteiro.")
 
-    def mostra_questao(self, dados_questao):
-        print("-------- QUESTÃO ----------")
-        print("ID DA QUESTÃO: ", dados_questao["id"])
-        print("ENUNCIADO DA QUESTÃO: ", dados_questao["enunciado"])
-        print("ALTERNATIVAS DA QUESTÃO: ", ", ".join(dados_questao["alternativas"]))
-        print("RESPOSTA CORRETA: ", dados_questao["resposta_correta"])
+    def mostrar_questao(self, dados_questao):
+        print("-------- QUESTAO ----------")
+        print("ID DA QUESTAO: ", dados_questao["id"])
+        print("ENUNCIADO DA QUESTAO: ", dados_questao["enunciado"])
+        print("ALTERNATIVAS DA QUESTAO: ", ", ".join(dados_questao["alternativas"]))
+        
+        # Converte a lista de respostas corretas em uma string sem colchetes
+        resposta_correta_str = ", ".join(dados_questao["respostas_corretas"])
+        print("RESPOSTA CORRETA: ", resposta_correta_str)
         print("\n")
 
 

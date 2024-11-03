@@ -1,7 +1,8 @@
 from models.questao import Questao
-from models.atividadeavaliativa import AtividadeAvaliativa 
+from models.atividadeavaliativa import AtividadeAvaliativa
 from views.TelaAtividadeAvaliativa import TelaAtividadeAvaliativa
 from controllers.controlador_questao import ControladorQuestao
+
 class ControladorAtividadeAvaliativa:
     def __init__(self, controlador_questao, controlador_aluno):
         self.__atividades = []
@@ -10,7 +11,6 @@ class ControladorAtividadeAvaliativa:
         self.__controlador_aluno = controlador_aluno  # Atribui o controlador de alunos
         self.__id_atual = 1
         self.__notas_atividade = {}  # Inicializa o dicionário para armazenar as notas
-
 
     def gerar_id(self):
         """Gera um ID único para cada nova atividade e incrementa o contador."""
@@ -22,12 +22,10 @@ class ControladorAtividadeAvaliativa:
         dados_atividade = self.__tela_atividade.pega_dados_atividade()
         nota_maxima = dados_atividade["nota_maxima"]
         quantidade_questoes = dados_atividade["quantidade_questoes"]
-        
-       
+
         questoes = self.selecionar_questoes_existentes(quantidade_questoes)
 
         if questoes:
-            
             id_atividade = self.gerar_id()
             atividade = AtividadeAvaliativa(id_atividade, questoes, nota_maxima)
             self.__atividades.append(atividade)
@@ -45,11 +43,9 @@ class ControladorAtividadeAvaliativa:
 
         if atividade and aluno:
             if dados_nota["nota"] <= atividade.nota_maxima:
-                # Inicializa o dicionário da atividade se não existir
                 if atividade.id not in self.__notas_atividade:
                     self.__notas_atividade[atividade.id] = {}
 
-                # Atribui a nota para o aluno na atividade
                 self.__notas_atividade[atividade.id][aluno.cpf] = dados_nota["nota"]
                 self.__tela_atividade.mostra_mensagem("Nota adicionada com sucesso!")
             else:
@@ -62,7 +58,7 @@ class ControladorAtividadeAvaliativa:
         atividade = self.buscar_atividade_por_id(id_atividade)
         
         if atividade:
-            notas = list(self.__notas_atividade[id_atividade].values())
+            notas = list(self.__notas_atividade.get(id_atividade, {}).values())
             if notas:
                 dados_relatorio = {
                     "nota_maxima": max(notas),
@@ -90,6 +86,7 @@ class ControladorAtividadeAvaliativa:
     def selecionar_questoes_existentes(self, quantidade):
         questoes_selecionadas = []
 
+        # Obter as questões do controlador de questões
         questoes_existentes = self.__controlador_questao.listar_questoes_disponiveis()
 
         if questoes_existentes:
@@ -123,7 +120,7 @@ class ControladorAtividadeAvaliativa:
                         {
                             "enunciado": questao.enunciado,
                             "alternativas": questao.alternativas,
-                            "respostas_corretas": questao.respostas_corretas
+                            "respostas_corretas": questao.respostas_corretas  # Exibe como lista completa
                         }
                         for questao in atividade.questoes
                     ]
@@ -142,14 +139,13 @@ class ControladorAtividadeAvaliativa:
         else:
             self.__tela_atividade.mostra_mensagem("ID de atividade inválido.")
 
-    
     def mostrar_menu(self):
         lista_opcoes = {
             1: self.adicionar_atividade,
             2: self.remover_atividade,
             3: self.listar_atividades,
-            4: self.adicionar_nota_para_aluno,  # Adicionar nota
-            5: self.gerar_relatorio_atividade   # Gerar relatório
+            4: self.adicionar_nota_para_aluno,
+            5: self.gerar_relatorio_atividade
         }
         
         while True:
@@ -162,4 +158,4 @@ class ControladorAtividadeAvaliativa:
                 self.__tela_atividade.mostra_mensagem("Voltando...")
                 break
             else:
-                self.__tela_atividade.mostra_mensagem("Opção inválida. Tente novamente.")
+                self.__tela_atividade.mostra_mensagem("Opção inválida.")

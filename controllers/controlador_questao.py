@@ -24,7 +24,7 @@ class ControladorQuestao:
                 dados_questao["id"], 
                 dados_questao["enunciado"],
                 dados_questao["alternativas"], 
-                dados_questao["resposta_correta"]
+                dados_questao["respostas_corretas"]
             )
             self.__questoes.append(questao)
             self.__tela_questao.mostra_mensagem("Questão adicionada com sucesso!")
@@ -32,18 +32,19 @@ class ControladorQuestao:
             self.__tela_questao.mostra_mensagem("ATENÇÃO: Questão com este ID já existente.")
 
     def listar_questoes_disponiveis(self):
-        """Lista as questões disponíveis e retorna para integração com outras classes."""
+        """Lista e retorna as questões disponíveis."""
         if not self.__questoes:
             self.__tela_questao.mostra_mensagem("Nenhuma questão cadastrada.")
         else:
             for questao in self.__questoes:
-                self.__tela_questao.mostra_questao({
+                self.__tela_questao.mostrar_questao({
                     "id": questao.id,
                     "enunciado": questao.enunciado,
                     "alternativas": questao.alternativas,
-                    "resposta_correta": questao.respostas_corretas  # Corrigido aqui para respostas_corretas
+                    "respostas_corretas": questao.respostas_corretas
                 })
         return self.__questoes
+
 
     def excluir_questao(self):
         """Exclui uma questão do sistema."""
