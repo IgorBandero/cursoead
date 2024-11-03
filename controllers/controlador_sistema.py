@@ -4,6 +4,7 @@ from controllers.controlador_professor import ControladorProfessor
 from controllers.controlador_atividadeavaliativa import ControladorAtividadeAvaliativa
 from controllers.controlador_orientacao import ControladorOrientacao
 from controllers.controlador_curso import ControladorCurso  # Adicionando ControladorCurso
+from controllers.controlador_certificado import ControladorCertificado
 from views.tela_sistema import TelaSistema
 
 class ControladorSistema:
@@ -16,8 +17,9 @@ class ControladorSistema:
         self.__controlador_alunos = ControladorAluno(self, self.__controlador_curso)
         self.__controlador_questoes = ControladorQuestao(self)
         self.__controlador_professores = ControladorProfessor(self)
-        self.__controlador_atividade = ControladorAtividadeAvaliativa(self.__controlador_questoes,self.__controlador_alunos)
+        self.__controlador_atividade = ControladorAtividadeAvaliativa(self.__controlador_questoes, self.__controlador_alunos)
         self.__controlador_orientacao = ControladorOrientacao(self)
+        self.__controlador_certificado = ControladorCertificado(self,  self.__controlador_alunos)
 
     # Propriedades para acessar os controladores no sistema
     @property
@@ -43,6 +45,14 @@ class ControladorSistema:
     @property
     def controlador_curso(self):
         return self.__controlador_curso
+    
+    @property
+    def controlador_certificado(self):
+        return self.__controlador_certificado
+    
+    @property
+    def controlador_modulo(self):
+        return self.__controlador_modulo
 
     # Funções para cada opção do menu principal
     def inicializar_sistema(self):
@@ -66,6 +76,9 @@ class ControladorSistema:
     def opcoes_curso(self):  # Função para acessar o menu de cursos
         self.__controlador_curso.abrir_tela()
 
+    def opcoes_certificado(self):
+        self.__controlador_certificado.abrir_tela()
+
     def encerrar_sistema(self):
         print("Encerrando o sistema...")
         exit(0)
@@ -78,6 +91,7 @@ class ControladorSistema:
             4: self.opcoes_professor,
             5: self.opcoes_orientacao,
             6: self.opcoes_curso,  # Adicionando a nova opção de cursos
+            7: self.opcoes_certificado,
             0: self.encerrar_sistema
         }
 

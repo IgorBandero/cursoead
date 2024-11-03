@@ -1,5 +1,7 @@
 class TelaSistema:
+
     def menu_opcoes(self):
+        
         print("\n-------- SISTEMA DE CURSOS EAD ---------")
         print("Escolha uma opção:")
         print("1 - Alunos")
@@ -8,6 +10,7 @@ class TelaSistema:
         print("4 - Professores")
         print("5 - Orientações")
         print("6 - Cursos")  # Nova opção para cursos
+        print("7 - Certificados")
         print("0 - Finalizar sistema")
         
         try:

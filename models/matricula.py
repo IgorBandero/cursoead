@@ -20,7 +20,9 @@ class Matricula:
             raise TypeError("Data_inicio deve ser uma data (Date).")
         
         self.__data_final = None
-        
+        self.__modulos_atuais = []
+        self.__modulos_finalizados = []
+
     @property
     def curso(self) -> (Curso):
         return self.__curso
@@ -60,3 +62,12 @@ class Matricula:
         if not isinstance(data_final, date):
             raise TypeError("Data_final deve ser uma data (date).")
         self.__data_final = data_final
+
+    def calcular_progresso(self):
+        carga_concluida = 0
+        if (len(self.__modulos_finalizados) > 0):
+            for modulo in self.__modulos_finalizados:
+                carga_concluida += modulo.carga_horaria
+            return carga_concluida / self.curso.carga_horaria
+        else:
+            return 0

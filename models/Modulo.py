@@ -1,7 +1,7 @@
 from models.atividadeavaliativa import AtividadeAvaliativa
 
 class Modulo:
-    def __init__(self, codigo: str, nome: str, area: str, carga_horaria: int, aulas: list, atividades: list):
+    def __init__(self, codigo: str, nome: str, area: str, carga_horaria: int, atividades: list):
         if isinstance(codigo, str):
             self.__codigo = codigo
         else:
@@ -21,11 +21,6 @@ class Modulo:
             self.__carga_horaria = carga_horaria
         else:
             raise TypeError("Carga horária deve ser um número inteiro.")
-        
-        if isinstance(aulas, list):
-            self.__aulas = aulas
-        else:
-            raise TypeError("Aulas deve ser uma lista de objetos Aula.")
         
         if isinstance(atividades, list):
             self.__atividades = atividades
@@ -75,16 +70,6 @@ class Modulo:
         self.__carga_horaria = carga_horaria
     
     @property
-    def aulas(self) -> list:
-        return self.__aulas
-    
-    @aulas.setter
-    def aulas(self, aulas: list):
-        if not isinstance(aulas, list):
-            raise TypeError("Aulas deve ser uma lista de objetos Aula.")
-        self.__aulas = aulas
-    
-    @property
     def atividades(self) -> list:
         return self.__atividades
     
@@ -114,5 +99,5 @@ class Modulo:
     
     def avaliacao_media(self) -> float:
         if not self.__lista_avaliacoes:
-            return 0.0  
+            return 0.0
         return sum(self.__lista_avaliacoes) / len(self.__lista_avaliacoes)

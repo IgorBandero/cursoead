@@ -3,11 +3,11 @@ class Endereco:
     def __init__(self, rua: str, num_residencia: int, bairro: str, cidade: str, cep: str):
         if isinstance(rua, str):
             self.__rua = rua
-        else: 
+        else:
             raise TypeError("Rua deve ser uma string.")
         if isinstance(num_residencia, int):
             self.__num_residencia = num_residencia
-        else: 
+        else:
             raise TypeError("Número da residência deve ser um inteiro.")
         if isinstance(bairro, str):
             self.__bairro = bairro
@@ -19,12 +19,12 @@ class Endereco:
             raise TypeError("Cidade deve ser uma string.")
         if isinstance(cep, str):
             self.__cep = cep
-        else: 
+        else:
             raise TypeError("CEP deve ser uma string.")
 
     @property
     def rua(self) -> (str):
-        return self.__rua 
+        return self.__rua
     
     @rua.setter
     def rua(self, rua: str):
@@ -34,7 +34,7 @@ class Endereco:
 
     @property
     def num_residencia(self) -> (int):
-        return self.__num_residencia 
+        return self.__num_residencia
     
     @num_residencia.setter
     def num_residencia(self, num_residencia: int):
@@ -44,7 +44,7 @@ class Endereco:
 
     @property
     def bairro(self) -> (str):
-        return self.__bairro 
+        return self.__bairro
     
     @bairro.setter
     def bairro(self, bairro: str):
@@ -54,7 +54,7 @@ class Endereco:
     
     @property
     def cidade(self) -> (str):
-        return self.__cidade 
+        return self.__cidade
     
     @cidade.setter
     def cidade(self, cidade: str):
@@ -64,7 +64,7 @@ class Endereco:
 
     @property
     def cep(self) -> (str):
-        return self.__cep 
+        return self.__cep
     
     @cep.setter
     def cep(self, cep: str):

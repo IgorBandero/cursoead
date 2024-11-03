@@ -57,6 +57,19 @@ class TelaAluno():
             else:
                 print("Opção inválida. Por favor, digite o número da opção de aluno desejada.")
 
+    def selecionar_aluno_pelo_cpf(self):
+        print("\n----------- SELECIONAR ALUNO -----------")
+        while(True):
+            try:
+                cpf = int(input("\nInforme o cpf do aluno que deseja selecionar: "))
+            except ValueError:
+                print("Erro: CPF deve ser um número inteiro válido.")
+                return
+            if (len(str(cpf)) == 11):
+                return cpf
+            else:
+                print("\nCPF inválido! Tente novamente...")
+
     def mostrar_opcao_aluno(self, aluno):
         print(aluno["indice"]+1, " - Nome: ", aluno["nome"], " | Matrícula: ", aluno["matricula"], " | Curso: ", aluno["curso"])
 

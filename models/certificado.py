@@ -1,20 +1,19 @@
 import models.aluno as Aluno
-from models.Modulo import Modulo
+from models.curso import Curso
 import datetime as Date
 
 class Certificado:
     
-    def __init__(self, aluno: Aluno, modulo: Modulo, nota_final: float, data_emissao: Date):
-        
+    def __init__(self, aluno: Aluno, curso: Curso, nota_final: float, data_emissao: Date):
         if isinstance(aluno, Aluno):
             self.__aluno = aluno
         else:
             raise TypeError("Aluno deve ser um objeto da classe Aluno.")
 
-        if isinstance(modulo, Modulo):
-            self.__modulo = modulo
+        if isinstance(curso, Curso):
+            self.__curso = curso
         else:
-            raise TypeError("Modulo deve ser um objeto da classe Modulo.")
+            raise TypeError("Curso deve ser um objeto da classe Curso.")
 
         if isinstance(nota_final, float):
             self.__nota_final = nota_final
@@ -38,15 +37,15 @@ class Certificado:
             raise TypeError("Aluno deve ser um objeto da classe Aluno.")
 
     @property
-    def modulo(self) -> Modulo:
-        return self.__modulo
+    def curso(self) -> Curso:
+        return self.__curso
 
-    @modulo.setter
-    def modulo(self, modulo: Modulo):
-        if isinstance(modulo, Modulo):
-            self.__modulo = modulo
+    @curso.setter
+    def curso(self, curso: Curso):
+        if isinstance(curso, Curso):
+            self.__curso = curso
         else:
-            raise TypeError("Modulo deve ser um objeto da classe Modulo.")
+            raise TypeError("Curso deve ser um objeto da classe Curso.")
 
     @property
     def nota_final(self) -> float:

@@ -8,14 +8,14 @@ class ControladorAluno():
     def __init__(self, controlador_sistema, controlador_curso):
         self.__alunos = []
         self.__tela_aluno = TelaAluno()
-        self.__controlador_sistema = controlador_sistema
         self.__controlador_curso = controlador_curso
+        self.__controlador_sistema = controlador_sistema
         
     def cadastrar_aluno(self):
         num_cursos_disponiveis = len(self.__controlador_curso._ControladorCurso__cursos)
         if (num_cursos_disponiveis == 0):
             self.__tela_aluno.mostrar_mensagem("\n****** ATENÇÃO: Nenhum curso disponível! ******")
-            return 
+            return
         aluno = self.__tela_aluno.cadastrar_aluno()
 
         try:
@@ -68,6 +68,15 @@ class ControladorAluno():
                 return aluno
         return None
     
+    def selecionar_aluno_pelo_cpf(self):
+        cpf = self.__tela_aluno.selecionar_aluno_pelo_cpf()
+        if (cpf is not None):
+            aluno = self.buscar_aluno_pelo_cpf(cpf)
+            if(aluno is not None):
+                return aluno
+            else:
+                self.__tela_aluno.mostrar_mensagem("\n********* ATENÇÃO: Aluno não encontrado! *********")
+
     def gerar_codigo_matricula(self):
         data = date.today()
         ano = data.strftime('%Y')
@@ -81,6 +90,5 @@ class ControladorAluno():
 
     def abrir_tela(self):
         menu_opcoes = {1: self.cadastrar_aluno, 2: self.excluir_aluno, 3: self.listar_alunos, 0: self.voltar}
-
         while True:
             menu_opcoes[self.__tela_aluno.mostrar_menu_opcoes()]()
