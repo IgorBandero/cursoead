@@ -1,6 +1,6 @@
 class Questao:
 
-    def __init__(self, id: int, enunciado: str, alternativas: list[str], respostas_corretas: list[str]):
+    def __init__(self, id: int, enunciado: str, alternativas: list[str], respostas_corretas: str):
         if isinstance(id, int):
             self.__id = id
         else:
@@ -16,10 +16,10 @@ class Questao:
         else:
             raise TypeError("Alternativas deve ser uma lista de strings.")
         
-        if isinstance(respostas_corretas, list) and all(isinstance(resposta, str) for resposta in respostas_corretas):
+        if isinstance(respostas_corretas, str) and all(isinstance(resposta, str) for resposta in respostas_corretas):
             self.__respostas_corretas = respostas_corretas
         else:
-            raise TypeError("Respostas corretas deve ser uma lista de strings.")
+            raise TypeError("Respostas corretas deve ser uma string.")
 
     @property
     def id(self) -> int:
@@ -55,13 +55,13 @@ class Questao:
             raise TypeError("Alternativas deve ser uma lista de strings.")
 
     @property
-    def respostas_corretas(self) -> list[str]:
+    def respostas_corretas(self) -> str:
         return self.__respostas_corretas
 
     @respostas_corretas.setter
-    def respostas_corretas(self, respostas_corretas: list[str]):
-        if isinstance(respostas_corretas, list) and all(isinstance(resposta, str) for resposta in respostas_corretas):
+    def respostas_corretas(self, respostas_corretas: str):
+        if isinstance(respostas_corretas, str) and all(isinstance(resposta, str) for resposta in respostas_corretas):
             self.__respostas_corretas = respostas_corretas
         else:
-            raise TypeError("Respostas corretas deve ser uma lista de strings.")
+            raise TypeError("Respostas corretas deve ser uma strings.")
 

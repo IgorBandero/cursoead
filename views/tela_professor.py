@@ -10,7 +10,10 @@ class TelaProfessor:
         print("0 - Voltar")
         print("---------------------------------------------------------")
         opcao = input("Escolha a opção: ")
-        return int(opcao) if opcao.isdigit() else -1
+        if (opcao == "1" or opcao == "2" or opcao == "3" or opcao == "4" or  opcao == "5" or opcao == "0"):
+            return int(opcao)
+        else:
+            print("\n***** OPÇÃO INVÁLIDA! TENTE NOVAMENTE... *****")
     
     def continuar_edicao(self):
         while True:
