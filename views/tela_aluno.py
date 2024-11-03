@@ -111,7 +111,7 @@ class TelaAluno():
 
     def excluir_aluno(self, aluno):
         while(True):
-            print(f"\nConfirma a exclusão do(a) ALUNO(A): {aluno["nome"]} do CURSO: {aluno["curso"]} da lista de alunos da universidade? \n1 - SIM \n2 - NÃO (Cancelar)")
+            print(f"\nConfirma a exclusão do(a) ALUNO(A): {aluno['nome']} do CURSO: {aluno['curso']} da lista de alunos da universidade? \n1 – SIM \n2 – NÃO (Cancelar)")
             excluir = input("\nEscolha a opção: ")
             if (excluir == "1"):
                 return True
