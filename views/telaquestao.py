@@ -2,6 +2,7 @@ class TelaQuestao:
     def mostrar_menu_opcoes(self):
         print("-------- QUESTOES ----------")
         print("Escolha a opção")
+        print("----------------------------")
         print("1. Adicionar Questao")
         print("2. Excluir Questao")
         print("3. Listar Questões")
