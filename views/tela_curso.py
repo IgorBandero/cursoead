@@ -40,13 +40,14 @@ class TelaCurso():
     
     def selecionar_curso(self, num_opcoes):
         if (num_opcoes == 0):
+            print("************ NENHUM CURSO DISPONÍVEL ************")
             return
         while(True):
             indice_curso = int(input("\nInforme o número da opção do curso que deseja selecionar: "))
             if 1 <= indice_curso < num_opcoes+1 :
                 return indice_curso - 1
             else:
-                print("Opção inválida. Por favor, digite o número da opção de curso desejada.")
+                print("Opção inválida! Por favor, digite o número da opção de curso desejada.")
     
     def mostrar_curso(self, curso):
         print("\n-----------------------------------------------")

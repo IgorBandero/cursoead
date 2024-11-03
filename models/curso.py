@@ -2,7 +2,7 @@ from models.Modulo import Modulo
 from models.atividadeavaliativa import AtividadeAvaliativa
 class Curso:
 
-    def __init__(self, nome: str, descricao: str, carga_horaria: int, min_semestres: int, max_semestres: int, mensalidade: float):
+    def __init__(self, nome: str, descricao: str, carga_horaria: int, min_semestres: int, max_semestres: int, mensalidade: float, modulos: list[Modulo]):
         
         if isinstance(nome, str):
             self.__nome = nome
@@ -99,6 +99,12 @@ class Curso:
     @property
     def modulos(self) -> list[Modulo]:
         return self.__modulos
+    
+    @modulos.setter
+    def modulos(self, modulos: list[Modulo]):
+        if not isinstance(modulos, list):
+            raise TypeError("Modulos deve ser uma lista de módulos.")
+        self.__modulos = modulos
 
     def adicionar_modulo(self, modulo: Modulo):
         if not isinstance(modulo, Modulo):

@@ -14,15 +14,15 @@ class ControladorSistema:
         self.__tela_sistema = TelaSistema()
 
         # Instanciando os controladores
-        self.__controlador_curso = ControladorCurso(self)  # Inicializa ControladorCurso
-        self.__controlador_alunos = ControladorAluno(self, self.__controlador_curso)
         self.__controlador_questoes = ControladorQuestao(self)
         self.__controlador_professores = ControladorProfessor(self)
-        self.__controlador_atividade = ControladorAtividadeAvaliativa(self.__controlador_questoes, self.__controlador_alunos)
         self.__controlador_orientacao = ControladorOrientacao(self)
-        self.__controlador_certificado = ControladorCertificado(self,  self.__controlador_alunos)
         self.__controlador_modulo = ControladorModulo(self)
-
+        self.__controlador_curso = ControladorCurso(self, self.__controlador_modulo)  # Inicializa ControladorCurso
+        self.__controlador_alunos = ControladorAluno(self, self.__controlador_curso)
+        self.__controlador_atividade = ControladorAtividadeAvaliativa(self.__controlador_questoes, self.__controlador_alunos)
+        self.__controlador_certificado = ControladorCertificado(self,  self.__controlador_alunos)
+        
     # Propriedades para acessar os controladores no sistema
     @property
     def controlador_alunos(self):
@@ -75,8 +75,14 @@ class ControladorSistema:
     def opcoes_orientacao(self):
         self.__controlador_orientacao.abre_tela()
 
-    def opcoes_curso(self):  
+    def opcoes_curso(self):
         self.__controlador_curso.abrir_tela()
+
+    def opcoes_modulo(self):
+        self.__controlador_modulo.abrir_tela()
+
+    def opcoes_certificado(self):
+        self.__controlador_certificado.abrir_tela()
 
     def encerrar_sistema(self):
         print("Encerrando o sistema...")
@@ -90,6 +96,8 @@ class ControladorSistema:
             4: self.opcoes_professor,
             5: self.opcoes_orientacao,
             6: self.opcoes_curso,  # Adicionando a nova opção de cursos
+            7: self.opcoes_modulo,
+            8: self.opcoes_certificado,
             0: self.encerrar_sistema
         }
 

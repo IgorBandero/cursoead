@@ -22,10 +22,10 @@ class ControladorCertificado():
             else:
                 raise ValueError # Erro de aluno não concluiu o curso
 
-    def voltar(self):
-        self.__controlador_sistema.abrir_tela()
-
     def abrir_tela(self):
         menu_opcoes = {1: self.emitir_certificado, 0: self.voltar}
         while True:
             menu_opcoes[self.__tela_certificado.mostrar_menu_opcoes()]()
+
+    def voltar(self):
+        self.__controlador_sistema.abrir_tela()

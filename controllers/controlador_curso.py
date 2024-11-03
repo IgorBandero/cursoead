@@ -3,16 +3,18 @@ from models.curso import Curso
 
 class ControladorCurso():
 
-    def __init__(self, controlador_sistema):
+    def __init__(self, controlador_sistema, controlador_modulo):
         self.__cursos = []
         self.__tela_curso = TelaCurso()
+        self.__controlador_modulo = controlador_modulo
         self.__controlador_sistema = controlador_sistema
         
     def cadastrar_curso(self):
         curso = self.__tela_curso.cadastrar_curso()
+        modulos = self.__controlador_modulo.selecionar_modulos()
         curso_cadastrado = self.buscar_curso_pelo_nome(curso["nome"])
         if curso_cadastrado is None:
-            novoCurso = Curso(curso["nome"], curso["descricao"], curso["carga_horaria"], curso["min_semestres"], curso["max_semestres"], curso["mensalidade"])
+            novoCurso = Curso(curso["nome"], curso["descricao"], curso["carga_horaria"], curso["min_semestres"], curso["max_semestres"], curso["mensalidade"], modulos)
             self.__cursos.append(novoCurso)
             self.__tela_curso.mostrar_mensagem(f"\nCurso: {self.__cursos[-1].nome} cadastrado com sucesso!")
         else:
@@ -38,7 +40,7 @@ class ControladorCurso():
                     item.mensalidade = curso_atualizado["mensalidade"]
 
     def selecionar_curso(self):
-        print("\nSelecione o curso:")
+        self.__tela_curso.mostrar_mensagem("\n----------------- SELECIONAR CURSO -----------------")
         self.listar_cursos()
         indice_curso_escolhido = self.__tela_curso.selecionar_curso(len(self.__cursos))
         if (indice_curso_escolhido is not None):
@@ -49,7 +51,6 @@ class ControladorCurso():
                 self.__tela_curso.mostrar_mensagem("********* ATENÇÃO: Curso não encontrado! *********")
 
     def listar_cursos(self):
-        print("\n")
         if(len(self.__cursos) == 0):
             self.__tela_curso.mostrar_mensagem("******* NENHUM CURSO CADASTRADO ATÉ O MOMENTO! *******")
         for indice, curso in enumerate(self.__cursos):

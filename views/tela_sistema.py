@@ -1,9 +1,9 @@
 class TelaSistema:
 
     def menu_opcoes(self):
-        
-        print("\n-------- SISTEMA DE CURSOS EAD ---------")
+        print("\n-------------- SISTEMA DE CURSOS EAD ---------------")
         print("Escolha uma opção:")
+        print("----------------------------------------------------")
         print("1 - Alunos")
         print("2 - Atividades Avaliativas")
         print("3 - Questões")
@@ -13,7 +13,8 @@ class TelaSistema:
         print("7 - Módulos")  # Nova opção para módulos
         print("8 - Certificados")
         print("0 - Finalizar sistema")
-        
+        print("----------------------------------------------------")
+
         try:
             opcao = int(input("Escolha a opção: "))
             return opcao

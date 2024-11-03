@@ -33,7 +33,7 @@ class TelaModulo:
         if not modulos:
             print("Nenhum módulo cadastrado.")
         else:
-            print("\n-------- LISTA DE MÓDULOS --------")
+            print("\n-------- LISTA DE MÓDULOS --------\n")
             for indice, modulo in enumerate(modulos, start=1):
                 print(f"{indice} - CÓDIGO: {modulo.codigo}, NOME: {modulo.nome}, ÁREA: {modulo.area}, CARGA HORÁRIA: {modulo.carga_horaria}")
 

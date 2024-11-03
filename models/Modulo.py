@@ -1,7 +1,7 @@
 from models.atividadeavaliativa import AtividadeAvaliativa
 
 class Modulo:
-    def __init__(self, codigo: str, nome: str, area: str, carga_horaria: int, atividades: list):
+    def __init__(self, codigo: str, nome: str, area: str, carga_horaria: int):
         if isinstance(codigo, str):
             self.__codigo = codigo
         else:
@@ -22,11 +22,7 @@ class Modulo:
         else:
             raise TypeError("Carga horária deve ser um número inteiro.")
         
-        if isinstance(atividades, list):
-            self.__atividades = atividades
-        else:
-            raise TypeError("Atividades deve ser uma lista de objetos AtividadesAvaliativas.")
-        
+        self.__atividades = []
         self.__lista_avaliacoes = []
 
     @property
