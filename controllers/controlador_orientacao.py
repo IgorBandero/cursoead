@@ -168,5 +168,5 @@ class ControladorOrientacao:
                 self.voltar()
                 break
             else:
-                self.__tela_orientacao.mostra_mensagem("Opção inválida. Tente novamente.")
+                self.__tela_orientacao.mostra_mensagem("Opção inválida")
 

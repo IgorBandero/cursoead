@@ -7,8 +7,12 @@ class TelaOrientacao:
         print("4 – Excluir Orientação")
         print("5 – Listar Orientandos de um Professor")
         print("0 – Voltar")
-        opcao = input("Escolha uma opção: ")
-        return int(opcao)
+        opcao = input("Escolha a opção: ")
+        if opcao in {"1", "2", "3", "0"}:
+            return int(opcao)
+        else:
+            print("\n***** OPÇÃO INVÁLIDA! TENTE NOVAMENTE... *****")
+            return None
 
     def pega_dados_orientacao(self):
         cpf_aluno = input("CPF do Aluno: ")

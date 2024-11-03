@@ -65,3 +65,4 @@ class Questao:
         else:
             raise TypeError("Respostas corretas deve ser uma lista de strings.")
 
+

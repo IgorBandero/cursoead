@@ -33,7 +33,7 @@ class TelaCurso():
     
     def excluir_curso(self, curso):
         while(True):
-            print(f"\nConfirma a exclusão do CURSO: {curso["nome"]}? \n1 - SIM \n2 - NÃO (Cancelar)")
+            print(f"\nConfirma a exclusão do CURSO: {curso['nome']}? \n1 – SIM \n2 – NÃO (Cancelar)")
             excluir = input("\nEscolha a opção: ")
             if (excluir == "1"):
                 return True

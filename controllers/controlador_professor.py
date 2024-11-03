@@ -25,74 +25,82 @@ class ControladorProfessor:
                     "nome": professor.nome,
                     "cpf": professor.cpf,
                     "especialidade": professor.especialidade,
-                    "formacao": professor.formacao
+                    "formacao": professor.formacao,
+                    "telefone": professor.telefone,
+                    "email": professor.email,
+                    "usuario": professor.usuario,
+                    "rua": professor.endereco.rua,
+                    "num_residencia": professor.endereco.num_residencia,
+                    "bairro": professor.endereco.bairro,
+                    "cidade": professor.endereco.cidade,
+                    "cep": professor.endereco.cep
                 }
-                self.__tela_professor.mostra_professor(dados_professor)
+                self.__tela_professor.mostrar_professor(dados_professor)
 
     def buscar_professor_por_cpf(self, cpf: int):
         for professor in self.__professores:
             if professor.cpf == cpf:  
                 return professor
         return None
-
-    def editar_professor(self):
+    
+    def selecionar_professor(self):
         cpf = self.__tela_professor.seleciona_professor()
         professor = self.buscar_professor_por_cpf(cpf)
         if professor:
-            while True:
-                print("\nEscolha o campo que deseja editar:")
-                print("1 - Nome")
-                print("2 - Telefone")
-                print("3 - Email")
-                print("4 - Usuário")
-                print("5 - Senha")
-                print("6 - Formação")
-                print("7 - Especialidade")
-                print("8 - Rua")
-                print("9 - Número da Residência")
-                print("10 - Bairro")
-                print("11 - Cidade")
-                print("12 - CEP")
-                print("0 - Finalizar Edição")
-
-                opcao = int(input("Escolha uma opção: "))
-
-                if opcao == 1:
-                    professor.nome = input("Novo nome: ")
-                elif opcao == 2:
-                    professor.telefone = input("Novo telefone: ")
-                elif opcao == 3:
-                    professor.email = input("Novo email: ")
-                elif opcao == 4:
-                    professor.usuario = input("Novo usuário: ")
-                elif opcao == 5:
-                    professor.senha = input("Nova senha: ")
-                elif opcao == 6:
-                    professor.formacao = input("Nova formação: ")
-                elif opcao == 7:
-                    professor.especialidade = input("Nova especialidade: ")
-                elif opcao == 8:
-                    professor.rua = input("Nova rua: ")
-                elif opcao == 9:
-                    while True:
-                        try:
-                            professor.num_residencia = int(input("Novo número da residência: "))
-                            break
-                        except ValueError:
-                            print("Número da residência deve ser um valor inteiro. Tente novamente.")
-                elif opcao == 10:
-                    professor.bairro = input("Novo bairro: ")
-                elif opcao == 11:
-                    professor.cidade = input("Nova cidade: ")
-                elif opcao == 12:
-                    professor.cep = input("Novo CEP: ")
-                elif opcao == 0:
-                    self.__tela_professor.mostra_mensagem("Edição finalizada.")
-                    break
-                else:
-                    self.__tela_professor.mostra_mensagem("Opção inválida. Tente novamente.")
+            return professor
         else:
             self.__tela_professor.mostra_mensagem("Professor não encontrado.")
+            return None
+
+    def editar_professor(self):
+        professor = self.selecionar_professor()
+        if professor:
+            self.__tela_professor.mostrar_professor({
+                "nome": professor.nome,
+                "cpf": professor.cpf,
+                "telefone": professor.telefone,
+                "email": professor.email,
+                "usuario": professor.usuario,
+                "formacao": professor.formacao,
+                "especialidade": professor.especialidade,
+                "rua": professor.endereco.rua,
+                "num_residencia": professor.endereco.num_residencia,
+                "bairro": professor.endereco.bairro,
+                "cidade": professor.endereco.cidade,
+                "cep": professor.endereco.cep
+            })
+            while True:
+                campo, info_atualizada = self.__tela_professor.editar_professor()
+                if info_atualizada is not None:
+                    if campo == 1:
+                        professor.nome = info_atualizada
+                    elif campo == 2:
+                        professor.cpf = info_atualizada
+                    elif campo == 3:
+                        professor.telefone = info_atualizada
+                    elif campo == 4:
+                        professor.email = info_atualizada
+                    elif campo == 5:
+                        professor.usuario = info_atualizada
+                    elif campo == 6:
+                        professor.senha = info_atualizada
+                    elif campo == 7:
+                        professor.formacao = info_atualizada
+                    elif campo == 8:
+                        professor.especialidade = info_atualizada
+                    elif campo == 9:
+                        professor.endereco.rua = info_atualizada
+                    elif campo == 10:
+                        professor.endereco.num_residencia = info_atualizada
+                    elif campo == 11:
+                        professor.endereco.bairro = info_atualizada
+                    elif campo == 12:
+                        professor.endereco.cidade = info_atualizada
+                    elif campo == 13:
+                        professor.endereco.cep = info_atualizada
+                continuar = self.__tela_professor.continuar_edicao()
+                if not continuar:
+                    break
 
     def remover_professor(self):
         cpf = self.__tela_professor.seleciona_professor()
@@ -109,9 +117,9 @@ class ControladorProfessor:
     def abrir_tela(self):
         opcoes = {
             1: self.cadastrar_professor,
-            2: self.listar_professores,
-            3: self.editar_professor,
-            4: self.remover_professor
+            2: self.editar_professor,
+            3: self.remover_professor,
+            4: self.listar_professores
         }
 
         while True:
