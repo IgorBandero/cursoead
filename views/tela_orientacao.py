@@ -6,7 +6,6 @@ class TelaOrientacao:
         print("3 – Editar Orientação")
         print("4 – Excluir Orientação")
         print("5 – Listar Orientandos de um Professor")
-        print("6 – Buscar Orientador de um Aluno")
         print("0 – Voltar")
         opcao = input("Escolha uma opção: ")
         return int(opcao)
@@ -36,17 +35,13 @@ class TelaOrientacao:
         print(f"Nome do Orientador: {nome_professor}")
         print(f"CPF do Orientador: {cpf_professor}")
 
-    def pegar_cpf_aluno(self):
-        cpf_aluno = input("Digite o CPF do Aluno: ")
-        return cpf_aluno
-
     def mostra_mensagem(self, mensagem: str):
         print(mensagem)
 
     def seleciona_orientacao(self):
         while True:
             try:
-                cpf_aluno = int(input("Digite o CPF do aluno para selecionar a orientação: "))
+                cpf_aluno = int(input("Digite o CPF do aluno: "))
                 return cpf_aluno
             except ValueError:
                 print("CPF deve ser um número inteiro. Por favor, tente novamente.")

@@ -9,8 +9,9 @@ class TelaSistema:
         print("3 - Questões")
         print("4 - Professores")
         print("5 - Orientações")
-        print("6 - Cursos")  # Nova opção para cursos
-        print("7 - Certificados")
+        print("6 - Cursos")
+        print("7 - Módulos")  # Nova opção para módulos
+        print("8 - Certificados")
         print("0 - Finalizar sistema")
         
         try:

@@ -56,8 +56,8 @@ class ControladorOrientacao:
                 })
 
     def editar_orientacao(self):
-        cpf_aluno = self.__tela_orientacao.pegar_cpf_aluno()
-        orientacao = self.buscar_orientacao_por_cpf_aluno(cpf_aluno)
+        cpf_aluno = self.__tela_orientacao.seleciona_orientacao()  # Obtém o CPF do aluno usando o método de seleção da tela
+        orientacao = self.buscar_orientacao_por_aluno(cpf_aluno)  # Usa o método de busca
 
         if orientacao:
             while True:
@@ -71,7 +71,7 @@ class ControladorOrientacao:
                 if opcao == 1:
                     # Alterar orientador
                     cpf_novo_professor = self.__tela_orientacao.pegar_cpf_professor()
-                    novo_professor = self.__controlador_sistema.controlador_professor.buscar_professor_por_cpf(cpf_novo_professor)
+                    novo_professor = self.__controlador_sistema.controlador_professores.buscar_professor_por_cpf(cpf_novo_professor)
                     if novo_professor:
                         orientacao.professor = novo_professor
                         self.__tela_orientacao.mostra_mensagem("Orientador alterado com sucesso!")
@@ -80,7 +80,7 @@ class ControladorOrientacao:
 
                 elif opcao == 2:
                     # Alterar orientando (aluno)
-                    cpf_novo_aluno = self.__tela_orientacao.pegar_cpf_aluno()
+                    cpf_novo_aluno = self.__tela_orientacao.seleciona_orientacao()
                     novo_aluno = self.__controlador_sistema.controlador_alunos.buscar_aluno_pelo_cpf(cpf_novo_aluno)
                     if novo_aluno:
                         orientacao.aluno = novo_aluno
@@ -156,7 +156,6 @@ class ControladorOrientacao:
             3: self.editar_orientacao,
             4: self.excluir_orientacao,
             5: self.listar_orientandos_do_professor,
-            6: self.buscar_orientador_do_aluno
         }
 
         while True:
