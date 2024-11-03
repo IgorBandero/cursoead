@@ -12,6 +12,7 @@ class TelaSistema:
         print("6 - Cursos")
         print("7 - Módulos")  # Nova opção para módulos
         print("8 - Certificados")
+        print("9 - Matriculas")
         print("0 - Finalizar sistema")
         print("----------------------------------------------------")
 

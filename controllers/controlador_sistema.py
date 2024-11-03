@@ -6,6 +6,7 @@ from controllers.controlador_orientacao import ControladorOrientacao
 from controllers.controlador_curso import ControladorCurso  # Adicionando ControladorCurso
 from controllers.controlador_certificado import ControladorCertificado
 from controllers.controlador_modulo import ControladorModulo
+from controllers.controlador_matricula import ControladorMatricula
 from views.tela_sistema import TelaSistema
 
 class ControladorSistema:
@@ -22,6 +23,7 @@ class ControladorSistema:
         self.__controlador_alunos = ControladorAluno(self, self.__controlador_curso)
         self.__controlador_atividade = ControladorAtividadeAvaliativa(self.__controlador_questoes, self.__controlador_alunos)
         self.__controlador_certificado = ControladorCertificado(self,  self.__controlador_alunos)
+        self.__controlador_matricula = ControladorMatricula(self,  self.__controlador_alunos, self.controlador_modulo)
         
     # Propriedades para acessar os controladores no sistema
     @property
@@ -56,6 +58,10 @@ class ControladorSistema:
     def controlador_modulo(self):
         return self.__controlador_modulo
     
+    @property
+    def controlador_matricula(self):
+        return self.__controlador_matricula
+    
     # Funções para cada opção do menu principal
     def inicializar_sistema(self):
         self.abrir_tela()
@@ -84,8 +90,11 @@ class ControladorSistema:
     def opcoes_certificado(self):
         self.__controlador_certificado.abrir_tela()
 
+    def opcoes_matricula(self):
+        self.__controlador_matricula.abrir_tela()
+
     def encerrar_sistema(self):
-        print("Encerrando o sistema...")
+        print("\nEncerrando o sistema...")
         exit(0)
         
     def abrir_tela(self):
@@ -98,6 +107,7 @@ class ControladorSistema:
             6: self.opcoes_curso,  # Adicionando a nova opção de cursos
             7: self.opcoes_modulo,
             8: self.opcoes_certificado,
+            9: self.opcoes_matricula,
             0: self.encerrar_sistema
         }
 

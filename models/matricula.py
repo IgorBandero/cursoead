@@ -1,6 +1,6 @@
 from datetime import date
 from models.curso import Curso
-    
+from models.Modulo import Modulo
 class Matricula:
     
     def __init__(self, curso: Curso, codigo: str, data_inicio: date):
@@ -62,6 +62,48 @@ class Matricula:
         if not isinstance(data_final, date):
             raise TypeError("Data_final deve ser uma data (date).")
         self.__data_final = data_final
+
+    @property
+    def modulos_atuais(self) -> list[Modulo]:
+        return self.__modulos_atuais
+    
+    @modulos_atuais.setter
+    def modulos_atuais(self, modulos: list[Modulo]):
+        if not isinstance(modulos, list):
+            raise TypeError("Modulos_atuais deve ser uma lista de módulos.")
+        self.__modulos_atuais = modulos
+
+    def adicionar_modulo_atual(self, modulo: Modulo):
+        if not isinstance(modulo, Modulo):
+            raise TypeError("Modulo deve ser um objeto do tipo Modulo.")
+        if modulo not in self.__modulos_atuais:
+            self.__modulos_atuais.append(modulo)
+
+    def remover_modulo_atual(self, modulo: Modulo):
+        for item in self.__modulos_atuais:
+            if(item.codigo == modulo.codigo):
+                self.__modulos_atuais.remove(item)
+
+    @property
+    def modulos_finalizados(self) -> list[Modulo]:
+        return self.__modulos_finalizados
+    
+    @modulos_finalizados.setter
+    def modulos_finalizados(self, modulos: list[Modulo]):
+        if not isinstance(modulos, list):
+            raise TypeError("Modulos_finalizados deve ser uma lista de módulos.")
+        self.__modulos_finalizados = modulos
+
+    def adicionar_modulos_finalizados(self, modulo: Modulo):
+        if not isinstance(modulo, Modulo):
+            raise TypeError("Modulo deve ser um objeto do tipo Modulo.")
+        if modulo not in self.__modulos_finalizados:
+            self.__modulos_finalizados.append(modulo)
+
+    def remover_modulos_finalizados(self, modulo: Modulo):
+        for item in self.__modulos_finalizados:
+            if(item.codigo == modulo.codigo):
+                self.__modulos_finalizados.remove(item)
 
     def calcular_progresso(self):
         carga_concluida = 0

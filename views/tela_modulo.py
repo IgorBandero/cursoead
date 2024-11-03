@@ -1,13 +1,20 @@
 class TelaModulo:
     def mostrar_menu_opcoes(self):
-        print("\n---------------- MÓDULOS ----------------")
-        print("1 - Cadastrar Módulo")
-        print("2 - Editar Módulo")
-        print("3 - Excluir Módulo")
-        print("4 - Listar Módulos")
-        print("0 - Voltar")
-        opcao = int(input("Escolha a opção: "))
-        return opcao
+        while(True):
+            print("\n---------------------- MÓDULOS ---------------------")
+            print("Escolha a opção:")
+            print("----------------------------------------------------")
+            print("1 - Cadastrar Módulo")
+            print("2 - Editar Módulo")
+            print("3 - Excluir Módulo")
+            print("4 - Listar Módulos")
+            print("0 - Voltar")
+            print("----------------------------------------------------")
+            opcao = input("Escolha a opção: ")
+            if (opcao == "1" or opcao == "2" or opcao == "3" or opcao == "4" or opcao == "0"):
+                return int(opcao)
+            else:
+                print("\n***** OPÇÃO INVÁLIDA! TENTE NOVAMENTE... *****")
 
     def pega_dados_modulo(self):
         codigo = input("Código do Módulo: ")
@@ -72,3 +79,6 @@ class TelaModulo:
                 return False
             else:
                 print("\n***** OPÇÃO INVÁLIDA! TENTE NOVAMENTE... *****")
+
+    def mostrar_modulo(self, modulo):
+        print("CÓDIGO: ", modulo["codigo"], " | NOME: ", modulo["nome"], " | ÁREA: ", modulo["area"], " | CARGA HORÁRIA: ", modulo["carga_horaria"])

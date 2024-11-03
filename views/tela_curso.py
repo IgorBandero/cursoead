@@ -95,6 +95,17 @@ class TelaCurso():
         if (opcao == "2"):
             return "Selecionar da lista"
     
+    def selecionar_curso_na_lista(self, num_opcoes):
+        while(True):
+            indice_curso = input("\nInforme o número da opção do curso que deseja selecionar: ")
+            if indice_curso.isdigit():
+                if 1 <= int(indice_curso) < num_opcoes+1:
+                    return int(indice_curso) - 1
+                else:
+                    print("Opção inválida. Por favor, digite o número da opção de curso desejada.")
+            else:
+                print("Opção inválida. Por favor, digite o número da opção de curso desejada.")
+
     def buscar_curso_pelo_nome(self):
         while(True):
             nome = input("\nInforme o nome do curso que deseja selecionar: ")
@@ -151,7 +162,7 @@ class TelaCurso():
                 break
             else:
                 if len(descricao) < 10:
-                    print("\n**** DESCRIÇÃOO DEVE TER PELO MENOS 5 CARACTERES ***")
+                    print("\n**** DESCRIÇÃO DEVE TER PELO MENOS 5 CARACTERES ***")
                 opcao = input("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar cadastro) \n\nEscolha uma opção: ")
                 if (opcao == "2"):
                     return

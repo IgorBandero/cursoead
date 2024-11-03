@@ -1,15 +1,33 @@
 from views.tela_aluno import TelaAluno
+from views.tela_modulo import TelaModulo
 from models.aluno import Aluno
 from models.matricula import Matricula
 from datetime import date
 import random
+
+from models.curso import Curso
 class ControladorAluno():
 
     def __init__(self, controlador_sistema, controlador_curso):
         self.__alunos = []
         self.__tela_aluno = TelaAluno()
+        self.__tela_modulo = TelaModulo()
         self.__controlador_curso = controlador_curso
         self.__controlador_sistema = controlador_sistema
+
+        curso1 = Curso("Sistemas de Informação", "Gestão e Tecnologia", 3500, 8, 16, 750.00, [])
+        curso2 = Curso("Engenharia de Produção", "Gestão Industrial", 3300, 10, 18, 900.00, [])
+        curso3 = Curso("Arquitetura e Urbanismo", "Planejamento do Espaço Construído", 4000, 10, 18, 850.00, [])
+        controlador_curso._ControladorCurso__cursos.append(curso1)
+        controlador_curso._ControladorCurso__cursos.append(curso2)
+        controlador_curso._ControladorCurso__cursos.append(curso3)
+
+        aluno1 = Aluno("Carlos", 11122233344, "(48) 991122333", "carlos@contato.com", "carlos123", "123456", "Rua de Cima", 350, "Pantanal", "Florianópolis", "88040-100", curso1, "24100299", date.today())
+        aluno2 = Aluno("Maria", 22233344455, "(48) 992233444", "maria@contato.com", "maria123", "123456", "Rua do Lado", 100, "Trindade", "Florianópolis", "88040-900", curso2, "24100299", date.today())
+        aluno3 = Aluno("João", 33344455566, "(48) 993344555", "joao@contato.com", "joao123", "123456", "Rua de Baixo", 1200, "Córrego Grande", "Florianópolis", "88040-500", curso3, "24100299", date.today())
+        self.__alunos.append(aluno1)
+        self.__alunos.append(aluno2)
+        self.__alunos.append(aluno3)
 
     def cadastrar_aluno(self):
         num_cursos_disponiveis = len(self.__controlador_curso._ControladorCurso__cursos)
@@ -29,9 +47,9 @@ class ControladorAluno():
                     self.__alunos.append(novo_aluno)
                     print("\nAluno: ", self.__alunos[-1].nome, " cadastrado(a) com sucesso!")
                 else:
-                    self.__tela_aluno.mostrar_mensagem("********* ATENÇÃO: Aluno já cadastrado! *********")
+                    self.__tela_aluno.mostrar_mensagem("\n********* ATENÇÃO: Aluno já cadastrado! *********")
             else:
-                self.__tela_aluno.mostrar_mensagem("\n****** ATENÇÃO: Curso inválido! ******")
+                self.__tela_aluno.mostrar_mensagem("\n*********** ATENÇÃO: Curso inválido! ************")
         else:
             self.__tela_aluno.mostrar_mensagem("\n************* ERRO NO CADASTRO DE ALUNO ************")
 
@@ -125,6 +143,10 @@ class ControladorAluno():
 
     def mostrar_aluno(self, aluno):
         self.__tela_aluno.mostrar_aluno({"nome": aluno.nome, "cpf": aluno.cpf, "telefone": aluno.telefone, "email": aluno.email, "usuario": aluno.usuario, "rua": aluno.endereco.rua, "num_residencia": aluno.endereco.num_residencia, "bairro": aluno.endereco.bairro, "cidade": aluno.endereco.cidade, "cep": aluno.endereco.cep, "curso": aluno.matricula.curso.nome, "codigo": aluno.matricula.codigo, "data_inicio": aluno.matricula.data_inicio})
+        if len(aluno.matricula.modulos_atuais) > 0:
+            self.__tela_aluno.mostrar_mensagem("\n------------------ MÓDULOS ATUAIS -----------------")
+            for modulo in aluno.matricula.modulos_atuais:
+                self.__tela_modulo.mostrar_modulo({"codigo": modulo.codigo, "nome": modulo.nome, "area": modulo.area, "carga_horaria": modulo.carga_horaria})
 
     def selecionar_aluno(self):
         self.__tela_aluno.mostrar_mensagem("\n----------------- SELECIONAR ALUNO -----------------")

@@ -26,7 +26,7 @@ class ControladorCurso():
                 else:
                     self.__tela_curso.mostrar_mensagem("********* ATENÇÃO: Curso já cadastrado! *********")
             else:
-                self.__tela_curso.mostrar_mensagem("\n****** ATENÇÃO: Curso inválido! ******")
+                self.__tela_curso.mostrar_mensagem("\n*********** ATENÇÃO: Curso inválido! **********")
         else:
             self.__tela_curso.mostrar_mensagem("\n************* ERRO NO CADASTRO DE CURSO ************")
 
@@ -112,12 +112,6 @@ class ControladorCurso():
         for indice, curso in enumerate(self.__cursos):
             self.__tela_curso.mostrar_opcao_curso({"indice": indice, "nome": curso.nome})
 
-    def buscar_curso_pelo_nome(self, nome: str):
-        for curso in self.__cursos:
-            if(curso.nome == nome):
-                return curso
-        return None
-
     def buscar_curso(self):
         curso = self.selecionar_curso()
         if curso is not None:
@@ -126,11 +120,12 @@ class ControladorCurso():
     def mostrar_curso(self, curso):
         self.__tela_curso.mostrar_curso({"nome": curso.nome, "descricao": curso.descricao, "carga_horaria": curso.carga_horaria, "min_semestres": curso.min_semestres, "max_semestres": curso.max_semestres, "mensalidade": curso.mensalidade})
 
-    def voltar(self):
-        self.__controlador_sistema.abrir_tela()
-
     def abrir_tela(self):
         menu_opcoes = {1: self.cadastrar_curso, 2: self.editar_curso, 3: self.excluir_curso, 4: self.listar_cursos, 5: self.buscar_curso, 0: self.voltar}
 
         while True:
             menu_opcoes[self.__tela_curso.mostrar_menu_opcoes()]()
+            
+    def voltar(self):
+        self.__controlador_sistema.abrir_tela()
+
