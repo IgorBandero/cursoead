@@ -34,7 +34,10 @@ class Curso:
         else:
             raise TypeError("Mensalidade deve ser um número decimal.")
         
-        self.__modulos = []
+        if isinstance(modulos, list):
+            self.__modulos = modulos
+        else:
+            raise TypeError("Modulos deve ser uma lista de modulos.")
 
     @property
     def nome(self) -> str:

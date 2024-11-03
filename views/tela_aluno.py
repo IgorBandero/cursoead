@@ -7,15 +7,21 @@ class TelaAluno():
             print("\n---------------------- ALUNOS ----------------------")
             print("Escolha a opção:")
             print("----------------------------------------------------")
-            print("1 - Cadastrar Aluno")
-            print("2 - Editar Aluno")
-            print("3 - Excluir Aluno")
-            print("4 - Listar Alunos")
-            print("5 - Mostrar Aluno")
-            print("0 - Voltar ")
+            print("1 -  Cadastrar Aluno")
+            print("2 -  Editar Aluno")
+            print("3 -  Excluir Aluno")
+            print("4 -  Listar Alunos")
+            print("5 -  Mostrar Aluno")
+            print("6 -  Matricular aluno em módulos")
+            print("7 -  Lançar notas de aluno")
+            print("8 -  Finalizar curso de aluno")
+            print("9 -  Relatório de cursos mais populares")
+            print("10 - Relatório de cursos melhor avaliados")
+            print("11 - Relatório de tempo médio de conclusão")
+            print("0 -  Voltar ")
             print("----------------------------------------------------")
             opcao = input("Escolha a opção: ")
-            if (opcao == "1" or opcao == "2" or opcao == "3" or opcao == "4" or opcao == "5" or opcao == "0"):
+            if (opcao == "1" or opcao == "2" or opcao == "3" or opcao == "4" or opcao == "5" or opcao == "6" or opcao == "7" or opcao == "8" or opcao == "9" or opcao == "10" or opcao == "11" or opcao == "0"):
                 return int(opcao)
             else:
                 print("\n***** OPÇÃO INVÁLIDA! TENTE NOVAMENTE... *****")
@@ -377,3 +383,31 @@ class TelaAluno():
                     return
                 print("\n")
         return cep
+    
+    def lancar_nota_modulo(self):
+        while(True):
+            nota = input("\nInforme a nota do aluno no módulo: ")
+            if bool(re.fullmatch(r"\d+([.,]\d+)?", nota)):
+                if 7.00 <= float(nota) <= 10.00:
+                    return float(nota)
+                else:
+                    print("\n********* NOTA DEVE SER UM NÚMERO DE 7 A 10 ********")
+            else:
+                print("\nNOTA INVÁLIDA! Por favor, tente novamente...")
+
+    def data_conclusao(self):
+        print("\nDATA DE CONCLUSÃO: ")
+        while(True):
+            data = input("Informe a data de conclusão no formato DD/MM/AAAA: ")
+            data_valida = self.verificar_formato_data(data)
+            if data_valida:
+                return date.strptime(data, "%d/%m/%Y").date()
+            else:
+                print("\nDATA INVÁLIDA! Por favor, tente novamente...")
+
+    def verificar_formato_data(self, data):
+        try:
+            date.strptime(data, "%d/%m/%Y")
+            return True
+        except ValueError:
+            return False

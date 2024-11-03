@@ -82,3 +82,22 @@ class TelaModulo:
 
     def mostrar_modulo(self, modulo):
         print("CÓDIGO: ", modulo["codigo"], " | NOME: ", modulo["nome"], " | ÁREA: ", modulo["area"], " | CARGA HORÁRIA: ", modulo["carga_horaria"])
+
+    def mostrar_modulo_finalizado(self, modulo):
+        self.mostrar_modulo(modulo)
+        print("NOTA FINAL: ", modulo["nota"])
+        print("----------------------------------------------------")
+
+    def mostrar_opcao_modulo(self, modulo):
+        print(modulo["indice"]+1, " - CÓDIGO: ", modulo["codigo"], " | NOME: ", modulo["nome"], " | ÁREA: ", modulo["area"], " | CARGA HORÁRIA: ", modulo["carga_horaria"])
+
+    def selecionar_modulo_na_lista(self, num_opcoes):
+        while(True):
+            indice_modulo = input("\nInforme o número da opção do módulo que deseja selecionar: ")
+            if indice_modulo.isdigit():
+                if 1 <= int(indice_modulo) < num_opcoes+1:
+                    return int(indice_modulo) - 1
+                else:
+                    print("Opção inválida. Por favor, digite o número da opção de módulo desejada.")
+            else:
+                print("Opção inválida. Por favor, digite o número da opção de módulo desejada.")

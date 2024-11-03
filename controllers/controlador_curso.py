@@ -1,10 +1,12 @@
 from views.tela_curso import TelaCurso
+from views.tela_modulo import TelaModulo
 from models.curso import Curso
 class ControladorCurso():
 
     def __init__(self, controlador_sistema, controlador_modulo):
         self.__cursos = []
         self.__tela_curso = TelaCurso()
+        self.__tela_modulo = TelaModulo()
         self.__controlador_modulo = controlador_modulo
         self.__controlador_sistema = controlador_sistema
 
@@ -97,13 +99,13 @@ class ControladorCurso():
             curso = self.buscar_curso_pelo_nome(nome)
             if(curso is not None):
                 return curso
-            
+
     def buscar_curso_pelo_nome(self, nome):
         for curso in self.__cursos:
             if curso.nome.upper() == nome.upper():
                 return curso
         return None
-            
+
     def listar_cursos(self):
         if(len(self.__cursos) == 0):
             self.__tela_curso.mostrar_mensagem("\n****** NENHUM CURSO CADASTRADO ATÉ O MOMENTO! ******")
@@ -119,13 +121,17 @@ class ControladorCurso():
 
     def mostrar_curso(self, curso):
         self.__tela_curso.mostrar_curso({"nome": curso.nome, "descricao": curso.descricao, "carga_horaria": curso.carga_horaria, "min_semestres": curso.min_semestres, "max_semestres": curso.max_semestres, "mensalidade": curso.mensalidade})
+        if len(curso.modulos) > 0:
+            self.__tela_curso.mostrar_mensagem("\n--------------- MÓDULOS OBRIGATÓRIOS --------------")
+            for modulo in curso.modulos:
+                self.__tela_modulo.mostrar_modulo({"codigo": modulo.codigo, "nome": modulo.nome, "area": modulo.area, "carga_horaria": modulo.carga_horaria})
 
     def abrir_tela(self):
         menu_opcoes = {1: self.cadastrar_curso, 2: self.editar_curso, 3: self.excluir_curso, 4: self.listar_cursos, 5: self.buscar_curso, 0: self.voltar}
 
         while True:
             menu_opcoes[self.__tela_curso.mostrar_menu_opcoes()]()
-            
+
     def voltar(self):
         self.__controlador_sistema.abrir_tela()
 
