@@ -25,8 +25,8 @@ class ControladorAluno():
                 data_inicio = date.today()
                 aluno_cadastrado = self.buscar_aluno_pelo_cpf(aluno["cpf"])
                 if aluno_cadastrado is None:
-                    novoAluno = Aluno(aluno["nome"], aluno["cpf"], aluno["telefone"], aluno["email"], aluno["usuario"], aluno["senha"], aluno["rua"], aluno["num_residencia"], aluno["bairro"], aluno["cidade"], aluno["cep"], curso, codigo, data_inicio)
-                    self.__alunos.append(novoAluno)
+                    novo_aluno = Aluno(aluno["nome"], aluno["cpf"], aluno["telefone"], aluno["email"], aluno["usuario"], aluno["senha"], aluno["rua"], aluno["num_residencia"], aluno["bairro"], aluno["cidade"], aluno["cep"], curso, codigo, data_inicio)
+                    self.__alunos.append(novo_aluno)
                     print("\nAluno: ", self.__alunos[-1].nome, " cadastrado(a) com sucesso!")
                 else:
                     self.__tela_aluno.mostrar_mensagem("********* ATENÇÃO: Aluno já cadastrado! *********")

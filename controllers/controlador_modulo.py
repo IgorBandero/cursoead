@@ -6,19 +6,6 @@ class ControladorModulo:
         self.__modulos = []
         self.__controlador_sistema = controlador_sistema
         self.__tela_modulo = TelaModulo()
-
-        modulo1 = Modulo("INE5610", "Introdução à Informática", "Informática", 100)
-        modulo2 = Modulo("INE5620", "Organização de Computadores", "Informática", 100)
-        modulo3 = Modulo("INE5630", "Circuitos Digitais", "Informática", 100)
-        modulo4 = Modulo("EGC5010", "Teoria Geral de Sistemas", "Gestão do Conhecimento", 100)
-        modulo5 = Modulo("EGC5020", "Marketing Pessoal e Empreendedorismo", "Gestão do Conhecimento", 100)
-        modulo6 = Modulo("EGC5030", "Administração I", "Gestão do Conhecimento", 100)
-        self.__modulos.append(modulo1)
-        self.__modulos.append(modulo2)
-        self.__modulos.append(modulo3)
-        self.__modulos.append(modulo4)
-        self.__modulos.append(modulo5)
-        self.__modulos.append(modulo6)
         
     def cadastrar_modulo(self):
         dados_modulo = self.__tela_modulo.pega_dados_modulo()
@@ -88,20 +75,39 @@ class ControladorModulo:
                 self.__tela_modulo.mostrar_mensagem("Opção inválida. Tente novamente.")
 
     def selecionar_modulos(self):
-        exit = False
         lista_modulos = []
-        while(not exit):
-            print("\nSelecione o módulo:")
-            self.listar_modulos()
-            indice_modulo_escolhido = self.__tela_modulo.selecionar_modulo(len(self.__modulos))
-            if (indice_modulo_escolhido is not None):
-                modulo = self.__modulos[indice_modulo_escolhido]
+        while(True):
+            self.__tela_modulo.mostrar_mensagem("\n----------------- SELECIONAR MÓDULO ----------------")
+            tipo_consulta = self.__tela_modulo.selecionar_modulo(len(self.__modulos))
+            if tipo_consulta == "Buscar pelo codigo":
+                modulo = self.selecionar_modulo_pelo_codigo()
                 if(modulo is not None):
                     lista_modulos.append(modulo)
                 else:
-                    self.__tela_modulo.mostrar_mensagem("********* ATENÇÃO: Módulo não encontrado! *********")
-            opcao = int(input("\nCadastrar outro módulo? \n1 - Sim \n2 - Não"))
-            if opcao == 2:
-                exit = True
+                    self.__tela_modulo.mostrar_mensagem("\n******** ATENÇÃO: Módulo não encontrado! ********")
+            elif tipo_consulta == "Selecionar da lista":
+                self.listar_modulos()
+                indice_modulo_escolhido = self.__tela_modulo.selecionar_modulo_na_lista(len(self.__modulos))
+                if (indice_modulo_escolhido is not None):
+                    modulo = self.__modulos[indice_modulo_escolhido]
+                    if(modulo is not None):
+                        lista_modulos.append(modulo)
+                    else:
+                        self.__tela_modulo.mostrar_mensagem("\n******** ATENÇÃO: Módulo não encontrado! ********")
+            continuar = self.__tela_modulo.continuar_registro_modulos()
+            if not continuar:
+                break
         return lista_modulos
-
+    
+    def selecionar_modulo_pelo_codigo(self):
+        codigo = self.__tela_modulo.buscar_modulo_pelo_codigo()
+        if (codigo is not None):
+            modulo = self.buscar_modulo_pelo_codigo(codigo)
+            if(modulo is not None):
+                return modulo
+            
+    def buscar_modulo_pelo_codigo(self, codigo):
+        for modulo in self.__modulos:
+            if modulo.codigo == codigo:
+                return modulo
+        return None

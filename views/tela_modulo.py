@@ -17,17 +17,19 @@ class TelaModulo:
         return {"codigo": codigo, "nome": nome, "area": area, "carga_horaria": carga_horaria}
 
     def selecionar_modulo(self, num_opcoes):
-        if num_opcoes == 0:
-            return None
-        while True:
-            try:
-                indice_modulo = int(input("\nInforme o número da opção do módulo que deseja selecionar: "))
-                if 1 <= indice_modulo <= num_opcoes:
-                    return indice_modulo - 1
-                else:
-                    print("Opção inválida. Por favor, digite o número da opção de módulo desejado.")
-            except ValueError:
-                print("Entrada inválida! Insira um número.")
+        if (num_opcoes == 0):
+            print("\n************ NENHUM MÓDULO CADASTRADO ***********")
+            return
+        while(True):
+            opcao = input("\nComo deseja selecionar o módulo? \n1 - Procurar módulo pelo CÓDIGO \n2 - Selecionar da lista de módulos \n\nEscolha uma opção: ")
+            if (opcao == "1" or opcao == "2"):
+                break
+            else:
+                print("\n****** OPÇÃO INVÁLIDA, TENTE NOVAMENTE... *******")
+        if (opcao == "1"):
+            return "Buscar pelo codigo"
+        if (opcao == "2"):
+            return "Selecionar da lista"
 
     def listar_modulos(self, modulos):
         if not modulos:
@@ -39,3 +41,34 @@ class TelaModulo:
 
     def mostrar_mensagem(self, msg):
         print(msg)
+
+    def buscar_modulo_pelo_codigo(self):
+        while(True):
+            codigo = input("\nInforme o código do módulo que deseja selecionar: ")
+            if codigo is not None:
+                return codigo
+            else:
+                print("\n******* CÓDIGO INVÁLIDO! TENTE NOVAMENTE... ********")
+
+    def selecionar_modulo_na_lista(self, num_opcoes):
+        while(True):
+            indice_modulo = input("\nInforme o número da opção do módulo que deseja selecionar: ")
+            if indice_modulo.isdigit():
+                if 1 <= int(indice_modulo) < num_opcoes+1:
+                    return int(indice_modulo) - 1
+                else:
+                    print("Opção inválida. Por favor, digite o número da opção de módulo desejada.")
+            else:
+                print("Opção inválida. Por favor, digite o número da opção de módulo desejada.")
+
+    def continuar_registro_modulos(self):
+        while(True):
+            print("\n----------------------------------------------------")
+            print("Deseja adicionar outro módulo? \n1 - SIM \n2 - NÃO (Finalizar)")
+            opcao = input("\nEscolha a opção: ")
+            if (opcao == "1"):
+                return True
+            elif (opcao == "2"):
+                return False
+            else:
+                print("\n***** OPÇÃO INVÁLIDA! TENTE NOVAMENTE... *****")

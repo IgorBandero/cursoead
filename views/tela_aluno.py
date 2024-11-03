@@ -33,7 +33,6 @@ class TelaAluno():
         bairro = self.cadastrar_bairro()
         cidade = self.cadastrar_cidade()
         cep = self.cadastrar_cep()
-        
         return {
             "nome": nome, "cpf": cpf, "telefone": telefone, "email": email, "usuario": usuario,
             "senha": senha, "rua": rua, "num_residencia": num_residencia, "bairro": bairro,
@@ -119,21 +118,21 @@ class TelaAluno():
             elif (excluir == "2"):
                 return False
             else:
-                print("\n***** OPÇÃO INVÁLIDA! TENTE NOVAMENTE... *****")
+                print("\n******** OPÇÃO INVÁLIDA! TENTE NOVAMENTE... ********")
 
     def mostrar_opcao_aluno(self, aluno):
         print(aluno["indice"]+1, " - NOME: ", aluno["nome"], " | CPF: ", aluno["cpf"], " | MATRÍCULA: ", aluno["matricula"], " | CURSO: ", aluno["curso"])
 
     def selecionar_aluno(self, num_opcoes):
         if (num_opcoes == 0):
-            print("\n************ NENHUM ALUNO CADASTRADO ************")
+            print("\n************** NENHUM ALUNO CADASTRADO *************")
             return
         while(True):
             opcao = input("\nComo deseja selecionar o aluno? \n1 - Procurar aluno pelo CPF \n2 - Selecionar da lista de alunos \n\nEscolha uma opção: ")
             if (opcao == "1" or opcao == "2"):
                 break
             else:
-                print("\n****** OPÇÃO INVÁLIDA, TENTE NOVAMENTE... *******")
+                print("\n******** OPÇÃO INVÁLIDA, TENTE NOVAMENTE... ********")
         if (opcao == "1"):
             return "Buscar pelo cpf"
         if (opcao == "2"):
