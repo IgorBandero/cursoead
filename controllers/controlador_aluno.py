@@ -286,7 +286,7 @@ class ControladorAluno():
     def tempo_medio_conclusao(self):
         if (len(self.__ex_alunos) == 0):
             self.__tela_aluno.mostrar_mensagem(f"\n****** NENHUM ALUNO CONCLUINTE ATÉ O MOMENTO! ******")
-        else: 
+        else:
             duracoes = []
             for aluno in self.__ex_alunos:
                 data_inicio = aluno.matricula.data_inicio
