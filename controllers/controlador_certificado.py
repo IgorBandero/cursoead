@@ -2,9 +2,6 @@ from views.tela_certificado import TelaCertificado
 from views.tela_aluno import TelaAluno
 from models.certificado import Certificado
 from datetime import datetime as date
-
-from models.curso import Curso
-from models.aluno import Aluno
 class ControladorCertificado():
 
     def __init__(self, controlador_sistema, controlador_aluno):
@@ -13,21 +10,6 @@ class ControladorCertificado():
         self.__tela_aluno = TelaAluno()
         self.__controlador_aluno = controlador_aluno
         self.__controlador_sistema = controlador_sistema
-
-        curso1 = Curso("Sistemas de Informação", "Gestão e Tecnologia", 3500, 8, 16, 750.00, [])
-        curso2 = Curso("Engenharia de Produção", "Gestão Industrial", 3300, 10, 18, 900.00, [])
-        curso3 = Curso("Arquitetura e Urbanismo", "Planejamento do Espaço Construído", 4000, 10, 18, 850.00, [])
-        aluno1 = Aluno("Carlos", 11122233344, "(48) 991122333", "carlos@contato.com", "carlos123", "123456", "Rua de Cima", 350, "Pantanal", "Florianópolis", "88040-100", curso1, "24100299", date.today())
-        aluno2 = Aluno("Maria", 22233344455, "(48) 992233444", "maria@contato.com", "maria123", "123456", "Rua do Lado", 100, "Trindade", "Florianópolis", "88040-900", curso2, "24100299", date.today())
-        aluno3 = Aluno("João", 33344455566, "(48) 993344555", "joao@contato.com", "joao123", "123456", "Rua de Baixo", 1200, "Córrego Grande", "Florianópolis", "88040-500", curso3, "24100299", date.today())
-
-        certificado1 = Certificado(aluno1, curso1, 8.6, date.today())
-        certificado2 = Certificado(aluno2, curso2, 7.2, date.today())
-        certificado3 = Certificado(aluno3, curso3, 9.3, date.today())
-        self.__certificados.append(certificado1)
-        self.__certificados.append(certificado2)
-        self.__certificados.append(certificado3)
-
         
     def emitir_certificado(self):
         cpf_aluno = self.__tela_aluno.buscar_aluno_pelo_cpf()

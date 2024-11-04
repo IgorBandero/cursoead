@@ -6,8 +6,6 @@ from collections import Counter
 from datetime import date
 from datetime import timedelta
 import random
-
-from models.curso import Curso
 class ControladorAluno():
 
     def __init__(self, controlador_sistema, controlador_curso, controlador_modulo):
@@ -18,21 +16,6 @@ class ControladorAluno():
         self.__controlador_curso = controlador_curso
         self.__controlador_modulo = controlador_modulo
         self.__controlador_sistema = controlador_sistema
-
-        curso1 = Curso("Sistemas de Informação", "Gestão e Tecnologia", 3500, 8, 16, 750.00, [])
-        curso2 = Curso("Engenharia de Produção", "Gestão Industrial", 3300, 10, 18, 900.00, [])
-        curso3 = Curso("Arquitetura e Urbanismo", "Planejamento do Espaço Construído", 4000, 10, 18, 850.00, [])
-        controlador_curso._ControladorCurso__cursos.append(curso1)
-        controlador_curso._ControladorCurso__cursos.append(curso2)
-        controlador_curso._ControladorCurso__cursos.append(curso3)
-
-        aluno1 = Aluno("Carlos", 11122233344, "(48) 991122333", "carlos@contato.com", "carlos123", "123456", "Rua de Cima", 350, "Pantanal", "Florianópolis", "88040-100", curso1, "24100299", date.today())
-        aluno2 = Aluno("Maria", 22233344455, "(48) 992233444", "maria@contato.com", "maria123", "123456", "Rua do Lado", 100, "Trindade", "Florianópolis", "88040-900", curso2, "24100299", date.today())
-        aluno3 = Aluno("João", 33344455566, "(48) 993344555", "joao@contato.com", "joao123", "123456", "Rua de Baixo", 1200, "Córrego Grande", "Florianópolis", "88040-500", curso3, "24100299", date.today())
-        self.__alunos.append(aluno1)
-        self.__alunos.append(aluno2)
-        self.__alunos.append(aluno3)
-
 
     def cadastrar_aluno(self):
         num_cursos_disponiveis = len(self.__controlador_curso._ControladorCurso__cursos)
