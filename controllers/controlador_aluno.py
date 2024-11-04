@@ -2,7 +2,8 @@ from views.tela_aluno import TelaAluno
 from views.tela_modulo import TelaModulo
 from models.aluno import Aluno
 from models.matricula import Matricula
-from exceptions.ListaCursosVaziaException import ListaCursosVaziaException
+from exceptions.CursoExceptions import ListaCursosVaziaException, CursoInvalidoException
+from exceptions.AlunoExceptions import AlunoJaRegistradoException, AlunoInvalidoException, CpfAlunoJaRegistradoException, UsuarioAlunoJaRegistradoException, MatriculaJaRegistradaException, EdicaoAlunoException, ListaAlunosVaziaException, AlunoNaoEncontradoException, AlunoNaoConcluinteException, ListaExAlunosVaziaException
 from collections import Counter
 from datetime import date
 from datetime import timedelta
@@ -28,18 +29,17 @@ class ControladorAluno():
             curso = self.__controlador_curso.selecionar_curso()
             if (curso is not None):
                 codigo = self.gerar_codigo_matricula()
-                #data_inicio = date.today()
                 aluno_cadastrado = self.buscar_aluno_pelo_cpf(aluno["cpf"])
                 if aluno_cadastrado is None:
                     novo_aluno = Aluno(aluno["nome"], aluno["cpf"], aluno["telefone"], aluno["email"], aluno["usuario"], aluno["senha"], aluno["rua"], aluno["num_residencia"], aluno["bairro"], aluno["cidade"], aluno["cep"], curso, codigo, aluno["data_inicio"])
                     self.__alunos.append(novo_aluno)
                     print("\nAluno: ", self.__alunos[-1].nome, " cadastrado(a) com sucesso!")
                 else:
-                    self.__tela_aluno.mostrar_mensagem("\n*********** ATENÇÃO: Aluno já cadastrado! **********")
+                    raise AlunoJaRegistradoException
             else:
-                self.__tela_aluno.mostrar_mensagem("\n************ ATENÇÃO: Curso inválido! **************")
+                raise CursoInvalidoException
         else:
-            self.__tela_aluno.mostrar_mensagem("\n************* ERRO NO CADASTRO DE ALUNO ************")
+            raise AlunoInvalidoException
 
     def editar_aluno(self):
         aluno = self.selecionar_aluno()
@@ -56,8 +56,7 @@ class ControladorAluno():
                             elif campo == 2:
                                 for caso in self.__alunos:
                                     if caso.cpf == info_atualizada:
-                                        print("\n************* ERRO: CPF JÁ CADASTRADO! *************")
-                                        return
+                                        raise CpfAlunoJaRegistradoException
                                     else:
                                         item.cpf = info_atualizada
                                         self.mostrar_aluno(aluno)
@@ -70,8 +69,7 @@ class ControladorAluno():
                             elif campo == 5:
                                 for caso in self.__alunos:
                                     if caso.usuario == info_atualizada:
-                                        print("\n*********** ERRO: USUÁRIO JÁ CADASTRADO! ***********")
-                                        return
+                                        raise UsuarioAlunoJaRegistradoException
                                     else:
                                         item.usuario = info_atualizada
                                         self.mostrar_aluno(aluno)
@@ -98,8 +96,7 @@ class ControladorAluno():
                             elif campo == 12:
                                 for caso in self.__alunos:
                                     if caso.matricula.codigo == info_atualizada:
-                                        print("\n*********** ERRO: MATRICULA JÁ CADASTRADA! ***********")
-                                        return
+                                        raise MatriculaJaRegistradaException
                                     else:
                                         item.matricula = Matricula(aluno.matricula.curso, info_atualizada, aluno.matricula.data_inicio)
                                         self.mostrar_aluno(aluno)
@@ -118,7 +115,7 @@ class ControladorAluno():
                                         if not continuar:
                                             break
                 else:
-                    self.__tela_aluno.mostrar_mensagem("\n************ ERRO: Edição não concluída ************")
+                    raise EdicaoAlunoException
                 continuar = self.__tela_aluno.continuar("Deseja editar outro campo? \n1 - SIM \n2 - NÃO (Sair)")
                 if not continuar:
                     break
@@ -135,8 +132,7 @@ class ControladorAluno():
 
     def listar_alunos(self):
         if(len(self.__alunos) == 0):
-            self.__tela_aluno.mostrar_mensagem("\n****** NENHUM ALUNO CADASTRADO ATÉ O MOMENTO! ******")
-            return
+            raise ListaAlunosVaziaException
         print("\n----------------- LISTA DE ALUNOS ------------------\n")
         for indice, aluno in enumerate(self.__alunos):
             self.__tela_aluno.mostrar_opcao_aluno({"indice": indice, "nome": aluno.nome, "cpf": aluno.cpf, "matricula": aluno.matricula.codigo, "curso": aluno.matricula.curso.nome})
@@ -167,7 +163,7 @@ class ControladorAluno():
                 if(aluno is not None):
                     return aluno
                 else:
-                    self.__tela_aluno.mostrar_mensagem("\n********** ATENÇÃO: Aluno não encontrado! **********")
+                    raise AlunoNaoEncontradoException
             elif tipo_consulta == "Selecionar da lista":
                 self.listar_alunos()
                 indice_aluno_escolhido = self.__tela_aluno.selecionar_aluno_na_lista(len(self.__alunos))
@@ -176,7 +172,7 @@ class ControladorAluno():
                     if(aluno is not None):
                         return aluno
                     else:
-                        self.__tela_aluno.mostrar_mensagem("\n********* ATENÇÃO: Aluno não encontrado! *********")
+                        raise AlunoNaoEncontradoException
             continuar = self.__tela_aluno.continuar("Deseja tentar novamente? \n1 - SIM \n2 - NÃO (Sair)")
             if not continuar:
                 break
@@ -193,7 +189,7 @@ class ControladorAluno():
             if aluno.cpf == cpf:
                 return aluno
         return None
-    
+
     def buscar_ex_aluno_pelo_cpf(self, cpf):
         for aluno in self.__ex_alunos:
             if aluno.cpf == cpf:
@@ -201,12 +197,21 @@ class ControladorAluno():
         return None
 
     def gerar_codigo_matricula(self):
-        data = date.today()
-        ano = data.strftime('%Y')
-        semestre = "100" if data.month in [1, 2, 3, 4, 5, 6] else "200"
-        numero = random.randint(1, 9999)
-        numero = str(numero).zfill(4)
-        return ano+semestre+numero
+        while (True):
+            data = date.today()
+            ano = data.strftime('%Y')
+            semestre = "100" if data.month in [1, 2, 3, 4, 5, 6] else "200"
+            numero = random.randint(1, 999)
+            numero = str(numero).zfill(4)
+            num_matricula = ano+semestre+numero
+            if (self.matricula_unica(num_matricula)):
+                return num_matricula
+
+    def matricula_unica(self, num_matricula):
+        for aluno in self.__alunos:
+            if aluno.matricula.codigo == num_matricula:
+                return False
+        return True
 
     def matricular_aluno_modulos(self):
         aluno = self.selecionar_aluno()
@@ -250,7 +255,7 @@ class ControladorAluno():
                 self.__alunos.remove(aluno)
                 self.__tela_aluno.mostrar_mensagem("\n********** CURSO FINALIZADO COM SUCESSO! ***********")
             else:
-                self.__tela_aluno.mostrar_mensagem("\n*********** ALUNO NÃO APTO À CONCLUSÃO! ************")
+                raise AlunoNaoConcluinteException
 
     def aluno_concluinte(self, aluno):
         if len(aluno.matricula.modulos_finalizados) == len(aluno.matricula.curso.modulos) and len(aluno.matricula.curso.modulos) > 0:
@@ -275,7 +280,7 @@ class ControladorAluno():
 
     def tempo_medio_conclusao(self):
         if (len(self.__ex_alunos) == 0):
-            self.__tela_aluno.mostrar_mensagem(f"\n****** NENHUM ALUNO CONCLUINTE ATÉ O MOMENTO! ******")
+            raise ListaExAlunosVaziaException
         else:
             duracoes = []
             for aluno in self.__ex_alunos:

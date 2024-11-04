@@ -1,12 +1,8 @@
 from views.tela_curso import TelaCurso
 from views.tela_modulo import TelaModulo
 from models.curso import Curso
-from exceptions.ListaModulosVaziaException import ListaModulosVaziaException
-from exceptions.ListaCursosVaziaException import ListaCursosVaziaException
-from exceptions.CursoJaRegistradoException import CursoJaRegistradoException
-from exceptions.CursoInvalidoException import CursoInvalidoException
-from exceptions.NomeCursoJaRegistradoException import NomeCursoJaRegistradoException
-from exceptions.CursoNaoEncontradoException import CursoNaoEncontradoException
+from exceptions.ModulosExceptions import ListaModulosVaziaException
+from exceptions.CursoExceptions import ListaCursosVaziaException, CursoJaRegistradoException, CursoInvalidoException, NomeCursoJaRegistradoException, CursoNaoEncontradoException, EdicaoCursoException
 class ControladorCurso():
 
     def __init__(self, controlador_sistema, controlador_modulo):
@@ -64,7 +60,7 @@ class ControladorCurso():
                                 item.mensalidade = info_atualizada
                             self.mostrar_curso(curso)
                 else:
-                    self.__tela_curso.mostrar_mensagem("\n************* ERRO: Edição não concluída *************")
+                    raise EdicaoCursoException
                 continuar = self.__tela_curso.continuar("Deseja editar outro campo? \n1 - SIM \n2 - NÃO (Sair)")
                 if not continuar:
                     break

@@ -1,4 +1,4 @@
-from exceptions.ListaCursosVaziaException import ListaCursosVaziaException
+from exceptions.CursoExceptions import ListaCursosVaziaException
 import re
 class TelaCurso():
 
