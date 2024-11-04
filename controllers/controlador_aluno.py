@@ -2,6 +2,7 @@ from views.tela_aluno import TelaAluno
 from views.tela_modulo import TelaModulo
 from models.aluno import Aluno
 from models.matricula import Matricula
+from exceptions.ListaCursosVaziaException import ListaCursosVaziaException
 from collections import Counter
 from datetime import date
 from datetime import timedelta
@@ -20,8 +21,7 @@ class ControladorAluno():
     def cadastrar_aluno(self):
         num_cursos_disponiveis = len(self.__controlador_curso._ControladorCurso__cursos)
         if (num_cursos_disponiveis == 0):
-            self.__tela_aluno.mostrar_mensagem("\n****** NENHUM CURSO DISPONÍVEL PARA MATRÍCULA! *****")
-            return
+            raise ListaCursosVaziaException
         aluno = self.__tela_aluno.cadastrar_aluno()
         if (aluno is not None):
             self.__tela_aluno.mostrar_mensagem("Curso: ")

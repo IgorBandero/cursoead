@@ -1,6 +1,12 @@
 from views.tela_curso import TelaCurso
 from views.tela_modulo import TelaModulo
 from models.curso import Curso
+from exceptions.ListaModulosVaziaException import ListaModulosVaziaException
+from exceptions.ListaCursosVaziaException import ListaCursosVaziaException
+from exceptions.CursoJaRegistradoException import CursoJaRegistradoException
+from exceptions.CursoInvalidoException import CursoInvalidoException
+from exceptions.NomeCursoJaRegistradoException import NomeCursoJaRegistradoException
+from exceptions.CursoNaoEncontradoException import CursoNaoEncontradoException
 class ControladorCurso():
 
     def __init__(self, controlador_sistema, controlador_modulo):
@@ -13,8 +19,7 @@ class ControladorCurso():
     def cadastrar_curso(self):
         num_modulos_disponiveis = len(self.__controlador_modulo._ControladorModulo__modulos)
         if (num_modulos_disponiveis == 0):
-            self.__tela_curso.mostrar_mensagem("\n****** NENHUM MÓDULO DISPONÍVEL PARA CURSOS! ******")
-            return
+            raise ListaModulosVaziaException
         curso = self.__tela_curso.cadastrar_curso()
         if (curso is not None):
             self.__tela_curso.mostrar_mensagem("Módulos: ")
@@ -26,11 +31,11 @@ class ControladorCurso():
                     self.__cursos.append(novo_curso)
                     self.__tela_curso.mostrar_mensagem(f"\nCurso: {self.__cursos[-1].nome} cadastrado com sucesso!")
                 else:
-                    self.__tela_curso.mostrar_mensagem("********* ATENÇÃO: Curso já cadastrado! *********")
+                    raise CursoJaRegistradoException
             else:
-                self.__tela_curso.mostrar_mensagem("\n*********** ATENÇÃO: Curso inválido! **********")
+                raise CursoInvalidoException
         else:
-            self.__tela_curso.mostrar_mensagem("\n************* ERRO NO CADASTRO DE CURSO ************")
+            raise CursoInvalidoException
 
     def editar_curso(self):
         curso = self.selecionar_curso()
@@ -44,7 +49,7 @@ class ControladorCurso():
                             if campo == 1:
                                 for caso in self.__cursos:
                                     if caso.nome == info_atualizada:
-                                        print("\n*********** ERRO: NOME JÁ CADASTRADO! **********")
+                                        raise NomeCursoJaRegistradoException
                                         return
                                 item.nome = info_atualizada
                             elif campo == 2:
@@ -83,16 +88,16 @@ class ControladorCurso():
                 if(curso is not None):
                     return curso
                 else:
-                    self.__tela_curso.mostrar_mensagem("\n********** ATENÇÃO: Curso não encontrado! **********")
+                    raise CursoNaoEncontradoException
             elif tipo_consulta == "Selecionar da lista":
                 self.listar_cursos()
                 indice_curso_escolhido = self.__tela_curso.selecionar_curso_na_lista(len(self.__cursos))
                 if (indice_curso_escolhido is not None):
-                    curso = self.__cursos[indice_curso_escolhido]
-                    if(curso is not None):
+                    try:
+                        curso = self.__cursos[indice_curso_escolhido]
                         return curso
-                    else:
-                        self.__tela_curso.mostrar_mensagem("\n********* ATENÇÃO: Curso não encontrado! *********")
+                    except CursoNaoEncontradoException:
+                        return
             continuar = self.__tela_curso.continuar("Deseja tentar novamente? \n1 - SIM \n2 - NÃO (Sair)")
             if not continuar:
                 break
@@ -103,6 +108,8 @@ class ControladorCurso():
             curso = self.buscar_curso_pelo_nome(nome)
             if(curso is not None):
                 return curso
+            else:
+                raise CursoNaoEncontradoException
 
     def buscar_curso_pelo_nome(self, nome):
         for curso in self.__cursos:
@@ -112,7 +119,7 @@ class ControladorCurso():
 
     def listar_cursos(self):
         if(len(self.__cursos) == 0):
-            self.__tela_curso.mostrar_mensagem("\n****** NENHUM CURSO CADASTRADO ATÉ O MOMENTO! ******")
+            raise ListaCursosVaziaException
             return
         print("\n----------------- LISTA DE CURSOS ------------------\n")
         for indice, curso in enumerate(self.__cursos):
@@ -122,6 +129,8 @@ class ControladorCurso():
         curso = self.selecionar_curso()
         if curso is not None:
             self.mostrar_curso(curso)
+        else:
+            raise CursoNaoEncontradoException
 
     def mostrar_curso(self, curso):
         self.__tela_curso.mostrar_curso({"nome": curso.nome, "descricao": curso.descricao, "carga_horaria": curso.carga_horaria, "min_semestres": curso.min_semestres, "max_semestres": curso.max_semestres, "mensalidade": curso.mensalidade})

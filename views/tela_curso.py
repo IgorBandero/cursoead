@@ -1,3 +1,4 @@
+from exceptions.ListaCursosVaziaException import ListaCursosVaziaException
 import re
 class TelaCurso():
 
@@ -83,8 +84,7 @@ class TelaCurso():
     
     def selecionar_curso(self, num_opcoes):
         if (num_opcoes == 0):
-            print("\n************** NENHUM CURSO CADASTRADO *************")
-            return
+            raise ListaCursosVaziaException
         while(True):
             opcao = input("\nComo deseja selecionar o curso? \n1 - Procurar curso pelo NOME \n2 - Selecionar da lista de cursos \n\nEscolha uma opção: ")
             if (opcao == "1" or opcao == "2"):
@@ -163,7 +163,7 @@ class TelaCurso():
                 break
             else:
                 if len(descricao) < 10:
-                    print("\n**** DESCRIÇÃO DEVE TER PELO MENOS 5 CARACTERES ***")
+                    print("\n**** DESCRIÇÃO DEVE TER PELO MENOS 10 CARACTERES ***")
                 opcao = self.continuar("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar)")
                 if (not opcao):
                     return
