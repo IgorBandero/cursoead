@@ -8,7 +8,7 @@ class TelaOrientacao:
         print("5 – Listar Orientandos de um Professor")
         print("0 – Voltar")
         opcao = input("Escolha a opção: ")
-        if opcao in {"1", "2", "3", "0"}:
+        if opcao in {"1", "2", "3", "4", "5", "0"}:
             return int(opcao)
         else:
             print("\n***** OPÇÃO INVÁLIDA! TENTE NOVAMENTE... *****")
