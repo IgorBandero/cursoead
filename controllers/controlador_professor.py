@@ -1,5 +1,9 @@
 from models.professor import Professor
 from views.tela_professor import TelaProfessor
+from exceptions.ListaProfessoresVaziaException import ListaProfessoresVaziaException
+from exceptions.ProfessorNaoEncontradoException import ProfessorNaoEncontradoException
+from exceptions.ProfessorJaRegistradoException import ProfessorJaRegistradoException
+
 
 class ControladorProfessor:
     def __init__(self, controlador_sistema):
@@ -14,11 +18,11 @@ class ControladorProfessor:
             self.__professores.append(professor)
             self.__tela_professor.mostra_mensagem("Professor cadastrado com sucesso!")
         else:
-            self.__tela_professor.mostra_mensagem("Professor já cadastrado com este CPF.")
+            raise ProfessorJaRegistradoException
 
     def listar_professores(self):
         if not self.__professores:
-            self.__tela_professor.mostra_mensagem("Nenhum professor cadastrado.")
+            raise ListaProfessoresVaziaException
         else:
             for professor in self.__professores:
                 dados_professor = {
@@ -49,8 +53,7 @@ class ControladorProfessor:
         if professor:
             return professor
         else:
-            self.__tela_professor.mostra_mensagem("Professor não encontrado.")
-            return None
+            raise ProfessorNaoEncontradoException
 
     def editar_professor(self):
         professor = self.selecionar_professor()
@@ -109,7 +112,7 @@ class ControladorProfessor:
             self.__professores.remove(professor)
             self.__tela_professor.mostra_mensagem("Professor removido com sucesso!")
         else:
-            self.__tela_professor.mostra_mensagem("Professor não encontrado.")
+            raise ProfessorNaoEncontradoException
 
     def voltar(self):
         self.__controlador_sistema.abrir_tela()
