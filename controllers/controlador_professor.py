@@ -4,7 +4,6 @@ from exceptions.ListaProfessoresVaziaException import ListaProfessoresVaziaExcep
 from exceptions.ProfessorNaoEncontradoException import ProfessorNaoEncontradoException
 from exceptions.ProfessorJaRegistradoException import ProfessorJaRegistradoException
 
-
 class ControladorProfessor:
     def __init__(self, controlador_sistema):
         self.__professores = []
