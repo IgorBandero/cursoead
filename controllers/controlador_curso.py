@@ -60,7 +60,7 @@ class ControladorCurso():
                             self.mostrar_curso(curso)
                 else:
                     self.__tela_curso.mostrar_mensagem("\n************* ERRO: Edição não concluída *************")
-                continuar = self.__tela_curso.continuar_edicao()
+                continuar = self.__tela_curso.continuar("Deseja editar outro campo? \n1 - SIM \n2 - NÃO (Sair)")
                 if not continuar:
                     break
 
@@ -75,23 +75,27 @@ class ControladorCurso():
                 self.__tela_curso.mostrar_mensagem("\n*************** EXCLUSÃO CANCELADA ****************")
 
     def selecionar_curso(self):
-        self.__tela_curso.mostrar_mensagem("\n----------------- SELECIONAR CURSO -----------------")
-        tipo_consulta = self.__tela_curso.selecionar_curso(len(self.__cursos))
-        if tipo_consulta == "Buscar pelo nome":
-            curso = self.selecionar_curso_pelo_nome()
-            if(curso is not None):
-                return curso
-            else:
-                self.__tela_curso.mostrar_mensagem("\n********* ATENÇÃO: Curso não encontrado! *********")
-        elif tipo_consulta == "Selecionar da lista":
-            self.listar_cursos()
-            indice_curso_escolhido = self.__tela_curso.selecionar_curso_na_lista(len(self.__cursos))
-            if (indice_curso_escolhido is not None):
-                curso = self.__cursos[indice_curso_escolhido]
+        while (True):
+            self.__tela_curso.mostrar_mensagem("\n----------------- SELECIONAR CURSO -----------------")
+            tipo_consulta = self.__tela_curso.selecionar_curso(len(self.__cursos))
+            if tipo_consulta == "Buscar pelo nome":
+                curso = self.selecionar_curso_pelo_nome()
                 if(curso is not None):
                     return curso
                 else:
-                    self.__tela_curso.mostrar_mensagem("\n********* ATENÇÃO: Curso não encontrado! *********")
+                    self.__tela_curso.mostrar_mensagem("\n********** ATENÇÃO: Curso não encontrado! **********")
+            elif tipo_consulta == "Selecionar da lista":
+                self.listar_cursos()
+                indice_curso_escolhido = self.__tela_curso.selecionar_curso_na_lista(len(self.__cursos))
+                if (indice_curso_escolhido is not None):
+                    curso = self.__cursos[indice_curso_escolhido]
+                    if(curso is not None):
+                        return curso
+                    else:
+                        self.__tela_curso.mostrar_mensagem("\n********* ATENÇÃO: Curso não encontrado! *********")
+            continuar = self.__tela_curso.continuar("Deseja tentar novamente? \n1 - SIM \n2 - NÃO (Sair)")
+            if not continuar:
+                break
 
     def selecionar_curso_pelo_nome(self):
         nome = self.__tela_curso.buscar_curso_pelo_nome()
@@ -126,8 +130,14 @@ class ControladorCurso():
             for modulo in curso.modulos:
                 self.__tela_modulo.mostrar_modulo({"codigo": modulo.codigo, "nome": modulo.nome, "area": modulo.area, "carga_horaria": modulo.carga_horaria})
 
+    def cursos_melhor_avaliados(self):
+        avaliacoes = [(curso, curso.avaliacao_media_curso()) for curso in self.__cursos]
+        cursos_ordenados = sorted(avaliacoes, key=lambda x: x[1], reverse=True)
+        for curso, avaliacao in cursos_ordenados:
+            self.__tela_curso.mostrar_mensagem(f"CURSO: {curso.nome} | AVALIAÇÃO MÉDIA: {avaliacao}")
+
     def abrir_tela(self):
-        menu_opcoes = {1: self.cadastrar_curso, 2: self.editar_curso, 3: self.excluir_curso, 4: self.listar_cursos, 5: self.buscar_curso, 0: self.voltar}
+        menu_opcoes = {1: self.cadastrar_curso, 2: self.editar_curso, 3: self.excluir_curso, 4: self.listar_cursos, 5: self.buscar_curso, 6: self.cursos_melhor_avaliados, 0: self.voltar}
 
         while True:
             menu_opcoes[self.__tela_curso.mostrar_menu_opcoes()]()

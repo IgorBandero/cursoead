@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import datetime
 import re
 class TelaAluno():
 
@@ -16,12 +16,11 @@ class TelaAluno():
             print("7 -  Lançar notas de aluno")
             print("8 -  Finalizar curso de aluno")
             print("9 -  Relatório de cursos mais populares")
-            print("10 - Relatório de cursos melhor avaliados")
-            print("11 - Relatório de tempo médio de conclusão")
+            print("10 - Relatório de tempo médio de conclusão")
             print("0 -  Voltar ")
             print("----------------------------------------------------")
             opcao = input("Escolha a opção: ")
-            if (opcao == "1" or opcao == "2" or opcao == "3" or opcao == "4" or opcao == "5" or opcao == "6" or opcao == "7" or opcao == "8" or opcao == "9" or opcao == "10" or opcao == "11" or opcao == "0"):
+            if (opcao == "1" or opcao == "2" or opcao == "3" or opcao == "4" or opcao == "5" or opcao == "6" or opcao == "7" or opcao == "8" or opcao == "9" or opcao == "10" or opcao == "0"):
                 return int(opcao)
             else:
                 print("\n***** OPÇÃO INVÁLIDA! TENTE NOVAMENTE... *****")
@@ -39,10 +38,11 @@ class TelaAluno():
         bairro = self.cadastrar_bairro()
         cidade = self.cadastrar_cidade()
         cep = self.cadastrar_cep()
+        data_inicio = self.cadastrar_data("Data de início (DD/MM/AAAA): ")
         return {
             "nome": nome, "cpf": cpf, "telefone": telefone, "email": email, "usuario": usuario,
             "senha": senha, "rua": rua, "num_residencia": num_residencia, "bairro": bairro,
-            "cidade": cidade, "cep": cep
+            "cidade": cidade, "cep": cep, "data_inicio": data_inicio
         }
     
     def editar_aluno(self):
@@ -175,6 +175,10 @@ class TelaAluno():
         print("BAIRRO: ", aluno["bairro"])
         print("CIDADE: ", aluno["cidade"])
         print("CEP: ", aluno["cep"])
+        if (aluno["data_inicio"] is not None):
+            print("DATA INÍCIO: ", aluno["data_inicio"].strftime("%d/%m/%Y"))
+        if (aluno["data_final"] is not None):
+            print("DATA FINAL: ", aluno["data_final"].strftime("%d/%m/%Y"))
         print("CURSO: ", aluno["curso"])
         print("MATRÍCULA: ", aluno["codigo"])
 
@@ -203,8 +207,8 @@ class TelaAluno():
                     print("\n******* NOME DEVE TER PELO MENOS 3 CARACTERES ******")
                 else:
                     print("\n****** NOME DEVE TER APENAS LETRAS OU ESPAÇOS ******")
-                opcao = input("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar cadastro) \n\nEscolha uma opção: ")
-                if (opcao == "2"):
+                opcao = self.continuar("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar)")
+                if (not opcao):
                     return
                 print("\n")
         return nome
@@ -220,8 +224,8 @@ class TelaAluno():
                     print("\n******** CPF DEVE TER PELO MENOS 11 DÍGITOS ********")
                 else:
                     print("\n************ CPF DEVE TER SOMENTE NÚMEROS **********")
-                opcao = input("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar cadastro) \n\nEscolha uma opção: ")
-                if (opcao == "2"):
+                opcao = self.continuar("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar)")
+                if (not opcao):
                     return
                 print("\n")
         return cpf
@@ -236,8 +240,8 @@ class TelaAluno():
                     print("\n****** TELEFONE DEVE TER PELO MENOS 8 DÍGITOS ******")
                 else:
                     print("\n********* TELEFONE DEVE TER SOMENTE NÚMEROS ********")
-                opcao = input("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar cadastro) \n\nEscolha uma opção: ")
-                if (opcao == "2"):
+                opcao = self.continuar("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar)")
+                if (not opcao):
                     return
                 print("\n")
         return telefone
@@ -252,8 +256,8 @@ class TelaAluno():
                     print("\n****** EMAIL DEVE TER PELO MENOS 5 CARACTERES ******")
                 else:
                     print("\n******** EMAIL INVÁLIDO! TENTE NOVAMENTE... ********")
-                opcao = input("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar cadastro) \n\nEscolha uma opção: ")
-                if (opcao == "2"):
+                opcao = self.continuar("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar)")
+                if (not opcao):
                     return
                 print("\n")
         return email
@@ -265,8 +269,8 @@ class TelaAluno():
                 break
             else:
                 print("\n***** USUÁRIO DEVE TER PELO MENOS 8 CARACTERES ****")
-                opcao = input("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar cadastro) \n\nEscolha uma opção: ")
-                if (opcao == "2"):
+                opcao = self.continuar("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar)")
+                if (not opcao):
                     return
                 print("\n")
         return usuario
@@ -281,8 +285,8 @@ class TelaAluno():
                     print("\n***** SENHA DEVE TER PELO MENOS 8 CARACTERES ******")
                 else:
                     print("\n********* SENHA DEVE TER NÚMEROS E LETRAS *********")
-                opcao = input("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar cadastro) \n\nEscolha uma opção: ")
-                if (opcao == "2"):
+                opcao = self.continuar("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar)")
+                if (not opcao):
                     return
                 print("\n")
         return senha
@@ -297,8 +301,8 @@ class TelaAluno():
                     print("\n****** RUA DEVE TER PELO MENOS 5 CARACTERES *******")
                 else:
                     print("\n********* RUA INVÁLIDA! TENTE NOVAMENTE... ********")
-                opcao = input("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar cadastro) \n\nEscolha uma opção: ")
-                if (opcao == "2"):
+                opcao = self.continuar("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar)")
+                if (not opcao):
                     return
                 print("\n")
         return rua
@@ -314,8 +318,8 @@ class TelaAluno():
                     print("\n******* NÚMERO DEVE TER PELO MENOS 1 DÍGITO *******")
                 else:
                     print("\n********* NÚMERO DEVE TER SOMENTE NÚMEROS *********")
-                opcao = input("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar cadastro) \n\nEscolha uma opção: ")
-                if (opcao == "2"):
+                opcao = self.continuar("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar)")
+                if (not opcao):
                     return
                 print("\n")
         return num_residencia
@@ -330,8 +334,8 @@ class TelaAluno():
                     print("\n***** BAIRRO DEVE TER PELO MENOS 5 CARACTERES *****")
                 else:
                     print("\n******* BAIRRO INVÁLIDO! TENTE NOVAMENTE... *******")
-                opcao = input("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar cadastro) \n\nEscolha uma opção: ")
-                if (opcao == "2"):
+                opcao = self.continuar("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar)")
+                if (not opcao):
                     return
                 print("\n")
         return bairro
@@ -346,8 +350,8 @@ class TelaAluno():
                     print("\n***** CIDADE DEVE TER PELO MENOS 5 CARACTERES *****")
                 else:
                     print("\n******* CIDADE INVÁLIDA! TENTE NOVAMENTE... *******")
-                opcao = input("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar cadastro) \n\nEscolha uma opção: ")
-                if (opcao == "2"):
+                opcao = self.continuar("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar)")
+                if (not opcao):
                     return
                 print("\n")
         return cidade
@@ -362,8 +366,8 @@ class TelaAluno():
                     print("\n****** CÓDIGO DE MATRÍCULA DEVE TER 11 DÍGITOS *****")
                 else:
                     print("\n********** CÓDIGO DEVE TER SOMENTE NÚMEROS *********")
-                opcao = input("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar cadastro) \n\nEscolha uma opção: ")
-                if (opcao == "2"):
+                opcao = self.continuar("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar)")
+                if (not opcao):
                     return
                 print("\n")
         return codigo
@@ -378,8 +382,8 @@ class TelaAluno():
                     print("\n******** CEP DEVE TER PELO MENOS 8 DÍGITOS *********")
                 else:
                     print("\n*********** CEP DEVE TER SOMENTE NÚMEROS ***********")
-                opcao = input("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar cadastro) \n\nEscolha uma opção: ")
-                if (opcao == "2"):
+                opcao = self.continuar("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar)")
+                if (not opcao):
                     return
                 print("\n")
         return cep
@@ -388,26 +392,32 @@ class TelaAluno():
         while(True):
             nota = input("\nInforme a nota do aluno no módulo: ")
             if bool(re.fullmatch(r"\d+([.,]\d+)?", nota)):
-                if 7.00 <= float(nota) <= 10.00:
+                if 0.00 <= float(nota) <= 10.00:
                     return float(nota)
                 else:
-                    print("\n********* NOTA DEVE SER UM NÚMERO DE 7 A 10 ********")
+                    print("\n********* NOTA DEVE SER UM NÚMERO DE 0 A 10 ********")
             else:
                 print("\nNOTA INVÁLIDA! Por favor, tente novamente...")
 
-    def data_conclusao(self):
-        print("\nDATA DE CONCLUSÃO: ")
+    def continuar(self, mensagem):
         while(True):
-            data = input("Informe a data de conclusão no formato DD/MM/AAAA: ")
-            data_valida = self.verificar_formato_data(data)
-            if data_valida:
-                return date.strptime(data, "%d/%m/%Y").date()
+            print("\n----------------------------------------------------")
+            print(mensagem)
+            opcao = input("\nEscolha a opção: ")
+            if (opcao == "1"):
+                return True
+            elif (opcao == "2"):
+                return False
             else:
-                print("\nDATA INVÁLIDA! Por favor, tente novamente...")
+                print("\n******** OPÇÃO INVÁLIDA! TENTE NOVAMENTE... ********")
 
-    def verificar_formato_data(self, data):
-        try:
-            date.strptime(data, "%d/%m/%Y")
-            return True
-        except ValueError:
-            return False
+    def cadastrar_data(self, mensagem):
+        while(True):
+            #"Informe a data de conclusão no formato DD/MM/AAAA: "
+            data = input(mensagem)
+            try:
+                #data_valida = self.verificar_formato_data(data)
+                data_valida = datetime.strptime(data, "%d/%m/%Y")
+                return data_valida
+            except ValueError:
+                print("\nFormato de data inválido! Use DD/MM/AAAA...")

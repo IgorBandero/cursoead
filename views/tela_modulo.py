@@ -1,3 +1,4 @@
+import re
 class TelaModulo:
     def mostrar_menu_opcoes(self):
         while True:
@@ -8,10 +9,11 @@ class TelaModulo:
             print("2 - Editar Módulo")
             print("3 - Excluir Módulo")
             print("4 - Listar Módulos")
+            print("5 - Avaliar Módulos")
             print("0 - Voltar")
             print("----------------------------------------------------")
             opcao = input("Escolha a opção: ")
-            if opcao in ["1", "2", "3", "4", "0"]:
+            if opcao in ["1", "2", "3", "4", "5", "0"]:
                 return int(opcao)
             else:
                 print("\n***** OPÇÃO INVÁLIDA! TENTE NOVAMENTE... *****")
@@ -90,7 +92,7 @@ class TelaModulo:
     def continuar_registro_modulos(self):
         while True:
             print("\nDeseja adicionar outro módulo? \n1 - SIM \n2 - NÃO (Finalizar)")
-            opcao = input("Escolha a opção: ")
+            opcao = input("\nEscolha a opção: ")
             if opcao == "1":
                 return True
             elif opcao == "2":
@@ -100,7 +102,6 @@ class TelaModulo:
 
     def mostrar_modulo(self, modulo):
         print(f"CÓDIGO: {modulo['codigo']} | NOME: {modulo['nome']} | ÁREA: {modulo['area']} | CARGA HORÁRIA: {modulo['carga_horaria']}")
-
 
     def mostrar_modulo_finalizado(self, modulo):
         self.mostrar_modulo(modulo)
@@ -120,3 +121,15 @@ class TelaModulo:
                     print("Opção inválida. Por favor, digite o número da opção de módulo desejada.")
             else:
                 print("Opção inválida. Por favor, digite o número da opção de módulo desejada.")
+
+    def avaliar_modulos(self, modulo):
+        while(True):
+            print("\n--------------------------------------------------------------------")
+            nota = input(f"Informe a nota para o módulo {modulo["modulo"]} (de 0 a 10): ")
+            if bool(re.fullmatch(r"\d+([.,]\d+)?", nota)):
+                if 0.00 <= float(nota) <= 10.00:
+                    return float(nota)
+                else:
+                    print("\n********* NOTA DEVE SER UM NÚMERO DE 0 A 10 ********")
+            else:
+                print("\nNOTA INVÁLIDA! Por favor, tente novamente...")

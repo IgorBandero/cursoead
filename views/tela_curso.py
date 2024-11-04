@@ -11,10 +11,11 @@ class TelaCurso():
             print("3 - Excluir Curso")
             print("4 - Listar Cursos Disponíveis")
             print("5 - Mostrar Curso")
+            print("6 - Relatório de cursos melhor avaliados")
             print("0 - Voltar ")
             print("----------------------------------------------------")
             opcao = input("Escolha a opção: ")
-            if (opcao == "1" or opcao == "2" or opcao == "3" or opcao == "4" or  opcao == "5" or opcao == "0"):
+            if (opcao == "1" or opcao == "2" or opcao == "3" or opcao == "4" or  opcao == "5" or opcao == "6" or opcao == "0"):
                 return int(opcao)
             else:
                 print("\n***** OPÇÃO INVÁLIDA! TENTE NOVAMENTE... *****")
@@ -123,17 +124,17 @@ class TelaCurso():
         print("MÁXIMO DE SEMESTRES: ", curso["max_semestres"])
         print("MENSALIDADE: ", curso["mensalidade"])
 
-    def continuar_edicao(self):
+    def continuar(self, mensagem):
         while(True):
             print("\n----------------------------------------------------")
-            print("Deseja editar outro campo? \n1 - SIM \n2 - NÃO (Sair)")
+            print(mensagem)
             opcao = input("\nEscolha a opção: ")
             if (opcao == "1"):
                 return True
             elif (opcao == "2"):
                 return False
             else:
-                print("\n***** OPÇÃO INVÁLIDA! TENTE NOVAMENTE... *****")
+                print("\n******** OPÇÃO INVÁLIDA! TENTE NOVAMENTE... ********")
 
     def mostrar_opcao_curso(self, curso):
         print(curso["indice"]+1, " - ", curso["nome"])
@@ -149,8 +150,8 @@ class TelaCurso():
             else:
                 if len(nome) < 5:
                     print("\n******* NOME DEVE TER PELO MENOS 5 CARACTERES ******")
-                opcao = input("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar cadastro) \n\nEscolha uma opção: ")
-                if (opcao == "2"):
+                opcao = self.continuar("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar)")
+                if (not opcao):
                     return
                 print("\n")
         return nome
@@ -163,8 +164,8 @@ class TelaCurso():
             else:
                 if len(descricao) < 10:
                     print("\n**** DESCRIÇÃO DEVE TER PELO MENOS 5 CARACTERES ***")
-                opcao = input("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar cadastro) \n\nEscolha uma opção: ")
-                if (opcao == "2"):
+                opcao = self.continuar("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar)")
+                if (not opcao):
                     return
                 print("\n")
         return descricao
@@ -180,8 +181,8 @@ class TelaCurso():
                     print("\n********** CARGA HORÁRIA DEVE SER UM NÚMERO ********")
                 elif int(carga_horaria) < 1:
                     print("\n******* CARGA HORÁRIA DEVE SER MAIOR QUE ZERO ******")
-                opcao = input("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar cadastro) \n\nEscolha uma opção: ")
-                if (opcao == "2"):
+                opcao = self.continuar("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar)")
+                if (not opcao):
                     return
                 print("\n")
         return int(carga_horaria)
@@ -197,8 +198,8 @@ class TelaCurso():
                     print("\n******* MÍNIMO DE SEMESTRES DEVE SER UM NÚMERO *****")
                 elif int(min_semestres) < 1:
                     print("\n**** MÍNIMO DE SEMESTRES DEVE SER MAIOR QUE ZERO ***")
-                opcao = input("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar cadastro) \n\nEscolha uma opção: ")
-                if (opcao == "2"):
+                opcao = self.continuar("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar)")
+                if (not opcao):
                     return
                 print("\n")
         return int(min_semestres)
@@ -214,8 +215,8 @@ class TelaCurso():
                     print("\n******* MÁXIMO DE SEMESTRES DEVE SER UM NÚMERO *****")
                 elif int(max_semestres) < 1:
                     print("\n**** MÁXIMO DE SEMESTRES DEVE SER MAIOR QUE ZERO ***")
-                opcao = input("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar cadastro) \n\nEscolha uma opção: ")
-                if (opcao == "2"):
+                opcao = self.continuar("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar)")
+                if (not opcao):
                     return
                 print("\n")
         return int(max_semestres)
@@ -231,8 +232,8 @@ class TelaCurso():
                     print("\n*********** MENSALIDADE DEVE SER UM NÚMERO *********")
                 elif float(mensalidade) < 0:
                     print("\n******** MENSALIDADE DEVE SER MAIOR QUE ZERO *******")
-                opcao = input("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar cadastro) \n\nEscolha uma opção: ")
-                if (opcao == "2"):
+                opcao = self.continuar("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar)")
+                if (not opcao):
                     return
                 print("\n")
         return float(mensalidade)

@@ -122,7 +122,9 @@ class Curso:
 
     def avaliacao_media_curso(self):
         num_modulos = len(self.__modulos)
-        soma_avaliacoes = 0
-        for modulo in self.__modulos:
-            soma_avaliacoes += modulo.avaliacao_media()
-        return soma_avaliacoes / num_modulos
+        if(num_modulos > 0):
+            soma_avaliacoes = 0
+            for modulo in self.__modulos:
+                soma_avaliacoes += modulo.avaliacao_media()
+            return soma_avaliacoes / num_modulos
+        return 0

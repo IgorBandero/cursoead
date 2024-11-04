@@ -80,12 +80,21 @@ class ControladorModulo:
         codigo = self.__tela_modulo.buscar_modulo_pelo_codigo()
         return self.buscar_modulo_por_codigo(codigo)
 
+    def avaliar_modulos(self):
+        modulos = self.selecionar_modulos()
+        if modulos is not None:
+            for modulo in modulos:
+                nota = self.__tela_modulo.avaliar_modulos({"modulo": modulo.nome})
+                if nota is not None:
+                    modulo.adicionar_avaliacao(nota)
+
     def abrir_tela(self):
         opcoes = {
             1: self.cadastrar_modulo,
             2: self.editar_modulo,
             3: self.excluir_modulo,
             4: self.listar_modulos,
+            5: self.avaliar_modulos,
             0: self.voltar
         }
         while True:
