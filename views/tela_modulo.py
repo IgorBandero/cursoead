@@ -114,7 +114,7 @@ class TelaModulo:
     def avaliar_modulos(self, modulo):
         while(True):
             print("\n--------------------------------------------------------------------")
-            nota = input(f"Informe a nota para o módulo {modulo["modulo"]} (de 0 a 10): ")
+            nota = input(f"Informe a nota para o módulo {modulo['modulo']} (de 0 a 10): ")
             if bool(re.fullmatch(r"\d+([.,]\d+)?", nota)):
                 if 0.00 <= float(nota) <= 10.00:
                     return float(nota)
