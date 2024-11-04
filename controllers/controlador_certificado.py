@@ -1,6 +1,7 @@
 from views.tela_certificado import TelaCertificado
 from views.tela_aluno import TelaAluno
 from models.certificado import Certificado
+from exceptions.CertificadoExceptions import AlunoNaoConcluinteException, EmissaoCertificadoException, EdicaoCertificadoException, ListaCertificadosVaziaException
 from datetime import datetime as date
 class ControladorCertificado():
 
@@ -25,7 +26,7 @@ class ControladorCertificado():
                     self.__certificados.append(novo_certificado)
                     self.__tela_certificado.mostrar_mensagem("\n********** CERTICADO EMITIDO COM SUCESSO! **********")
                 else:
-                    self.__tela_certificado.mostrar_mensagem("\n********* ALUNO AINDA NÃO CONCLUIU O CURSO *********")
+                    raise AlunoNaoConcluinteException
             elif (ex_aluno is not None):
                 if (ex_aluno in self.__controlador_aluno._ControladorAluno__ex_alunos):
                     curso = ex_aluno.matricula.curso
@@ -35,7 +36,7 @@ class ControladorCertificado():
                     self.__tela_certificado.mostrar_certificado({"aluno": ex_aluno.nome, "cpf": ex_aluno.cpf, "curso": ex_aluno.matricula.curso.nome, "carga_horaria": ex_aluno.matricula.curso.carga_horaria, "nota_final": nota_final, "data_emissao": novo_certificado.data_emissao})
                     self.__tela_certificado.mostrar_mensagem("\n********** CERTICADO EMITIDO COM SUCESSO! **********")
             else:
-                self.__tela_certificado.mostrar_mensagem("\n*********** ERRO AO EMITIR O CERTIFICADO! **********")
+                raise EmissaoCertificadoException
 
     def editar_certificado(self):
         certificado = self.selecionar_certificado()
@@ -50,7 +51,7 @@ class ControladorCertificado():
                                 item.data_emissao = info_atualizada
                             self.mostrar_certificado(certificado)
                 else:
-                    self.__tela_certificado.mostrar_mensagem("\n************* ERRO: Edição não concluída *************")
+                    raise EdicaoCertificadoException
                 continuar = self.__tela_certificado.continuar("Deseja editar outro campo? \n1 - SIM \n2 - NÃO (Sair)")
                 if not continuar:
                     break
@@ -67,8 +68,7 @@ class ControladorCertificado():
 
     def listar_certificados(self):
         if(len(self.__certificados) == 0):
-            self.__tela_certificado.mostrar_mensagem("\n********** NENHUM CERTIFICADO REGISTRADO! **********")
-            return
+            raise ListaCertificadosVaziaException
         print("\n-------------- LISTA DE CERTIFICADOS ---------------\n")
         for indice, certificado in enumerate(self.__certificados):
             self.__tela_certificado.mostrar_opcao_certificado({"indice": indice, "aluno": certificado.aluno.nome, "curso": certificado.curso.nome, "nota_final": certificado.nota_final, "data_emissao": certificado.data_emissao})
