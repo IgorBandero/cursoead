@@ -109,7 +109,16 @@ class Matricula:
         carga_concluida = 0
         if (len(self.__modulos_finalizados) > 0):
             for modulo in self.__modulos_finalizados:
-                carga_concluida += modulo.carga_horaria
-            return carga_concluida / self.curso.carga_horaria
+                carga_concluida += modulo["modulo"].carga_horaria
+            return (carga_concluida / self.curso.carga_horaria)*100
+        else:
+            return 0
+        
+    def calcular_media(self):
+        soma_notas = 0
+        if (len(self.__modulos_finalizados) > 0):
+            for modulo in self.__modulos_finalizados:
+                soma_notas += modulo["nota"]
+            return soma_notas / len(self.__modulos_finalizados)
         else:
             return 0

@@ -182,18 +182,6 @@ class TelaAluno():
         print("CURSO: ", aluno["curso"])
         print("MATRÍCULA: ", aluno["codigo"])
 
-    def continuar_edicao(self):
-        while(True):
-            print("\n----------------------------------------------------")
-            print("Deseja editar outro campo? \n1 - SIM \n2 - NÃO (Sair)")
-            opcao = input("\nEscolha a opção: ")
-            if (opcao == "1"):
-                return True
-            elif (opcao == "2"):
-                return False
-            else:
-                print("\n***** OPÇÃO INVÁLIDA! TENTE NOVAMENTE... *****")
-
     def mostrar_mensagem(self, msg):
         print(msg)
 
@@ -413,10 +401,8 @@ class TelaAluno():
 
     def cadastrar_data(self, mensagem):
         while(True):
-            #"Informe a data de conclusão no formato DD/MM/AAAA: "
             data = input(mensagem)
             try:
-                #data_valida = self.verificar_formato_data(data)
                 data_valida = datetime.strptime(data, "%d/%m/%Y")
                 return data_valida
             except ValueError:

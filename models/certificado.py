@@ -1,6 +1,6 @@
-import models.aluno as Aluno
+from models.aluno import Aluno
 from models.curso import Curso
-import datetime as Date
+from datetime import datetime as Date
 
 class Certificado:
     
