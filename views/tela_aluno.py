@@ -3,7 +3,7 @@ import re
 import PySimpleGUI as sg
 class TelaAluno():
 
-     def mostrar_menu_opcoes(self):
+    def mostrar_menu_opcoes(self):
         while(True):
             print("\n---------------------- ALUNOS ----------------------")
             print("Escolha a opção:")
@@ -45,7 +45,7 @@ class TelaAluno():
             "senha": senha, "rua": rua, "num_residencia": num_residencia, "bairro": bairro,
             "cidade": cidade, "cep": cep, "data_inicio": data_inicio
         }
-    
+
     def editar_aluno(self):
         print("\n--------------- ATRIBUTOS PARA EDITAR --------------")
         print("1 - NOME")
