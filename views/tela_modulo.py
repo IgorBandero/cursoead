@@ -1,5 +1,9 @@
+import PySimpleGUI as sg
+
 import re
+
 class TelaModulo:
+
     def mostrar_menu_opcoes(self):
         while True:
             print("\n---------------------- MÓDULOS ---------------------")

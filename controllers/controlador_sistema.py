@@ -95,7 +95,7 @@ class ControladorSistema:
             3: self.opcoes_questao,
             4: self.opcoes_professor,
             5: self.opcoes_orientacao,
-            6: self.opcoes_curso,  # Adicionando a nova opção de cursos
+            6: self.opcoes_curso,
             7: self.opcoes_modulo,
             8: self.opcoes_certificado,
             0: self.encerrar_sistema

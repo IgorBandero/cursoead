@@ -1,8 +1,9 @@
 from datetime import datetime
 import re
+import PySimpleGUI as sg
 class TelaAluno():
 
-    def mostrar_menu_opcoes(self):
+     def mostrar_menu_opcoes(self):
         while(True):
             print("\n---------------------- ALUNOS ----------------------")
             print("Escolha a opção:")

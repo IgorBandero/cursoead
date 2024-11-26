@@ -33,19 +33,3 @@ class Aluno(Pessoa):
     
     def mostra_funcao(self):
         return f"Usuário: ${self.nome} é aluno de ${self.matricula.curso} na universidade."
-
-    def mostrar_aluno(self):
-        print("\n-----------------------------------------------")
-        print("NOME: ", self.nome)
-        print("CPF: ", self.cpf)
-        print("TELEFONE: ", self.telefone)
-        print("EMAIL: ", self.email)
-        print("USUÁRIO: ", self.usuario)
-        print("RUA: ", self.endereco.rua)
-        print("NÚMERO: ", self.endereco.num_residencia)
-        print("BAIRRO: ", self.endereco.bairro)
-        print("CIDADE: ", self.endereco.cidade)
-        print("CEP: ", self.endereco.cep)
-        print("CURSO: ", self.matricula.curso.nome)
-        print("MATRÍCULA: ", self.matricula.codigo)
-        print("\n")
