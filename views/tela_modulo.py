@@ -6,7 +6,7 @@ class TelaModulo:
         self.init_components()
 
     def init_components(self):
-        sg.ChangeLookAndFeel('DarkTeal4') #hjbdhj
+        sg.ChangeLookAndFeel('DarkTeal4') #hjbdhj #hjvbhagsdc
         layout = [
             [sg.Text('--------------------- MÓDULOS ---------------------', font=("Helvica",25))],
             [sg.Text('Escolha a opção:', font=("Helvica",15))],
