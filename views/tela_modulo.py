@@ -1,128 +1,131 @@
 import PySimpleGUI as sg
 
-import re
-
 class TelaModulo:
+    def __init__(self):
+        self.__window = None
+        self.init_components()
+
+    def init_components(self):
+        sg.ChangeLookAndFeel('DarkTeal4')
+        layout = [
+            [sg.Text('--------------------- MÓDULOS ---------------------', font=("Helvica",25))],
+            [sg.Text('Escolha a opção:', font=("Helvica",15))],
+            [sg.Radio('Cadastrar Módulo', "RD1", key='1')],
+            [sg.Radio('Editar Módulo', "RD1", key='2')],
+            [sg.Radio('Excluir Módulo', "RD1", key='3')],
+            [sg.Radio('Listar Módulos', "RD1", key='4')],
+            [sg.Radio('Avaliar Módulos', "RD1", key='5')],
+            [sg.Radio('Voltar', "RD1", key='0')],
+            [sg.Button('Confirmar'), sg.Cancel('Cancelar')]
+        ]
+        self.__window = sg.Window('Sistema de Módulos', layout)
 
     def mostrar_menu_opcoes(self):
-        while True:
-            print("\n---------------------- MÓDULOS ---------------------")
-            print("Escolha a opção:")
-            print("----------------------------------------------------")
-            print("1 - Cadastrar Módulo")
-            print("2 - Editar Módulo")
-            print("3 - Excluir Módulo")
-            print("4 - Listar Módulos")
-            print("5 - Avaliar Módulos")
-            print("0 - Voltar")
-            print("----------------------------------------------------")
-            opcao = input("Escolha a opção: ")
-            if opcao in ["1", "2", "3", "4", "5", "0"]:
-                return int(opcao)
-            else:
-                print("\n***** OPÇÃO INVÁLIDA! TENTE NOVAMENTE... *****")
+        self.init_components()
+        button, values = self.__window.Read()  # Correção aqui: chamada de Read() no lugar certo
+        opcao = 0
+        if values['1']:
+            opcao = 1
+        elif values['2']:
+            opcao = 2
+        elif values['3']:
+            opcao = 3
+        elif values['4']:
+            opcao = 4
+        elif values['5']:
+            opcao = 5
+        elif values['0'] or event in (None, 'Cancelar'):
+            opcao = 0
+        self.close()
+        return opcao
 
     def pega_dados_modulo(self):
-        while True:
-            codigo = input("Código do Módulo: ")
-            if len(codigo) >= 3:
-                break
-            else:
-                print("O código deve ter pelo menos 3 caracteres.")
+        layout = [
+            [sg.Text("Código do Módulo: "), sg.InputText(key="codigo")],
+            [sg.Text("Nome do Módulo: "), sg.InputText(key="nome")],
+            [sg.Text("Área do Módulo: "), sg.InputText(key="area")],
+            [sg.Text("Carga Horária: "), sg.InputText(key="carga_horaria")],
+            [sg.Button("Confirmar"), sg.Cancel("Cancelar")]
+        ]
+        self.__window = sg.Window("Cadastro de Módulo", layout)
 
-        while True:
-            nome = input("Nome do Módulo: ")
-            if len(nome) >= 5:
-                break
-            else:
-                print("O nome deve ter pelo menos 5 caracteres.")
+        event, values = self.__window.Read()
 
-        area = input("Área do Módulo: ")
-
-        while True:
-            try:
-                carga_horaria = int(input("Carga Horária do Módulo: "))
-                if carga_horaria > 0:
-                    break
-                else:
-                    print("A carga horária deve ser maior que zero.")
-            except ValueError:
-                print("Carga horária inválida. Deve ser um número inteiro.")
-
-        return {"codigo": codigo, "nome": nome, "area": area, "carga_horaria": carga_horaria}
-
-    def selecionar_modulo(self, num_opcoes):
-        if num_opcoes == 0:
-            print("\n************ NENHUM MÓDULO CADASTRADO ***********")
+        if event in (None, "Cancelar"):
+            self.close()
             return None
-        while True:
-            opcao = input("\nComo deseja selecionar o módulo? \n1 - Procurar módulo pelo CÓDIGO \n2 - Selecionar da lista de módulos \n\nEscolha uma opção: ")
-            if opcao in ["1", "2"]:
-                return "Buscar pelo codigo" if opcao == "1" else "Selecionar da lista"
-            else:
-                print("\n****** OPÇÃO INVÁLIDA, TENTE NOVAMENTE... *******")
+
+        if event == "Confirmar":
+            try:
+                carga_horaria = int(values["carga_horaria"])
+                if carga_horaria <= 0:
+                    sg.Popup("Carga horária deve ser maior que zero.")
+                    return None
+                return {"codigo": values["codigo"], "nome": values["nome"], "area": values["area"], "carga_horaria": carga_horaria}
+            except ValueError:
+                sg.Popup("Carga horária deve ser um número válido.")
+                return None
+        self.close()
+        return None
 
     def listar_modulos(self, modulos):
         if not modulos:
-            print("Nenhum módulo cadastrado.")
+            sg.Popup("Nenhum módulo cadastrado.")
         else:
-            print("\n-------- LISTA DE MÓDULOS --------\n")
-            for indice, modulo in enumerate(modulos, start=1):
-                print(f"{indice} - CÓDIGO: {modulo.codigo}, NOME: {modulo.nome}, ÁREA: {modulo.area}, CARGA HORÁRIA: {modulo.carga_horaria}")
+            modulo_list = [f"{indice+1} - CÓDIGO: {modulo['codigo']}, NOME: {modulo['nome']}, ÁREA: {modulo['area']}, CARGA HORÁRIA: {modulo['carga_horaria']}" for indice, modulo in enumerate(modulos)]
+            layout = [[sg.Text("\n".join(modulo_list))], [sg.Button("Voltar")]]
+            self.__window = sg.Window("Lista de Módulos", layout)
+            self.__window.Read()
+            self.close()
 
-    def mostrar_mensagem(self, msg):
-        print(msg)
+    def selecionar_modulo(self, num_opcoes):
+        if num_opcoes == 0:
+            sg.Popup("Nenhum módulo cadastrado.")
+            return None
+
+        layout = [
+            [sg.Text("Como deseja selecionar o módulo?")],
+            [sg.Button("Buscar pelo Código"), sg.Button("Selecionar da Lista")]
+        ]
+        self.__window = sg.Window("Seleção de Módulo", layout)
+        event, values = self.__window.Read()
+
+        if event == "Buscar pelo Código":
+            return self.buscar_modulo_pelo_codigo()
+        elif event == "Selecionar da Lista":
+            return self.selecionar_modulo_na_lista(num_opcoes)
+        self.close()
 
     def buscar_modulo_pelo_codigo(self):
-        while True:
-            codigo = input("\nInforme o código do módulo que deseja selecionar: ")
-            if len(codigo) >= 3:
-                return codigo
-            else:
-                print("Código inválido! Tente novamente.")
+        layout = [[sg.Text("Informe o código do módulo que deseja selecionar: "), sg.InputText(key="codigo")],
+                  [sg.Button("Confirmar"), sg.Cancel("Cancelar")]]
+        self.__window = sg.Window("Buscar Módulo", layout)
+        event, values = self.__window.Read()
+        if event == "Confirmar" and len(values["codigo"]) >= 3:
+            self.close()
+            return values["codigo"]
+        else:
+            sg.Popup("Código inválido!")
+            self.close()
+            return None
 
     def selecionar_modulo_na_lista(self, num_opcoes):
-        while True:
-            indice_modulo = input("Informe o número da opção do módulo que deseja selecionar: ")
-            if indice_modulo.isdigit():
-                indice_modulo = int(indice_modulo) - 1
-                if 0 <= indice_modulo < num_opcoes:
-                    return indice_modulo
-                else:
-                    print("Opção inválida. Por favor, selecione uma opção válida.")
-            else:
-                print("Opção inválida. Por favor, insira um número.")
+        layout = [[sg.Text("Selecione o número do módulo:")]]
+        layout += [[sg.Button(f"Opção {i+1}") for i in range(num_opcoes)]]
+        self.__window = sg.Window("Seleção de Módulo", layout)
+        event, values = self.__window.Read()
 
-    def continuar_registro_modulos(self):
-        while True:
-            print("\nDeseja adicionar outro módulo? \n1 - SIM \n2 - NÃO (Finalizar)")
-            opcao = input("\nEscolha a opção: ")
-            if opcao == "1":
-                return True
-            elif opcao == "2":
-                return False
-            else:
-                print("\n***** OPÇÃO INVÁLIDA! TENTE NOVAMENTE... *****")
+        if event and event.startswith("Opção"):
+            return int(event.split()[1]) - 1
+        self.close()
+        return None
 
     def mostrar_modulo(self, modulo):
-        print(f"CÓDIGO: {modulo['codigo']} | NOME: {modulo['nome']} | ÁREA: {modulo['area']} | CARGA HORÁRIA: {modulo['carga_horaria']}")
+        sg.Popup(f"CÓDIGO: {modulo['codigo']} | NOME: {modulo['nome']} | ÁREA: {modulo['area']} | CARGA HORÁRIA: {modulo['carga_horaria']}")
 
-    def mostrar_modulo_finalizado(self, modulo):
-        self.mostrar_modulo(modulo)
-        print("NOTA FINAL: ", modulo["nota"])
-        print("----------------------------------------------------")
+    def mostrar_mensagem(self, msg):
+        sg.Popup(msg)
 
-    def mostrar_opcao_modulo(self, modulo):
-        print(modulo["indice"]+1, " - CÓDIGO: ", modulo["codigo"], " | NOME: ", modulo["nome"], " | ÁREA: ", modulo["area"], " | CARGA HORÁRIA: ", modulo["carga_horaria"])
-
-    def avaliar_modulos(self, modulo):
-        while(True):
-            print("\n--------------------------------------------------------------------")
-            nota = input(f"Informe a nota para o módulo {modulo['modulo']} (de 0 a 10): ")
-            if bool(re.fullmatch(r"\d+([.,]\d+)?", nota)):
-                if 0.00 <= float(nota) <= 10.00:
-                    return float(nota)
-                else:
-                    print("\n********* NOTA DEVE SER UM NÚMERO DE 0 A 10 ********")
-            else:
-                print("\nNOTA INVÁLIDA! Por favor, tente novamente...")
+    def close(self):
+        if self.__window:
+            self.__window.close()

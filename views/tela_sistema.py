@@ -70,8 +70,8 @@ class TelaSistema:
             [sg.Radio('Professores',"RD1", key='4')],
             [sg.Radio('Orientações', "RD1", key='5')],
             [sg.Radio('Cursos', "RD1", key='6')],
-            [sg.Radio('Questões', "RD1", key='7')],
-            [sg.Radio('Módulos', "RD1", key='8')],
+            [sg.Radio('Modulo', "RD1", key='7')],
+            [sg.Radio('Certificados', "RD1", key='8')],
             [sg.Radio('Finalizar sistema', "RD1", key='0')],
             [sg.Button('Confirmar'), sg.Cancel('Cancelar')]
         ]
