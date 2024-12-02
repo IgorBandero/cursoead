@@ -6,10 +6,10 @@ class TelaModulo:
         self.init_components()
 
     def init_components(self):
-        sg.ChangeLookAndFeel('DarkTeal4') #hjbdhj #hjvbhagsdc
+        sg.ChangeLookAndFeel('DarkTeal4')  # Definir tema
         layout = [
-            [sg.Text('--------------------- MÓDULOS ---------------------', font=("Helvica",25))],
-            [sg.Text('Escolha a opção:', font=("Helvica",15))],
+            [sg.Text('--------------------- MÓDULOS ---------------------', font=("Helvica", 25))],
+            [sg.Text('Escolha a opção:', font=("Helvica", 15))],
             [sg.Radio('Cadastrar Módulo', "RD1", key='1')],
             [sg.Radio('Editar Módulo', "RD1", key='2')],
             [sg.Radio('Excluir Módulo', "RD1", key='3')],
@@ -34,9 +34,9 @@ class TelaModulo:
             opcao = 4
         elif values['5']:
             opcao = 5
-        elif values['0'] or event in (None, 'Cancelar'):
+        elif values['0'] or button in (None, 'Cancelar'):
             opcao = 0
-        self.close()
+        self.close()  # Aqui chamando o close de forma correta.
         return opcao
 
     def pega_dados_modulo(self):
@@ -72,7 +72,10 @@ class TelaModulo:
         if not modulos:
             sg.Popup("Nenhum módulo cadastrado.")
         else:
-            modulo_list = [f"{indice+1} - CÓDIGO: {modulo['codigo']}, NOME: {modulo['nome']}, ÁREA: {modulo['area']}, CARGA HORÁRIA: {modulo['carga_horaria']}" for indice, modulo in enumerate(modulos)]
+            modulo_list = [
+                f"{indice + 1} - CÓDIGO: {modulo.codigo}, NOME: {modulo.nome}, ÁREA: {modulo.area}, CARGA HORÁRIA: {modulo.carga_horaria}"
+                for indice, modulo in enumerate(modulos)
+            ]
             layout = [[sg.Text("\n".join(modulo_list))], [sg.Button("Voltar")]]
             self.__window = sg.Window("Lista de Módulos", layout)
             self.__window.Read()
@@ -121,7 +124,7 @@ class TelaModulo:
         return None
 
     def mostrar_modulo(self, modulo):
-        sg.Popup(f"CÓDIGO: {modulo['codigo']} | NOME: {modulo['nome']} | ÁREA: {modulo['area']} | CARGA HORÁRIA: {modulo['carga_horaria']}")
+        sg.Popup(f"CÓDIGO: {modulo.codigo} | NOME: {modulo.nome} | ÁREA: {modulo.area} | CARGA HORÁRIA: {modulo.carga_horaria}")
 
     def mostrar_mensagem(self, msg):
         sg.Popup(msg)
@@ -129,3 +132,4 @@ class TelaModulo:
     def close(self):
         if self.__window:
             self.__window.close()
+
