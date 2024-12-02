@@ -1,91 +1,117 @@
+import PySimpleGUI as sg
+
 class TelaQuestao:
+    def __init__(self):
+        self.__window = None
+        self.init_components()
+
+    def init_components(self):
+        sg.ChangeLookAndFeel('DarkTeal4')  # Definir tema
+        layout = [
+            [sg.Text('-------- QUESTOES ----------', font=("Helvetica", 25))],
+            [sg.Text('Escolha a opção:', font=("Helvetica", 15))],
+            [sg.Radio('Adicionar Questão', "RD1", key='1')],
+            [sg.Radio('Excluir Questão', "RD1", key='2')],
+            [sg.Radio('Listar Questões', "RD1", key='3')],
+            [sg.Radio('Voltar', "RD1", key='0')],
+            [sg.Button('Confirmar'), sg.Cancel('Cancelar')]
+        ]
+        self.__window = sg.Window('Sistema de Questões', layout)
+
     def mostrar_menu_opcoes(self):
-        print("-------- QUESTOES ----------")
-        print("Escolha a opção:")
-        print("----------------------------")
-        print("1. Adicionar Questao")
-        print("2. Excluir Questao")
-        print("3. Listar Questões")
-        print("0. Voltar")
-        print("----------------------------")
-        opcao = input("Escolha a opção: ")
-        if opcao in {"1", "2", "3", "0"}:
-            return int(opcao)
-        else:
-            print("\n***** OPÇÃO INVÁLIDA! TENTE NOVAMENTE... *****")
-            return None
+        self.init_components()
+        button, values = self.__window.Read()  # Correção aqui: chamada de Read() no lugar certo
+        opcao = 0
+        if values['1']:
+            opcao = 1
+        elif values['2']:
+            opcao = 2
+        elif values['3']:
+            opcao = 3
+        elif values['0'] or button in (None, 'Cancelar'):
+            opcao = 0
+        self.close()  # Fechando a janela após a escolha
+        return opcao
 
     def pega_dados_questao(self):
-        print("-------- DADOS DA QUESTAO ----------")
-        id = self.pegar_id()
-        enunciado = self.pegar_enunciado()
-        alternativas = self.pegar_alternativas()
-        resposta_correta = self.pegar_resposta_correta(alternativas)
-        
-        # Transforme resposta_correta em uma lista
-        respostas_corretas = [resposta_correta]
-        
-        return {
-            "id": id,
-            "enunciado": enunciado,
-            "alternativas": alternativas,
-            "respostas_corretas": respostas_corretas
-        }
+        layout = [
+            [sg.Text("ID da Questão: "), sg.InputText(key="id")],
+            [sg.Text("Enunciado: "), sg.InputText(key="enunciado")],
+            [sg.Text("Alternativas (separadas por vírgula): "), sg.InputText(key="alternativas")],
+            [sg.Text("Resposta Correta: "), sg.InputText(key="resposta_correta")],
+            [sg.Button("Confirmar"), sg.Cancel("Cancelar")]
+        ]
+        self.__window = sg.Window("Cadastro de Questão", layout)
 
-    def pegar_id(self):
-        while True:
+        event, values = self.__window.Read()
+
+        if event in (None, "Cancelar"):
+            self.close()
+            return None
+
+        if event == "Confirmar":
             try:
-                id = int(input("ID da Questão: "))
-                return id
+                alternativas = values["alternativas"].split(", ")
+                if len(alternativas) < 2:
+                    sg.Popup("É necessário fornecer pelo menos duas alternativas.")
+                    return None
+                if values["resposta_correta"] not in alternativas:
+                    sg.Popup("A resposta correta deve corresponder a uma das alternativas fornecidas.")
+                    return None
+
+                return {
+                    "id": int(values["id"]),
+                    "enunciado": values["enunciado"],
+                    "alternativas": alternativas,
+                    "respostas_corretas": [values["resposta_correta"]]
+                }
             except ValueError:
-                print("ID inválido! Insira um número inteiro.")
+                sg.Popup("ID inválido! Insira um número inteiro para o ID.")
+                return None
+        self.close()
+        return None
 
-    def pegar_enunciado(self):
-        while True:
-            enunciado = input("Enunciado: ")
-            if len(enunciado) >= 5:
-                return enunciado
-            else:
-                print("Enunciado deve ter pelo menos 5 caracteres.")
-
-    def pegar_alternativas(self):
-        while True:
-            alternativas = input("Alternativas (separadas por vírgula): ").split(", ")
-            if len(alternativas) >= 2:
-                return alternativas
-            else:
-                print("É necessário fornecer pelo menos duas alternativas.")
-
-    def pegar_resposta_correta(self, alternativas):
-        while True:
-            resposta_correta = input("Resposta Correta (exatamente como aparece nas alternativas): ")
-            if resposta_correta in alternativas:
-                return resposta_correta
-            else:
-                print("Resposta correta inválida! Deve corresponder a uma das alternativas fornecidas.")
-
-    def mostra_mensagem(self, msg):
-        print(msg)
+    def listar_questoes(self, questoes):
+        if not questoes:
+            sg.Popup("Nenhuma questão cadastrada.")
+        else:
+            questao_list = [
+                f"{indice + 1} - ID: {questao['id']}, Enunciado: {questao['enunciado']}, Alternativas: {', '.join(questao['alternativas'])}, Resposta Correta: {', '.join(questao['respostas_corretas'])}"
+                for indice, questao in enumerate(questoes)
+            ]
+            layout = [[sg.Text("\n".join(questao_list))], [sg.Button("Voltar")]]
+            self.__window = sg.Window("Lista de Questões", layout)
+            self.__window.Read()
+            self.close()
 
     def seleciona_questao(self):
-        while True:
+        layout = [[sg.Text("Informe o código da questão: "), sg.InputText(key="codigo")],
+                  [sg.Button("Confirmar"), sg.Cancel("Cancelar")]]
+        self.__window = sg.Window("Seleção de Questão", layout)
+        event, values = self.__window.Read()
+
+        if event == "Confirmar":
             try:
-                id = int(input("Código da Questão que deseja selecionar: "))
-                return id
+                return int(values["codigo"])
             except ValueError:
-                print("Código inválido! Insira um número inteiro.")
+                sg.Popup("Código inválido! Insira um número inteiro.")
+        self.close()
+        return None
 
     def mostrar_questao(self, dados_questao):
-        print("-------- QUESTAO ----------")
-        print("ID DA QUESTAO: ", dados_questao["id"])
-        print("ENUNCIADO DA QUESTAO: ", dados_questao["enunciado"])
-        print("ALTERNATIVAS DA QUESTAO: ", ", ".join(dados_questao["alternativas"]))
-        
-        # Converte a lista de respostas corretas em uma string sem colchetes
-        resposta_correta_str = ", ".join(dados_questao["respostas_corretas"])
-        print("RESPOSTA CORRETA: ", resposta_correta_str)
-        print("\n")
+        sg.Popup(f"ID: {dados_questao['id']} | Enunciado: {dados_questao['enunciado']} | Alternativas: {', '.join(dados_questao['alternativas'])} | Resposta Correta: {', '.join(dados_questao['respostas_corretas'])}")
+
+    def mostra_mensagem(self, msg):
+        sg.Popup(msg)
+
+    def close(self):
+        if self.__window:
+            self.__window.close()
 
 
 
-    
+
+
+
+
+

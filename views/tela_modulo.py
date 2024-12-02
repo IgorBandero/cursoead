@@ -124,23 +124,26 @@ class TelaModulo:
         return None
 
     def continuar_registro_modulos(self):
-        while True:
-            print("\nDeseja adicionar outro módulo? \n1 - SIM \n2 - NÃO (Finalizar)")
-            opcao = input("\nEscolha a opção: ")
-            if opcao == "1":
-                return True
-            elif opcao == "2":
-                return False
-            else:
-                print("\n***** OPÇÃO INVÁLIDA! TENTE NOVAMENTE... *****")
-        layout = [[sg.Text("Selecione o número do módulo:")]]
-        layout += [[sg.Button(f"Opção {i + 1}") for i in range(num_opcoes)]]
-        self.__window = sg.Window("Seleção de Módulo", layout)
+        layout = [
+            [sg.Text("Deseja adicionar outro módulo?")],
+            [sg.Button("SIM"), sg.Button("NÃO (Finalizar)")]
+        ]
+        self.__window = sg.Window("Adicionar Novo Módulo", layout)
         event, values = self.__window.Read()
-        if event and event.startswith("Opção"):
-            return int(event.split()[1]) - 1
-        self.close()
-        return None
+
+        if event == "SIM":
+            self.close()
+            return True
+        elif event == "NÃO (Finalizar)":
+            self.close()
+            return False
+        else:
+            self.close()
+            return False  # Caso o usuário feche a janela ou clique em cancelar
+
+    def close(self):
+        if self.__window:
+            self.__window.close()
 
     def mostrar_modulo(self, modulo):
         sg.Popup(f"CÓDIGO: {modulo.codigo} | NOME: {modulo.nome} | ÁREA: {modulo.area} | CARGA HORÁRIA: {modulo.carga_horaria}")
