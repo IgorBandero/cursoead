@@ -1,30 +1,35 @@
 from datetime import datetime
+from exceptions.OpcaoInvalidaException import OpcaoInvalidaException
+from exceptions.CpfInvalidoException import CpfInvalidoException
 import re
 import PySimpleGUI as sg
 class TelaAluno():
 
     def mostrar_menu_opcoes(self):
         while(True):
-            print("\n---------------------- ALUNOS ----------------------")
-            print("Escolha a opção:")
-            print("----------------------------------------------------")
-            print("1 -  Cadastrar Aluno")
-            print("2 -  Editar Aluno")
-            print("3 -  Excluir Aluno")
-            print("4 -  Listar Alunos")
-            print("5 -  Mostrar Aluno")
-            print("6 -  Matricular aluno em módulos")
-            print("7 -  Lançar notas de aluno")
-            print("8 -  Finalizar curso de aluno")
-            print("9 -  Relatório de cursos mais populares")
-            print("10 - Relatório de tempo médio de conclusão")
-            print("0 -  Voltar ")
-            print("----------------------------------------------------")
-            opcao = input("Escolha a opção: ")
-            if (opcao == "1" or opcao == "2" or opcao == "3" or opcao == "4" or opcao == "5" or opcao == "6" or opcao == "7" or opcao == "8" or opcao == "9" or opcao == "10" or opcao == "0"):
-                return int(opcao)
-            else:
-                print("\n***** OPÇÃO INVÁLIDA! TENTE NOVAMENTE... *****")
+            try:
+                print("\n---------------------- ALUNOS ----------------------")
+                print("Escolha a opção:")
+                print("----------------------------------------------------")
+                print("1 -  Cadastrar Aluno")
+                print("2 -  Editar Aluno")
+                print("3 -  Excluir Aluno")
+                print("4 -  Listar Alunos")
+                print("5 -  Mostrar Aluno")
+                print("6 -  Matricular aluno em módulos")
+                print("7 -  Lançar notas de aluno")
+                print("8 -  Finalizar curso de aluno")
+                print("9 -  Relatório de cursos mais populares")
+                print("10 - Relatório de tempo médio de conclusão")
+                print("0 -  Voltar ")
+                print("----------------------------------------------------")
+                opcao = input("Escolha a opção: ")
+                if (opcao == "1" or opcao == "2" or opcao == "3" or opcao == "4" or opcao == "5" or opcao == "6" or opcao == "7" or opcao == "8" or opcao == "9" or opcao == "10" or opcao == "0"):
+                    return int(opcao)
+                else:
+                    raise OpcaoInvalidaException
+            except Exception as e:
+                self.mostrar_mensagem(str(e))
 
     def cadastrar_aluno(self):
         print("\n------------------ DADOS DO ALUNO ------------------")
@@ -63,69 +68,76 @@ class TelaAluno():
         print("13 - SENHA")
         print("----------------------------------------------------")
         while(True):
-            opcao = input("\nEscolha uma opção: ")
-            if (opcao == "1"):
-                print("\nInforme o novo NOME...")
-                nome = self.cadastrar_nome()
-                return [int(opcao), nome]
-            if (opcao == "2"):
-                print("\nInforme o novo CPF...")
-                cpf = self.cadastrar_cpf()
-                return [int(opcao), cpf]
-            if (opcao == "3"):
-                print("\nInforme o novo TELEFONE...")
-                telefone = self.cadastrar_telefone()
-                return [int(opcao), telefone]
-            if (opcao == "4"):
-                print("\nInforme o novo EMAIL...")
-                email = self.cadastrar_email()
-                return [int(opcao), email]
-            if (opcao == "5"):
-                print("\nInforme o novo USUÁRIO...")
-                usuario = self.cadastrar_usuario()
-                return [int(opcao), usuario]
-            if (opcao == "6"):
-                print("\nInforme a nova RUA...")
-                rua = self.cadastrar_rua()
-                return [int(opcao), rua]
-            if (opcao == "7"):
-                print("\nInforme o novo NÚMERO DE RESIDÊNCIA...")
-                num_residencia = self.cadastrar_num_residencia()
-                return [int(opcao), num_residencia]
-            if (opcao == "8"):
-                print("\nInforme o novo BAIRRO...")
-                bairro = self.cadastrar_bairro()
-                return [int(opcao), bairro]
-            if (opcao == "9"):
-                print("\nInforme a nova CIDADE...")
-                cidade = self.cadastrar_cidade()
-                return [int(opcao), cidade]
-            if (opcao == "10"):
-                print("\nInforme o novo CEP...")
-                cep = self.cadastrar_cep()
-                return [int(opcao), cep]
-            if (opcao == "11"):
-                print("\nInforme o novo curso...")
-                return [int(opcao), ""]
-            if (opcao == "12"):
-                print("\nInforme o novo CÓDIGO DE MATRÍCULA...")
-                codigo = self.cadastrar_codigo()
-                return [int(opcao), codigo]
-            if (opcao == "13"):
-                return [int(opcao), ""]
-            else:
-                print("\n***** OPÇÃO INVÁLIDA! TENTE NOVAMENTE... *****")
+            try:
+                opcao = input("\nEscolha uma opção: ")
+                if (opcao == "1"):
+                    print("\nInforme o novo NOME...")
+                    nome = self.cadastrar_nome()
+                    return [int(opcao), nome]
+                if (opcao == "2"):
+                    print("\nInforme o novo CPF...")
+                    cpf = self.cadastrar_cpf()
+                    return [int(opcao), cpf]
+                if (opcao == "3"):
+                    print("\nInforme o novo TELEFONE...")
+                    telefone = self.cadastrar_telefone()
+                    return [int(opcao), telefone]
+                if (opcao == "4"):
+                    print("\nInforme o novo EMAIL...")
+                    email = self.cadastrar_email()
+                    return [int(opcao), email]
+                if (opcao == "5"):
+                    print("\nInforme o novo USUÁRIO...")
+                    usuario = self.cadastrar_usuario()
+                    return [int(opcao), usuario]
+                if (opcao == "6"):
+                    print("\nInforme a nova RUA...")
+                    rua = self.cadastrar_rua()
+                    return [int(opcao), rua]
+                if (opcao == "7"):
+                    print("\nInforme o novo NÚMERO DE RESIDÊNCIA...")
+                    num_residencia = self.cadastrar_num_residencia()
+                    return [int(opcao), num_residencia]
+                if (opcao == "8"):
+                    print("\nInforme o novo BAIRRO...")
+                    bairro = self.cadastrar_bairro()
+                    return [int(opcao), bairro]
+                if (opcao == "9"):
+                    print("\nInforme a nova CIDADE...")
+                    cidade = self.cadastrar_cidade()
+                    return [int(opcao), cidade]
+                if (opcao == "10"):
+                    print("\nInforme o novo CEP...")
+                    cep = self.cadastrar_cep()
+                    return [int(opcao), cep]
+                if (opcao == "11"):
+                    print("\nInforme o novo curso...")
+                    return [int(opcao), ""]
+                if (opcao == "12"):
+                    print("\nInforme o novo CÓDIGO DE MATRÍCULA...")
+                    codigo = self.cadastrar_codigo()
+                    return [int(opcao), codigo]
+                if (opcao == "13"):
+                    return [int(opcao), ""]
+                else:
+                    raise OpcaoInvalidaException
+            except Exception as e:
+                self.mostrar_mensagem(str(e))
+
 
     def excluir_aluno(self, aluno):
         while(True):
-            print(f"\nConfirma a exclusão do(a) ALUNO(A): {aluno['nome']} do CURSO: {aluno['curso']} da lista de alunos da universidade? \n1 – SIM \n2 – NÃO (Cancelar)")
-            excluir = input("\nEscolha a opção: ")
-            if (excluir == "1"):
-                return True
-            elif (excluir == "2"):
-                return False
-            else:
-                print("\n******** OPÇÃO INVÁLIDA! TENTE NOVAMENTE... ********")
+            try:
+                print(f"\nConfirma a exclusão do(a) ALUNO(A): {aluno['nome']} do CURSO: {aluno['curso']} da lista de alunos da universidade? \n1 – SIM \n2 – NÃO (Cancelar)")
+                excluir = input("\nEscolha a opção: ")
+                if (excluir == "1"):
+                    return True
+                elif (excluir == "2"):
+                    return False
+                else:
+                    raise OpcaoInvalidaException
+            except Exception as e:
+                self.mostrar_mensagem(str(e))
 
     def mostrar_opcao_aluno(self, aluno):
         print(aluno["indice"]+1, " - NOME: ", aluno["nome"], " | CPF: ", aluno["cpf"], " | MATRÍCULA: ", aluno["matricula"], " | CURSO: ", aluno["curso"])
@@ -135,11 +147,14 @@ class TelaAluno():
             print("\n************** NENHUM ALUNO CADASTRADO *************")
             return
         while(True):
-            opcao = input("\nComo deseja selecionar o aluno? \n1 - Procurar aluno pelo CPF \n2 - Selecionar da lista de alunos \n\nEscolha uma opção: ")
-            if (opcao == "1" or opcao == "2"):
-                break
-            else:
-                print("\n******** OPÇÃO INVÁLIDA, TENTE NOVAMENTE... ********")
+            try:
+                opcao = input("\nComo deseja selecionar o aluno? \n1 - Procurar aluno pelo CPF \n2 - Selecionar da lista de alunos \n\nEscolha uma opção: ")
+                if (opcao == "1" or opcao == "2"):
+                    break
+                else:
+                    raise OpcaoInvalidaException
+            except Exception as e:
+                self.mostrar_mensagem(str(e))
         if (opcao == "1"):
             return "Buscar pelo cpf"
         if (opcao == "2"):
@@ -147,22 +162,28 @@ class TelaAluno():
 
     def selecionar_aluno_na_lista(self, num_opcoes):
         while(True):
-            indice_aluno = input("\nInforme o número da opção do aluno que deseja selecionar: ")
-            if indice_aluno.isdigit():
-                if 1 <= int(indice_aluno) < num_opcoes+1:
-                    return int(indice_aluno) - 1
+            try:
+                indice_aluno = input("\nInforme o número da opção do aluno que deseja selecionar: ")
+                if indice_aluno.isdigit():
+                    if 1 <= int(indice_aluno) < num_opcoes+1:
+                        return int(indice_aluno) - 1
+                    else:
+                        raise OpcaoInvalidaException
                 else:
-                    print("Opção inválida. Por favor, digite o número da opção de aluno desejada.")
-            else:
-                print("Opção inválida. Por favor, digite o número da opção de aluno desejada.")
+                    raise OpcaoInvalidaException
+            except Exception as e:
+                self.mostrar_mensagem(str(e))
 
     def buscar_aluno_pelo_cpf(self):
         while(True):
-            cpf = input("\nInforme o número do CPF do aluno que deseja selecionar: ")
-            if cpf.isdigit() and len(cpf) == 11:
-                return int(cpf)
-            else:
-                print("\n********* CPF INVÁLIDO! TENTE NOVAMENTE... *********")
+            try:
+                cpf = input("\nInforme o número do CPF do aluno que deseja selecionar: ")
+                if cpf.isdigit() and len(cpf) == 11:
+                    return int(cpf)
+                else:
+                    raise CpfInvalidoException
+            except Exception as e:
+                self.mostrar_mensagem(str(e))
 
     def mostrar_aluno(self, aluno):
         print("\n---------------------- ALUNO(A) --------------------")
