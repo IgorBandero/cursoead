@@ -7,7 +7,6 @@ from daos.curso_dao import CursoDAO
 class ControladorCurso():
 
     def __init__(self, controlador_sistema, controlador_modulo):
-        self.__cursos = []
         self.__tela_curso = TelaCurso()
         self.__tela_modulo = TelaModulo()
         self.__controlador_modulo = controlador_modulo
@@ -28,7 +27,6 @@ class ControladorCurso():
                     if curso_cadastrado is None:
                         novo_curso = Curso(curso["nome"], curso["descricao"], curso["carga_horaria"], curso["min_semestres"], curso["max_semestres"], curso["mensalidade"], modulos)
                         self.__curso_DAO.add(novo_curso)
-                        #self.__cursos.append(novo_curso)
                         self.__tela_curso.mostrar_mensagem(f"\nCurso: {novo_curso.nome} cadastrado com sucesso!")
                     else:
                         raise CursoJaRegistradoException
@@ -43,34 +41,26 @@ class ControladorCurso():
         try:
             curso = self.selecionar_curso()
             if(curso is not None):
-                self.mostrar_curso(curso)
-                while(True):
-                    campo, info_atualizada = self.__tela_curso.editar_curso()
-                    if info_atualizada is not None:
-                        for item in self.__curso_DAO.get_all():
-                            if(item.nome == curso.nome):
-                                if campo == 1:
-                                    for caso in self.__curso_DAO.get_all():
-                                        if caso.nome == info_atualizada:
-                                            raise NomeCursoJaRegistradoException
-                                            return
-                                    item.nome = info_atualizada
-                                elif campo == 2:
-                                    item.descricao = info_atualizada
-                                elif campo == 3:
-                                    item.carga_horaria = info_atualizada
-                                elif campo == 4:
-                                    item.min_semestres = info_atualizada
-                                elif campo == 5:
-                                    item.max_semestres = info_atualizada
-                                elif campo == 6:
-                                    item.mensalidade = info_atualizada
-                                self.mostrar_curso(curso)
-                    else:
-                        raise EdicaoCursoException
-                    continuar = self.__tela_curso.continuar("Deseja editar outro campo? \n1 - SIM \n2 - NÃO (Sair)")
-                    if not continuar:
-                        break
+                curso_atualizado = self.__tela_curso.editar_curso({"nome": curso.nome, "descricao": curso.descricao, "carga_horaria": curso.carga_horaria,
+                                                    "min_semestres": curso.min_semestres, "max_semestres": curso.max_semestres, "mensalidade": curso.mensalidade})
+                if curso.nome != curso_atualizado["nome"]:
+                    self.__curso_DAO.remove(curso.nome)
+                    curso_novo = Curso(curso_atualizado["nome"], curso_atualizado["descricao"], curso_atualizado["carga_horaria"],
+                                    curso_atualizado["min_semestres"], curso_atualizado["max_semestres"], curso_atualizado["mensalidade"],
+                                    curso.modulos)
+                    self.__curso_DAO.add(curso_novo)
+                else:
+                    for item in self.__curso_DAO.get_all():
+                        if(item.nome == curso.nome):
+                            item.nome = curso_atualizado["nome"]
+                            item.descricao = curso_atualizado["descricao"]
+                            item.carga_horaria = curso_atualizado["carga_horaria"]
+                            item.min_semestres = curso_atualizado["min_semestres"]
+                            item.max_semestres = curso_atualizado["max_semestres"]
+                            item.mensalidade = curso_atualizado["mensalidade"]
+                            self.__curso_DAO.update(item)
+                self.__tela_curso.mostrar_mensagem(f"Curso {curso.nome} atualizado com sucesso!")
+            self.abrir_tela()
         except Exception as e:
             self.__tela_curso.mostrar_mensagem(str(e))
 
@@ -82,31 +72,35 @@ class ControladorCurso():
                 self.__curso_DAO.remove(curso.nome)
                 self.__tela_curso.mostrar_mensagem(f"\nCurso: {curso.nome} foi removido da lista de cursos da universidade.")
             else:
-                self.__tela_curso.mostrar_mensagem("\n*************** EXCLUSÃO CANCELADA ****************")
+                self.__tela_curso.mostrar_mensagem("*************** EXCLUSÃO CANCELADA ****************")
+        self.abrir_tela()
 
     def selecionar_curso(self):
         try:
-            while (True):
-                self.__tela_curso.mostrar_mensagem("\n----------------- SELECIONAR CURSO -----------------")
-                tipo_consulta = self.__tela_curso.selecionar_curso(len(self.__curso_DAO.get_all()))
-                if tipo_consulta == "Buscar pelo nome":
-                    curso = self.selecionar_curso_pelo_nome()
-                    if(curso is not None):
-                        return curso
-                    else:
-                        raise CursoNaoEncontradoException
-                elif tipo_consulta == "Selecionar da lista":
-                    self.listar_cursos()
-                    nome_curso_escolhido = self.__tela_curso.selecionar_curso_na_lista(len(self.__curso_DAO.get_all()))
-                    if (nome_curso_escolhido is not None):
-                        try:
-                            curso = self.buscar_curso_pelo_nome(nome_curso_escolhido)
-                            return curso
-                        except CursoNaoEncontradoException:
-                            return
-                continuar = self.__tela_curso.continuar("Deseja tentar novamente? \n1 - SIM \n2 - NÃO (Sair)")
-                if not continuar:
-                    break
+            if(len(self.__curso_DAO.get_all()) == 0):
+                raise ListaCursosVaziaException
+            lista_cursos = []
+            for curso in self.__curso_DAO.get_all():
+                lista_cursos.append({"nome": curso.nome})
+            nome_curso_escolhido = self.__tela_curso.selecionar_curso_na_lista(lista_cursos)
+            if (nome_curso_escolhido is not None):
+                try:
+                    curso = self.__curso_DAO.get(nome_curso_escolhido)
+                    return curso
+                except CursoNaoEncontradoException:
+                    return
+
+        except Exception as e:
+            self.__tela_curso.mostrar_mensagem(str(e))
+
+    def listar_cursos(self):
+        try:
+            if(len(self.__curso_DAO.get_all()) == 0):
+                raise ListaCursosVaziaException
+            lista_cursos = []
+            for curso in self.__curso_DAO.get_all():
+                lista_cursos.append({"nome": curso.nome})
+            curso = self.__tela_curso.mostrar_opcao_curso(lista_cursos)
         except Exception as e:
             self.__tela_curso.mostrar_mensagem(str(e))
 
@@ -127,17 +121,6 @@ class ControladorCurso():
             if curso.nome.upper() == nome.upper():
                 return curso
         return None
-
-    def listar_cursos(self):
-        try:
-            if(len(self.__curso_DAO.get_all()) == 0):
-                raise ListaCursosVaziaException
-                return
-            print("\n----------------- LISTA DE CURSOS ------------------\n")
-            for indice, curso in enumerate(self.__curso_DAO.get_all()):
-                self.__tela_curso.mostrar_opcao_curso({"indice": indice, "nome": curso.nome})
-        except Exception as e:
-            self.__tela_curso.mostrar_mensagem(str(e))
 
     def buscar_curso(self):
         try:
@@ -163,10 +146,19 @@ class ControladorCurso():
             self.__tela_curso.mostrar_mensagem(f"CURSO: {curso.nome} | AVALIAÇÃO MÉDIA: {avaliacao}")
 
     def abrir_tela(self):
-        menu_opcoes = {1: self.cadastrar_curso, 2: self.editar_curso, 3: self.excluir_curso, 4: self.listar_cursos, 5: self.buscar_curso, 6: self.cursos_melhor_avaliados, 0: self.voltar}
-
-        while True:
-            menu_opcoes[self.__tela_curso.mostrar_menu_opcoes()]()
+        opcoes = {
+            1: self.cadastrar_curso,
+            2: self.editar_curso,
+            3: self.excluir_curso,
+            4: self.listar_cursos,
+            5: self.buscar_curso,
+            6: self.cursos_melhor_avaliados,
+            0: self.voltar
+        }
+        opcao_escolhida = self.__tela_curso.menu_opcoes()
+        funcao_escolhida = opcoes.get(opcao_escolhida)
+        if funcao_escolhida:
+            funcao_escolhida()
 
     def voltar(self):
         self.__controlador_sistema.abrir_tela()

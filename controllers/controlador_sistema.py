@@ -7,13 +7,11 @@ from controllers.controlador_curso import ControladorCurso  # Adicionando Contro
 from controllers.controlador_certificado import ControladorCertificado
 from controllers.controlador_modulo import ControladorModulo
 from views.tela_sistema import TelaSistema
+from exceptions.OpcaoInvalidaException import OpcaoInvalidaException
 
 class ControladorSistema:
     def __init__(self):
-        # Instância da tela do sistema
         self.__tela_sistema = TelaSistema()
-
-        # Instanciando os controladores
         self.__controlador_questoes = ControladorQuestao(self)
         self.__controlador_professores = ControladorProfessor(self)
         self.__controlador_orientacao = ControladorOrientacao(self)
@@ -23,7 +21,6 @@ class ControladorSistema:
         self.__controlador_atividade = ControladorAtividadeAvaliativa(self.__controlador_questoes, self.__controlador_alunos)
         self.__controlador_certificado = ControladorCertificado(self,  self.__controlador_alunos)
 
-    # Propriedades para acessar os controladores no sistema
     @property
     def controlador_alunos(self):
         return self.__controlador_alunos
@@ -56,7 +53,6 @@ class ControladorSistema:
     def controlador_modulo(self):
         return self.__controlador_modulo
 
-    # Funções para cada opção do menu principal
     def inicializar_sistema(self):
         self.abrir_tela()
 
@@ -100,11 +96,7 @@ class ControladorSistema:
             8: self.opcoes_certificado,
             0: self.encerrar_sistema
         }
-
-        while True:
-            opcao_escolhida = self.__tela_sistema.menu_opcoes()
-            funcao_escolhida = opcoes.get(opcao_escolhida)
-            if funcao_escolhida:
-                funcao_escolhida()
-            else:
-                self.__tela_sistema.mostra_mensagem("Opção inválida, tente novamente.")
+        opcao_escolhida = self.__tela_sistema.menu_opcoes()
+        funcao_escolhida = opcoes.get(opcao_escolhida)
+        if funcao_escolhida:
+            funcao_escolhida()
