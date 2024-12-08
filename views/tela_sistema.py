@@ -10,7 +10,7 @@ class TelaSistema:
         sg.ChangeLookAndFeel('DarkTeal4')
         layout = [
             [sg.Text("-------------- Sistema de Cursos EAD ---------------", font=("Helvica",25), pad=((0, 0), (10, 15)))],
-            [sg.Text("Escolha sua opção:", font=("Helvica",15), pad=((0, 0), (0, 10)))],
+            [sg.Text("Escolha sua opção:", font=("Helvica",14), pad=((5, 0), (0, 10)))],
             [sg.Radio("Alunos","RD1", key="1")],
             [sg.Radio("Atividades Avaliativas","RD1", key="2")],
             [sg.Radio("Questões","RD1", key="3")],
@@ -20,7 +20,7 @@ class TelaSistema:
             [sg.Radio("Módulos", "RD1", key="7")],
             [sg.Radio("Certificados", "RD1", key="8")],
             [sg.Radio("Finalizar Sistema", "RD1", key="0")],
-            [sg.Button("Confirmar", pad=((15, 0), (20, 20))), sg.Cancel("Cancelar", pad=((15, 0), (20, 20)))],
+            [sg.Button("Confirmar", size=(8, 1), pad=((10, 0), (20, 20))), sg.Cancel("Cancelar", size=(8, 1), pad=((15, 0), (20, 20)))],
         ]
         self.__window = sg.Window("Sistema de Cursos EAD").Layout(layout)
 

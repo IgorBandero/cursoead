@@ -1,3 +1,3 @@
 class OpcaoInvalidaException(Exception):
     def __init__(self):
-        super().__init__("\n\n******** OPÇÃO INVÁLIDA! TENTE NOVAMENTE... ********")
+        super().__init__("OPÇÃO INVÁLIDA! TENTE NOVAMENTE...\n")

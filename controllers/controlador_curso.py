@@ -20,14 +20,13 @@ class ControladorCurso():
                 raise ListaModulosVaziaException
             curso = self.__tela_curso.cadastrar_curso()
             if (curso is not None):
-                self.__tela_curso.mostrar_mensagem("Módulos: ")
                 modulos = self.__controlador_modulo.selecionar_modulos()
                 if (modulos is not None):
                     curso_cadastrado = self.buscar_curso_pelo_nome(curso["nome"])
                     if curso_cadastrado is None:
                         novo_curso = Curso(curso["nome"], curso["descricao"], curso["carga_horaria"], curso["min_semestres"], curso["max_semestres"], curso["mensalidade"], modulos)
                         self.__curso_DAO.add(novo_curso)
-                        self.__tela_curso.mostrar_mensagem(f"\nCurso: {novo_curso.nome} cadastrado com sucesso!")
+                        self.__tela_curso.mostrar_mensagem(f"Curso: {novo_curso.nome} cadastrado com sucesso!\n")
                     else:
                         raise CursoJaRegistradoException
                 else:
@@ -36,61 +35,70 @@ class ControladorCurso():
                 raise CursoInvalidoException
         except Exception as e:
             self.__tela_curso.mostrar_mensagem(str(e))
+            self.abrir_tela()
 
     def editar_curso(self):
         try:
-            curso = self.selecionar_curso()
+            if(len(self.__curso_DAO.get_all()) == 0):
+                raise ListaCursosVaziaException
+            curso = self.selecionar_curso("Selecione um curso para editar:")
             if(curso is not None):
                 curso_atualizado = self.__tela_curso.editar_curso({"nome": curso.nome, "descricao": curso.descricao, "carga_horaria": curso.carga_horaria,
                                                     "min_semestres": curso.min_semestres, "max_semestres": curso.max_semestres, "mensalidade": curso.mensalidade})
-                if curso.nome != curso_atualizado["nome"]:
-                    self.__curso_DAO.remove(curso.nome)
-                    curso_novo = Curso(curso_atualizado["nome"], curso_atualizado["descricao"], curso_atualizado["carga_horaria"],
-                                    curso_atualizado["min_semestres"], curso_atualizado["max_semestres"], curso_atualizado["mensalidade"],
-                                    curso.modulos)
-                    self.__curso_DAO.add(curso_novo)
-                else:
-                    for item in self.__curso_DAO.get_all():
-                        if(item.nome == curso.nome):
-                            item.nome = curso_atualizado["nome"]
-                            item.descricao = curso_atualizado["descricao"]
-                            item.carga_horaria = curso_atualizado["carga_horaria"]
-                            item.min_semestres = curso_atualizado["min_semestres"]
-                            item.max_semestres = curso_atualizado["max_semestres"]
-                            item.mensalidade = curso_atualizado["mensalidade"]
-                            self.__curso_DAO.update(item)
-                self.__tela_curso.mostrar_mensagem(f"Curso {curso.nome} atualizado com sucesso!")
-            self.abrir_tela()
+                if curso_atualizado:
+                    if curso.nome != curso_atualizado["nome"]:
+                        self.__curso_DAO.remove(curso.nome)
+                        curso_novo = Curso(curso_atualizado["nome"], curso_atualizado["descricao"], curso_atualizado["carga_horaria"],
+                                        curso_atualizado["min_semestres"], curso_atualizado["max_semestres"], curso_atualizado["mensalidade"],
+                                        curso.modulos)
+                        self.__curso_DAO.add(curso_novo)
+                    else:
+                        for item in self.__curso_DAO.get_all():
+                            if(item.nome == curso.nome):
+                                item.nome = curso_atualizado["nome"]
+                                item.descricao = curso_atualizado["descricao"]
+                                item.carga_horaria = curso_atualizado["carga_horaria"]
+                                item.min_semestres = curso_atualizado["min_semestres"]
+                                item.max_semestres = curso_atualizado["max_semestres"]
+                                item.mensalidade = curso_atualizado["mensalidade"]
+                                self.__curso_DAO.update(item)
+                    self.__tela_curso.mostrar_mensagem(f"Curso {curso.nome} atualizado com sucesso!\n")
         except Exception as e:
             self.__tela_curso.mostrar_mensagem(str(e))
-
-    def excluir_curso(self):
-        curso = self.selecionar_curso()
-        if(curso is not None):
-            excluir = self.__tela_curso.excluir_curso({"nome": curso.nome})
-            if (excluir):
-                self.__curso_DAO.remove(curso.nome)
-                self.__tela_curso.mostrar_mensagem(f"\nCurso: {curso.nome} foi removido da lista de cursos da universidade.")
-            else:
-                self.__tela_curso.mostrar_mensagem("*************** EXCLUSÃO CANCELADA ****************")
         self.abrir_tela()
 
-    def selecionar_curso(self):
+    def excluir_curso(self):
+        try:
+            if(len(self.__curso_DAO.get_all()) == 0):
+                    raise ListaCursosVaziaException
+            curso = self.selecionar_curso("Selecione um curso para excluir:")
+            if(curso is not None):
+                excluir = self.__tela_curso.excluir_curso({"nome": curso.nome})
+                if (excluir):
+                    self.__curso_DAO.remove(curso.nome)
+                    self.__tela_curso.mostrar_mensagem(f"Curso: {curso.nome} foi removido da lista de cursos da universidade\n")
+                else:
+                    self.__tela_curso.mostrar_mensagem("EXCLUSÃO CANCELADA!\n")
+        except Exception as e:
+            self.__tela_curso.mostrar_mensagem(str(e))
+        self.abrir_tela()
+
+    def selecionar_curso(self, mensagem):
         try:
             if(len(self.__curso_DAO.get_all()) == 0):
                 raise ListaCursosVaziaException
             lista_cursos = []
             for curso in self.__curso_DAO.get_all():
                 lista_cursos.append({"nome": curso.nome})
-            nome_curso_escolhido = self.__tela_curso.selecionar_curso_na_lista(lista_cursos)
+            nome_curso_escolhido = self.__tela_curso.selecionar_curso_na_lista(lista_cursos, mensagem)
             if (nome_curso_escolhido is not None):
                 try:
                     curso = self.__curso_DAO.get(nome_curso_escolhido)
                     return curso
                 except CursoNaoEncontradoException:
                     return
-
         except Exception as e:
+            self.abrir_tela()
             self.__tela_curso.mostrar_mensagem(str(e))
 
     def listar_cursos(self):
@@ -99,21 +107,11 @@ class ControladorCurso():
                 raise ListaCursosVaziaException
             lista_cursos = []
             for curso in self.__curso_DAO.get_all():
-                lista_cursos.append({"nome": curso.nome})
-            curso = self.__tela_curso.mostrar_opcao_curso(lista_cursos)
+                lista_cursos.append({"nome": curso.nome, "carga_horaria": curso.carga_horaria, "mensalidade": curso.mensalidade})
+            curso = self.__tela_curso.listar_cursos(lista_cursos)
+            self.abrir_tela()
         except Exception as e:
-            self.__tela_curso.mostrar_mensagem(str(e))
-
-    def selecionar_curso_pelo_nome(self):
-        try:
-            nome = self.__tela_curso.buscar_curso_pelo_nome()
-            if (nome is not None):
-                curso = self.buscar_curso_pelo_nome(nome)
-                if(curso is not None):
-                    return curso
-                else:
-                    raise CursoNaoEncontradoException
-        except Exception as e:
+            self.abrir_tela()
             self.__tela_curso.mostrar_mensagem(str(e))
 
     def buscar_curso_pelo_nome(self, nome):
@@ -124,13 +122,14 @@ class ControladorCurso():
 
     def buscar_curso(self):
         try:
-            curso = self.selecionar_curso()
+            curso = self.selecionar_curso("Selecione um curso para ver os detalhes:")
             if curso is not None:
                 self.mostrar_curso(curso)
             else:
                 raise CursoNaoEncontradoException
         except Exception as e:
             self.__tela_curso.mostrar_mensagem(str(e))
+        self.abrir_tela()
 
     def mostrar_curso(self, curso):
         self.__tela_curso.mostrar_curso({"nome": curso.nome, "descricao": curso.descricao, "carga_horaria": curso.carga_horaria, "min_semestres": curso.min_semestres, "max_semestres": curso.max_semestres, "mensalidade": curso.mensalidade})
@@ -142,8 +141,11 @@ class ControladorCurso():
     def cursos_melhor_avaliados(self):
         avaliacoes = [(curso, curso.avaliacao_media_curso()) for curso in self.__curso_DAO.get_all()]
         cursos_ordenados = sorted(avaliacoes, key=lambda x: x[1], reverse=True)
+        lista_avaliacoes = []
         for curso, avaliacao in cursos_ordenados:
-            self.__tela_curso.mostrar_mensagem(f"CURSO: {curso.nome} | AVALIAÇÃO MÉDIA: {avaliacao}")
+            lista_avaliacoes.append({"nome": curso.nome, "avaliacao": avaliacao})
+        self.__tela_curso.mostrar_avaliacoes(lista_avaliacoes)
+        self.abrir_tela()
 
     def abrir_tela(self):
         opcoes = {
