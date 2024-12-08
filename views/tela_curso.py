@@ -56,12 +56,12 @@ class TelaCurso():
         sg.ChangeLookAndFeel('DarkTeal4')
         layout = [
             [sg.Text("------------------ Dados do Curso -------------------", font=("Helvica", 25), pad=((0, 0), (0, 10)))],
-            [sg.Text("Nome: ", size=(17, 1)), sg.InputText("", key="nome", size=(50, 1))],
-            [sg.Text("Descrição: ", size=(17, 1)), sg.InputText("", key="descricao", size=(50, 1))],
-            [sg.Text("Carga Horária: ", size=(17, 1)), sg.InputText("", key="carga_horaria", size=(50, 1))],
-            [sg.Text("Mínimo de semestres: ", size=(17, 1)), sg.InputText("", key="min_semestres", size=(50, 1))],
-            [sg.Text("Máximo de semestres: ", size=(17, 1)), sg.InputText("", key="max_semestres", size=(50, 1))],
-            [sg.Text("Mensalidade: ", size=(17, 1)), sg.InputText("", key="mensalidade", size=(50, 1))],
+            [sg.Text("Nome: "), sg.InputText("", key="nome", size=(50, 1))],
+            [sg.Text("Descrição: "), sg.InputText("", key="descricao", size=(50, 1))],
+            [sg.Text("Carga Horária: "), sg.InputText("", key="carga_horaria", size=(50, 1))],
+            [sg.Text("Mínimo de semestres: "), sg.InputText("", key="min_semestres", size=(50, 1))],
+            [sg.Text("Máximo de semestres: "), sg.InputText("", key="max_semestres", size=(50, 1))],
+            [sg.Text("Mensalidade: "), sg.InputText("", key="mensalidade", size=(50, 1))],
             [sg.Button("Confirmar", pad=((5, 0), (20, 20))), sg.Cancel("Cancelar")]
         ]
         self.__window = sg.Window("Sistema de livros").Layout(layout)
@@ -192,10 +192,10 @@ class TelaCurso():
             return "Selecionar da lista"
 
     def nome_valido(self, nome):
-        return len(nome) >= 5 and nome.isalpha()
+        return len(nome) >= 5 
 
     def descricao_valida(self, descricao):
-        return len(descricao) >= 10 and descricao.isalpha()
+        return len(descricao) >= 10
 
     def carga_semestres_valido(self, variavel):
         if variavel.isdigit():
