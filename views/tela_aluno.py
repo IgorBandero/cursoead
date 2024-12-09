@@ -1,129 +1,223 @@
 from datetime import datetime
 from exceptions.OpcaoInvalidaException import OpcaoInvalidaException
 from exceptions.CpfInvalidoException import CpfInvalidoException
+from exceptions.AlunoExceptions import EdicaoAlunoException
 import re
 import PySimpleGUI as sg
 class TelaAluno():
 
+    def __init__(self):
+        self.__window = None
+        self.mostrar_menu_opcoes()
+
     def mostrar_menu_opcoes(self):
+        sg.ChangeLookAndFeel('DarkTeal4')
+        layout = [
+            [sg.Text("----------------------- Alunos -----------------------", font=("Helvica", 25), pad=((0, 0), (10, 15)))],
+            [sg.Text("Escolha sua opção: ", font=("Helvica", 14), pad=((5, 0), (0, 10)))],
+            [sg.Radio("Cadastrar Aluno", "RD1", key="1")],
+            [sg.Radio("Editar Aluno", "RD1", key="2")],
+            [sg.Radio("Excluir Aluno", "RD1", key="3")],
+            [sg.Radio("Listar Alunos", "RD1", key="4")],
+            [sg.Radio("Mostrar Aluno", "RD1", key="5")],
+            [sg.Radio("Matricular aluno em módulos", "RD1", key="6")],
+            [sg.Radio("Lançar notas de aluno", "RD1", key="7")],
+            [sg.Radio("Finalizar curso de aluno", "RD1", key="8")],
+            [sg.Radio("Relatório de cursos mais populares", "RD1", key="9")],
+            [sg.Radio("Relatório de tempo médio de conclusão", "RD1", key="10")],
+            [sg.Radio("Voltar", "RD1", key="0")],
+            [sg.Button("Confirmar", size=(8, 1), pad=((10, 0), (20, 20))), sg.Cancel("Cancelar", size=(8, 1), pad=((15, 0), (20, 20)))]
+        ]
+        self.__window = sg.Window("Sistema de Alunos").Layout(layout)
+
+    def menu_opcoes(self):
         while(True):
+            self.mostrar_menu_opcoes()
+            button, values = self.open()
+            opcao = 0
             try:
-                print("\n---------------------- ALUNOS ----------------------")
-                print("Escolha a opção:")
-                print("----------------------------------------------------")
-                print("1 -  Cadastrar Aluno")
-                print("2 -  Editar Aluno")
-                print("3 -  Excluir Aluno")
-                print("4 -  Listar Alunos")
-                print("5 -  Mostrar Aluno")
-                print("6 -  Matricular aluno em módulos")
-                print("7 -  Lançar notas de aluno")
-                print("8 -  Finalizar curso de aluno")
-                print("9 -  Relatório de cursos mais populares")
-                print("10 - Relatório de tempo médio de conclusão")
-                print("0 -  Voltar ")
-                print("----------------------------------------------------")
-                opcao = input("Escolha a opção: ")
-                if (opcao == "1" or opcao == "2" or opcao == "3" or opcao == "4" or opcao == "5" or opcao == "6" or opcao == "7" or opcao == "8" or opcao == "9" or opcao == "10" or opcao == "0"):
-                    return int(opcao)
+                if values["1"]:
+                    opcao = 1
+                elif values["2"]:
+                    opcao = 2
+                elif values["3"]:
+                    opcao = 3
+                elif values['4']:
+                    opcao = 4
+                elif values["5"]:
+                    opcao = 5
+                elif values["6"]:
+                    opcao = 6
+                elif values["7"]:
+                    opcao = 7
+                elif values["8"]:
+                    opcao = 8
+                elif values["9"]:
+                    opcao = 9
+                elif values["10"]:
+                    opcao = 10
+                elif values["0"] or button in (None, "Cancelar"):
+                    opcao = 0
                 else:
                     raise OpcaoInvalidaException
-            except Exception as e:
+                self.close()
+                return opcao
+            except OpcaoInvalidaException as e:
                 self.mostrar_mensagem(str(e))
+                self.close()
 
     def cadastrar_aluno(self):
-        print("\n------------------ DADOS DO ALUNO ------------------")
-        nome = self.cadastrar_nome()
-        cpf = self.cadastrar_cpf()
-        telefone = self.cadastrar_telefone()
-        email = self.cadastrar_email()
-        usuario = self.cadastrar_usuario()
-        senha = self.cadastrar_senha()
-        rua = self.cadastrar_rua()
-        num_residencia = self.cadastrar_num_residencia()
-        bairro = self.cadastrar_bairro()
-        cidade = self.cadastrar_cidade()
-        cep = self.cadastrar_cep()
-        data_inicio = self.cadastrar_data("Data de início (DD/MM/AAAA): ")
-        return {
-            "nome": nome, "cpf": cpf, "telefone": telefone, "email": email, "usuario": usuario,
-            "senha": senha, "rua": rua, "num_residencia": num_residencia, "bairro": bairro,
-            "cidade": cidade, "cep": cep, "data_inicio": data_inicio
-        }
+        sg.ChangeLookAndFeel('DarkTeal4')
+        layout = [
+            [sg.Text("--------------- Dados do Aluno ----------------", font=("Helvica", 20), pad=((0, 0), (0, 10)))],
+            [sg.Text("Nome: "), sg.InputText("", key="nome", size=(50, 1))],
+            [sg.Text("CPF: "), sg.InputText("", key="cpf", size=(50, 1))],
+            [sg.Text("Telefone: "), sg.InputText("", key="telefone", size=(50, 1))],
+            [sg.Text("E-mail: "), sg.InputText("", key="email", size=(50, 1))],
+            [sg.Text("Usuário: "), sg.InputText("", key="usuario", size=(50, 1))],
+            [sg.Text("Senha: "), sg.InputText("", key="senha", size=(50, 1))],
+            [sg.Text("Rua: "), sg.InputText("", key="rua", size=(50, 1))],
+            [sg.Text("Número de Residência: "), sg.InputText("", key="num_residencia", size=(35, 1))],
+            [sg.Text("Bairro: "), sg.InputText("", key="bairro", size=(50, 1))],
+            [sg.Text("Cidade: "), sg.InputText("", key="cidade", size=(50, 1))],
+            [sg.Text("CEP: "), sg.InputText("", key="cep", size=(50, 1))],
+            [sg.Text("Data Início (DD/MM/AAAA): "), sg.InputText("", key="data_inicio", size=(30, 1))],
+            [sg.Button("Confirmar", size=(8, 1), pad=((5, 0), (20, 20))), sg.Cancel("Cancelar", size=(8, 1), pad=((15, 0), (20, 20)))]
+        ]
+        self.__window = sg.Window("Sistema de livros").Layout(layout)
 
-    def editar_aluno(self):
-        print("\n--------------- ATRIBUTOS PARA EDITAR --------------")
-        print("1 - NOME")
-        print("2 - CPF")
-        print("3 - TELEFONE")
-        print("4 - EMAIL")
-        print("5 - USUÁRIO")
-        print("6 - RUA")
-        print("7 - NÚMERO DE RESIDÊNCIA")
-        print("8 - BAIRRO")
-        print("9 - CIDADE")
-        print("10 - CEP")
-        print("11 - CURSO")
-        print("12 - MATRÍCULA")
-        print("13 - SENHA")
-        print("----------------------------------------------------")
         while(True):
             try:
-                opcao = input("\nEscolha uma opção: ")
-                if (opcao == "1"):
-                    print("\nInforme o novo NOME...")
-                    nome = self.cadastrar_nome()
-                    return [int(opcao), nome]
-                if (opcao == "2"):
-                    print("\nInforme o novo CPF...")
-                    cpf = self.cadastrar_cpf()
-                    return [int(opcao), cpf]
-                if (opcao == "3"):
-                    print("\nInforme o novo TELEFONE...")
-                    telefone = self.cadastrar_telefone()
-                    return [int(opcao), telefone]
-                if (opcao == "4"):
-                    print("\nInforme o novo EMAIL...")
-                    email = self.cadastrar_email()
-                    return [int(opcao), email]
-                if (opcao == "5"):
-                    print("\nInforme o novo USUÁRIO...")
-                    usuario = self.cadastrar_usuario()
-                    return [int(opcao), usuario]
-                if (opcao == "6"):
-                    print("\nInforme a nova RUA...")
-                    rua = self.cadastrar_rua()
-                    return [int(opcao), rua]
-                if (opcao == "7"):
-                    print("\nInforme o novo NÚMERO DE RESIDÊNCIA...")
-                    num_residencia = self.cadastrar_num_residencia()
-                    return [int(opcao), num_residencia]
-                if (opcao == "8"):
-                    print("\nInforme o novo BAIRRO...")
-                    bairro = self.cadastrar_bairro()
-                    return [int(opcao), bairro]
-                if (opcao == "9"):
-                    print("\nInforme a nova CIDADE...")
-                    cidade = self.cadastrar_cidade()
-                    return [int(opcao), cidade]
-                if (opcao == "10"):
-                    print("\nInforme o novo CEP...")
-                    cep = self.cadastrar_cep()
-                    return [int(opcao), cep]
-                if (opcao == "11"):
-                    print("\nInforme o novo curso...")
-                    return [int(opcao), ""]
-                if (opcao == "12"):
-                    print("\nInforme o novo CÓDIGO DE MATRÍCULA...")
-                    codigo = self.cadastrar_codigo()
-                    return [int(opcao), codigo]
-                if (opcao == "13"):
-                    return [int(opcao), ""]
-                else:
-                    raise OpcaoInvalidaException
+                button, values = self.open()
+                if button == None or button == "Cancelar":
+                    self.close()
+                    return None
+                elif button == "Confirmar":
+                    nome = values["nome"]
+                    if not self.nome_valido(nome):
+                        raise ValueError("Nome inválido! \nNome deve ser um texto com mais de 2 caracteres\n")
+                    cpf = values["cpf"]
+                    if not self.cpf_valido(cpf):
+                        raise ValueError("CPF inválido! \nCPF deve ser um número com 11 dígitos\n")
+                    telefone = values["telefone"]
+                    if not self.telefone_valido(telefone):
+                        raise ValueError("Telefone inválido! \nTelefone deve ser um número com 8 ou mais dígitos\n")
+                    email = values["email"]
+                    if not self.email_valido(email):
+                        raise ValueError("E-mail inválido! \nTente novamente...\n")
+                    usuario = values["usuario"]
+                    if not self.usuario_valido(usuario):
+                        raise ValueError("Usuário inválido! \nUsuário deve ter pelo menos 8 caracteres\n")
+                    senha = values["senha"]
+                    if not self.senha_valida(senha):
+                        raise ValueError("Senha inválida! \nSenha deve ter pelo menos 8 caracteres\n")
+                    rua = values["rua"]
+                    if not self.rua_valida(rua):
+                        raise ValueError("Rua inválida! \nRua deve ter mais de 5 caracteres\n")
+                    num_residencia = values["num_residencia"]
+                    if not self.num_residencia_valido(num_residencia):
+                        raise ValueError("Número de residência inválido! \nNúmero deve ter pelo menos 1 dígito\n")
+                    bairro = values["bairro"]
+                    if not self.bairro_valido(bairro):
+                        raise ValueError("Bairro inválido! \nBairro deve ter mais de 5 caracteres\n")
+                    cidade = values["cidade"]
+                    if not self.cidade_valida(cidade):
+                        raise ValueError("Cidade inválida! \nCidade deve ter mais de 5 caracteres\n")
+                    cep = values["cep"]
+                    if not self.cep_valido(cep):
+                        raise ValueError("CEP inválido! \nCEP deve ser um número com 8 dígitos\n")
+                    data_inicio = values["data_inicio"]
+                    data = self.data_valida(data_inicio)
+                    if data is None:
+                        raise ValueError("Formato da data de início inválida! Use DD/MM/AAAA...\n")
+                    else:
+                        data_inicio = data
+                    self.close()
+                    return {
+                        "nome": nome, "cpf": int(cpf), "telefone": telefone, "email": email, "usuario": usuario,
+                        "senha": senha, "rua": rua, "num_residencia": int(num_residencia), "bairro": bairro,
+                        "cidade": cidade, "cep": cep, "data_inicio": data_inicio
+                    }
             except Exception as e:
                 self.mostrar_mensagem(str(e))
 
+    def editar_aluno(self, aluno):
+        layout = [
+            [sg.Text("------------------ Editar Aluno -------------------", font=("Helvica", 20), pad=((0, 0), (0, 10)))],
+            [sg.Text("Nome: ", size=(20, 1)), sg.InputText(default_text=aluno["nome"], key="nome", size=(50, 1))],
+            [sg.Text("CPF: ", size=(20, 1)), sg.InputText(default_text=aluno["cpf"], key="cpf", size=(50, 1))],
+            [sg.Text("Telefone: ", size=(20, 1)), sg.InputText(default_text=aluno["telefone"], key="telefone", size=(50, 1))],
+            [sg.Text("E-mail: ", size=(20, 1)), sg.InputText(default_text=aluno["email"], key="email", size=(50, 1))],
+            [sg.Text("Usuário: ", size=(20, 1)), sg.InputText(default_text=aluno["usuario"], key="usuario", size=(50, 1))],
+            [sg.Text("Senha: ", size=(20, 1)), sg.InputText(default_text=aluno["senha"], key="senha", size=(50, 1))],
+            [sg.Text("Rua: ", size=(20, 1)), sg.InputText(default_text=aluno["rua"], key="rua", size=(50, 1))],
+            [sg.Text("Número de Residência: ", size=(20, 1)), sg.InputText(default_text=aluno["num_residencia"], key="num_residencia", size=(50, 1))],
+            [sg.Text("Bairro: ", size=(20, 1)), sg.InputText(default_text=aluno["bairro"], key="bairro", size=(50, 1))],
+            [sg.Text("Cidade: ", size=(20, 1)), sg.InputText(default_text=aluno["cidade"], key="cidade", size=(50, 1))],
+            [sg.Text("CEP: ", size=(20, 1)), sg.InputText(default_text=aluno["cep"], key="cep", size=(50, 1))],
+            [sg.Text("Data Início (DD/MM/AAAA): ", size=(20, 1)), sg.InputText(default_text=aluno["data_inicio"].strftime("%d/%m/%Y"), key="data_inicio", size=(50, 1))],
+            [sg.Button("Confirmar", size=(8, 1), pad=((5, 0), (20, 20))), sg.Cancel("Cancelar", size=(8, 1), pad=((15, 0), (20, 20)))]
+        ]
+        self.__window = sg.Window("Editar Aluno").Layout(layout)
+
+        while True:
+            button, values = self.open()
+            if button == None or button == "Cancelar":
+                self.close()
+                return None
+            elif button == "Confirmar":
+                try:
+                    if not self.nome_valido(values["nome"]):
+                        raise ValueError("Nome inválido! \nNome deve ser um texto com mais de 2 caracteres\n")
+                    if not self.cpf_valido(values["cpf"]):
+                        raise ValueError("CPF inválido! \nCPF deve ser um número com 11 dígitos\n")
+                    if not self.telefone_valido(values["telefone"]):
+                        raise ValueError("Telefone inválido! \nTelefone deve ser um número com 8 ou mais dígitos\n")
+                    if not self.email_valido(values["email"]):
+                        raise ValueError("E-mail inválido! \nTente novamente...\n")
+                    if not self.usuario_valido(values["usuario"]):
+                        raise ValueError("Usuário inválido! \nUsuário deve ter pelo menos 8 caracteres\n")
+                    if not self.senha_valida(values["senha"]):
+                        raise ValueError("Senha inválida! \nSenha deve ter pelo menos 8 caracteres\n")
+                    if not self.rua_valida(values["rua"]):
+                        raise ValueError("Rua inválida! \nRua deve ter mais de 5 caracteres\n")
+                    if not self.num_residencia_valido(values["num_residencia"]):
+                        raise ValueError("Número de residência inválido! \nNúmero deve ter pelo menos 1 dígito\n")
+                    if not self.bairro_valido(values["bairro"]):
+                        raise ValueError("Bairro inválido! \nBairro deve ter mais de 5 caracteres\n")
+                    if not self.cidade_valida(values["cidade"]):
+                        raise ValueError("Cidade inválida! \nCidade deve ter mais de 5 caracteres\n")
+                    if not self.cep_valido(values["cep"]):
+                        raise ValueError("CEP inválido! \nCEP deve ser um número com 8 dígitos\n")
+                    data = self.data_valida(values["data_inicio"])
+                    if data is None:
+                        raise ValueError("Formato da data de início inválida! Use DD/MM/AAAA...\n")
+                    else:
+                        data_inicio = data
+                    
+                    aluno_atualizado = {
+                        "nome": values["nome"],
+                        "cpf": int(values["cpf"]),
+                        "telefone": values["telefone"],
+                        "email": values["email"],
+                        "usuario": values["usuario"],
+                        "senha": values["senha"],
+                        "rua": values["rua"],
+                        "num_residencia": int(values["num_residencia"]),
+                        "bairro": values["bairro"],
+                        "cidade": values["cidade"],
+                        "cep": values["cep"],
+                        "data_inicio": data_inicio
+                    }
+
+                    if aluno_atualizado:
+                        self.close()
+                        return aluno_atualizado
+                    else:
+                        self.close()
+                        raise EdicaoAlunoException
+                except Exception as e:
+                    self.mostrar_mensagem(str(e))
 
     def excluir_aluno(self, aluno):
         while(True):
@@ -160,18 +254,31 @@ class TelaAluno():
         if (opcao == "2"):
             return "Selecionar da lista"
 
-    def selecionar_aluno_na_lista(self, num_opcoes):
+    def selecionar_aluno_na_lista(self, lista_alunos, mensagem):
+        nomes_alunos = [aluno["nome"] for aluno in lista_alunos]
+        layout = [
+            [sg.Text(mensagem, font=("Helvetica", 14), pad=((0, 0), (10, 10)))],
+            [sg.Listbox(nomes_alunos, size=(70, 10), key="nome_aluno_selecionado", enable_events=True)],
+            [sg.Button("Confirmar", size=(8, 1), pad=((5, 0), (15, 15))), sg.Button("Cancelar", size=(8, 1), pad=((15, 0), (15, 15)))]
+        ]
+        self.__window = sg.Window('Selecionar Aluno').Layout(layout)
         while(True):
             try:
-                indice_aluno = input("\nInforme o número da opção do aluno que deseja selecionar: ")
-                if indice_aluno.isdigit():
-                    if 1 <= int(indice_aluno) < num_opcoes+1:
-                        return int(indice_aluno) - 1
+                button, values = self.open()
+                if button == None or button == "Cancelar":
+                    self.close()
+                    return None
+                if button == "Confirmar":
+                    aluno_selecionado = values["nome_aluno_selecionado"]
+                    for aluno in lista_alunos:
+                        if aluno["nome"] == aluno_selecionado[0]:
+                            cpf_aluno_selecionado = aluno["cpf"]
+                    if cpf_aluno_selecionado:
+                        self.close()
+                        return cpf_aluno_selecionado
                     else:
                         raise OpcaoInvalidaException
-                else:
-                    raise OpcaoInvalidaException
-            except Exception as e:
+            except OpcaoInvalidaException as e:
                 self.mostrar_mensagem(str(e))
 
     def buscar_aluno_pelo_cpf(self):
@@ -204,168 +311,46 @@ class TelaAluno():
         print("CURSO: ", aluno["curso"])
         print("MATRÍCULA: ", aluno["codigo"])
 
-    def mostrar_mensagem(self, msg):
-        print(msg)
+    def nome_valido(self, nome):
+        return len(nome) > 2 and all(char.isalpha() or char.isspace() for char in nome)
 
-    def cadastrar_nome(self):
-        while(True):
-            nome = input("Nome: ")
-            if len(nome) >= 3 and all(char.isalpha() or char.isspace() for char in nome):
-                break
-            else:
-                if len(nome) < 3:
-                    print("\n******* NOME DEVE TER PELO MENOS 3 CARACTERES ******")
-                else:
-                    print("\n****** NOME DEVE TER APENAS LETRAS OU ESPAÇOS ******")
-                opcao = self.continuar("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar)")
-                if (not opcao):
-                    return
-                print("\n")
-        return nome
+    def cpf_valido(self, cpf):
+        return len(cpf) == 11 and cpf.isdigit()
 
-    def cadastrar_cpf(self):
-        while (True):
-            cpf = input("CPF: ")
-            if len(cpf) >= 11 and cpf.isdigit():
-                cpf = int(cpf)
-                break
-            else:
-                if len(cpf) < 11:
-                    print("\n******** CPF DEVE TER PELO MENOS 11 DÍGITOS ********")
-                else:
-                    print("\n************ CPF DEVE TER SOMENTE NÚMEROS **********")
-                opcao = self.continuar("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar)")
-                if (not opcao):
-                    return
-                print("\n")
-        return cpf
+    def telefone_valido(self, telefone):
+        return len(telefone) >= 8  and telefone.isdigit()
+    
+    def email_valido(self, email):
+        return len(email) > 5 and "@" in email and "." in email
+    
+    def usuario_valido(self, usuario):
+        return len(usuario) > 7
+    
+    def senha_valida(self, senha):
+        return len(senha) > 7
+    
+    def rua_valida(self, rua):
+        return len(rua) > 5
 
-    def cadastrar_telefone(self):
-        while(True):
-            telefone = input("Telefone: ")
-            if len(telefone) >= 8  and telefone.isdigit():
-                break
-            else:
-                if len(telefone) < 8:
-                    print("\n****** TELEFONE DEVE TER PELO MENOS 8 DÍGITOS ******")
-                else:
-                    print("\n********* TELEFONE DEVE TER SOMENTE NÚMEROS ********")
-                opcao = self.continuar("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar)")
-                if (not opcao):
-                    return
-                print("\n")
-        return telefone
+    def num_residencia_valido(self, num_residencia):
+        return len(num_residencia) > 0 and num_residencia.isdigit()
     
-    def cadastrar_email(self):
-        while(True):
-            email = input("E-mail: ")
-            if len(email) >= 5 and "@" in email and "." in email:
-                break
-            else:
-                if len(email) < 5:
-                    print("\n****** EMAIL DEVE TER PELO MENOS 5 CARACTERES ******")
-                else:
-                    print("\n******** EMAIL INVÁLIDO! TENTE NOVAMENTE... ********")
-                opcao = self.continuar("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar)")
-                if (not opcao):
-                    return
-                print("\n")
-        return email
+    def bairro_valido(self, bairro):
+        return len(bairro) > 5 and all(char.isalpha() or char.isspace() for char in bairro)
     
-    def cadastrar_usuario(self):
-        while(True):
-            usuario = input("Usuario: ")
-            if len(usuario) >= 8:
-                break
-            else:
-                print("\n***** USUÁRIO DEVE TER PELO MENOS 8 CARACTERES ****")
-                opcao = self.continuar("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar)")
-                if (not opcao):
-                    return
-                print("\n")
-        return usuario
-    
-    def cadastrar_senha(self):
-        while(True):
-            senha = input("Senha: ")
-            if len(senha) >= 8 and (bool(re.search(r"[a-zA-Z]", senha)) and bool(re.search(r"[0-9]", senha))) :
-                break
-            else:
-                if len(senha) < 8:
-                    print("\n***** SENHA DEVE TER PELO MENOS 8 CARACTERES ******")
-                else:
-                    print("\n********* SENHA DEVE TER NÚMEROS E LETRAS *********")
-                opcao = self.continuar("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar)")
-                if (not opcao):
-                    return
-                print("\n")
-        return senha
-    
-    def cadastrar_rua(self):
-        while(True):
-            rua = input("Rua: ")
-            if len(rua) >= 5 and bool(re.search(r"[a-zA-Z]", rua)):
-                break
-            else:
-                if len(rua) < 5:
-                    print("\n****** RUA DEVE TER PELO MENOS 5 CARACTERES *******")
-                else:
-                    print("\n********* RUA INVÁLIDA! TENTE NOVAMENTE... ********")
-                opcao = self.continuar("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar)")
-                if (not opcao):
-                    return
-                print("\n")
-        return rua
-    
-    def cadastrar_num_residencia(self):
-        while(True):
-            num_residencia = input("Número: ")
-            if len(num_residencia) >= 1 and num_residencia.isdigit():
-                num_residencia = int(num_residencia)
-                break
-            else:
-                if len(num_residencia) < 1:
-                    print("\n******* NÚMERO DEVE TER PELO MENOS 1 DÍGITO *******")
-                else:
-                    print("\n********* NÚMERO DEVE TER SOMENTE NÚMEROS *********")
-                opcao = self.continuar("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar)")
-                if (not opcao):
-                    return
-                print("\n")
-        return num_residencia
-    
-    def cadastrar_bairro(self):
-        while(True):
-            bairro = input("Bairro: ")
-            if len(bairro) >= 5 and all(char.isalpha() or char.isspace() for char in bairro):
-                break
-            else:
-                if len(bairro) < 5:
-                    print("\n***** BAIRRO DEVE TER PELO MENOS 5 CARACTERES *****")
-                else:
-                    print("\n******* BAIRRO INVÁLIDO! TENTE NOVAMENTE... *******")
-                opcao = self.continuar("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar)")
-                if (not opcao):
-                    return
-                print("\n")
-        return bairro
-    
-    def cadastrar_cidade(self):
-        while(True):
-            cidade = input("Cidade: ")
-            if len(cidade) >= 5 and all(char.isalpha() or char.isspace() for char in cidade):
-                break
-            else:
-                if len(cidade) < 5:
-                    print("\n***** CIDADE DEVE TER PELO MENOS 5 CARACTERES *****")
-                else:
-                    print("\n******* CIDADE INVÁLIDA! TENTE NOVAMENTE... *******")
-                opcao = self.continuar("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar)")
-                if (not opcao):
-                    return
-                print("\n")
-        return cidade
-    
+    def cidade_valida(self, cidade):
+        return len(cidade) > 5 and all(char.isalpha() or char.isspace() for char in cidade)
+
+    def cep_valido(self, cep):
+        return len(cep) == 8 and cep.isdigit()
+
+    def data_valida(self, data):
+        try:
+            data_valida = datetime.strptime(data, "%d/%m/%Y")
+            return data_valida
+        except ValueError:
+            return None
+
     def cadastrar_codigo(self):
         while (True):
             codigo = input("CÓDIGO DE MATRÍCULA: ")
@@ -382,22 +367,6 @@ class TelaAluno():
                 print("\n")
         return codigo
 
-    def cadastrar_cep(self):
-        while(True):
-            cep = input("CEP: ")
-            if len(cep) >= 8 and cep.isdigit():
-                break
-            else:
-                if len(cep) < 8:
-                    print("\n******** CEP DEVE TER PELO MENOS 8 DÍGITOS *********")
-                else:
-                    print("\n*********** CEP DEVE TER SOMENTE NÚMEROS ***********")
-                opcao = self.continuar("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar)")
-                if (not opcao):
-                    return
-                print("\n")
-        return cep
-    
     def lancar_nota_modulo(self):
         while(True):
             nota = input("\nInforme a nota do aluno no módulo: ")
@@ -421,11 +390,15 @@ class TelaAluno():
             else:
                 print("\n******** OPÇÃO INVÁLIDA! TENTE NOVAMENTE... ********")
 
-    def cadastrar_data(self, mensagem):
-        while(True):
-            data = input(mensagem)
-            try:
-                data_valida = datetime.strptime(data, "%d/%m/%Y")
-                return data_valida
-            except ValueError:
-                print("\nFormato de data inválido! Use DD/MM/AAAA...")
+    def mostrar_mensagem(self, mensagem: str):
+        sg.Popup("Alerta!", mensagem)
+
+    def open(self):
+        button, values = self.__window.Read()
+        return button, values
+
+    def close(self):
+        self.__window.Close()
+
+    def voltar(self):
+        self.__controlador_sistema.abrir_tela()

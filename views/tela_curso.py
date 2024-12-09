@@ -62,7 +62,7 @@ class TelaCurso():
             [sg.Text("Mínimo de semestres: ", size=(17, 1)), sg.InputText("", key="min_semestres", size=(50, 1))],
             [sg.Text("Máximo de semestres: ", size=(17, 1)), sg.InputText("", key="max_semestres", size=(50, 1))],
             [sg.Text("Mensalidade: ", size=(17, 1)), sg.InputText("", key="mensalidade", size=(50, 1))],
-            [sg.Button("Confirmar", size=(12, 1), pad=((5, 0), (20, 20))), sg.Cancel("Cancelar", size=(12, 1), pad=((15, 0), (20, 20)))]
+            [sg.Button("Confirmar", size=(8, 1), pad=((5, 0), (20, 20))), sg.Cancel("Cancelar", size=(8, 1), pad=((15, 0), (20, 20)))]
         ]
         self.__window = sg.Window("Sistema de livros").Layout(layout)
 
@@ -111,7 +111,7 @@ class TelaCurso():
         self.__window = sg.Window("Editar Curso").Layout(layout)
 
         while True:
-            button, values = self.__window.read()
+            button, values = self.open()
             if button == None or button == "Cancelar":
                 self.close()
                 return None

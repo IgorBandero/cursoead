@@ -35,7 +35,7 @@ class ControladorCurso():
                 raise CursoInvalidoException
         except Exception as e:
             self.__tela_curso.mostrar_mensagem(str(e))
-            self.abrir_tela()
+        self.abrir_tela()
 
     def editar_curso(self):
         try:
