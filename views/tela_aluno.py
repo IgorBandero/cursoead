@@ -69,19 +69,19 @@ class TelaAluno():
     def cadastrar_aluno(self):
         sg.ChangeLookAndFeel('DarkTeal4')
         layout = [
-            [sg.Text("--------------- Dados do Aluno ----------------", font=("Helvica", 20), pad=((0, 0), (0, 10)))],
-            [sg.Text("Nome: "), sg.InputText("", key="nome", size=(50, 1))],
-            [sg.Text("CPF: "), sg.InputText("", key="cpf", size=(50, 1))],
-            [sg.Text("Telefone: "), sg.InputText("", key="telefone", size=(50, 1))],
-            [sg.Text("E-mail: "), sg.InputText("", key="email", size=(50, 1))],
-            [sg.Text("Usuário: "), sg.InputText("", key="usuario", size=(50, 1))],
-            [sg.Text("Senha: "), sg.InputText("", key="senha", size=(50, 1))],
-            [sg.Text("Rua: "), sg.InputText("", key="rua", size=(50, 1))],
-            [sg.Text("Número de Residência: "), sg.InputText("", key="num_residencia", size=(35, 1))],
-            [sg.Text("Bairro: "), sg.InputText("", key="bairro", size=(50, 1))],
-            [sg.Text("Cidade: "), sg.InputText("", key="cidade", size=(50, 1))],
-            [sg.Text("CEP: "), sg.InputText("", key="cep", size=(50, 1))],
-            [sg.Text("Data Início (DD/MM/AAAA): "), sg.InputText("", key="data_inicio", size=(30, 1))],
+            [sg.Text("---------------- Dados do Aluno ----------------", font=("Helvica", 20), pad=((0, 0), (0, 10)))],
+            [sg.Text("Nome: ", size=(20, 1)), sg.InputText("", key="nome", size=(45, 1))],
+            [sg.Text("CPF: ", size=(20, 1)), sg.InputText("", key="cpf", size=(45, 1))],
+            [sg.Text("Telefone: ", size=(20, 1)), sg.InputText("", key="telefone", size=(45, 1))],
+            [sg.Text("E-mail: ", size=(20, 1)), sg.InputText("", key="email", size=(45, 1))],
+            [sg.Text("Usuário: ", size=(20, 1)), sg.InputText("", key="usuario", size=(45, 1))],
+            [sg.Text("Senha: ", size=(20, 1)), sg.InputText("", key="senha", size=(45, 1))],
+            [sg.Text("Rua: ", size=(20, 1)), sg.InputText("", key="rua", size=(45, 1))],
+            [sg.Text("Número de Residência: ", size=(20, 1)), sg.InputText("", key="num_residencia", size=(45, 1))],
+            [sg.Text("Bairro: ", size=(20, 1)), sg.InputText("", key="bairro", size=(45, 1))],
+            [sg.Text("Cidade: ", size=(20, 1)), sg.InputText("", key="cidade", size=(45, 1))],
+            [sg.Text("CEP: ", size=(20, 1)), sg.InputText("", key="cep", size=(45, 1))],
+            [sg.Text("Data Início (DD/MM/AAAA): ", size=(20, 1)), sg.InputText("", key="data_inicio", size=(45, 1))],
             [sg.Button("Confirmar", size=(8, 1), pad=((5, 0), (20, 20))), sg.Cancel("Cancelar", size=(8, 1), pad=((15, 0), (20, 20)))]
         ]
         self.__window = sg.Window("Sistema de livros").Layout(layout)
@@ -220,39 +220,35 @@ class TelaAluno():
                     self.mostrar_mensagem(str(e))
 
     def excluir_aluno(self, aluno):
-        while(True):
-            try:
-                print(f"\nConfirma a exclusão do(a) ALUNO(A): {aluno['nome']} do CURSO: {aluno['curso']} da lista de alunos da universidade? \n1 – SIM \n2 – NÃO (Cancelar)")
-                excluir = input("\nEscolha a opção: ")
-                if (excluir == "1"):
-                    return True
-                elif (excluir == "2"):
-                    return False
-                else:
-                    raise OpcaoInvalidaException
-            except Exception as e:
-                self.mostrar_mensagem(str(e))
+        layout = [
+            [sg.Text(f"Confirma a exclusão do ALUNO(A): {aluno["nome"]}?", font=("Helvetica", 14))],
+            [sg.Button("SIM", size=(10, 1), pad=((5, 0), (10, 10))), sg.Button("NÃO", size=(10, 1), pad=((10, 0), (10, 10)))]
+        ]
+        self.__window = sg.Window("Confirmar Exclusão").Layout(layout)
 
-    def mostrar_opcao_aluno(self, aluno):
-        print(aluno["indice"]+1, " - NOME: ", aluno["nome"], " | CPF: ", aluno["cpf"], " | MATRÍCULA: ", aluno["matricula"], " | CURSO: ", aluno["curso"])
+        while True:
+            button, values = self.open()
+            self.close()
+            if button == None:
+                return False
+            elif button == "SIM":
+                return True
+            elif button == "NÃO":
+                return False
 
-    def selecionar_aluno(self, num_opcoes):
-        if (num_opcoes == 0):
-            print("\n************** NENHUM ALUNO CADASTRADO *************")
-            return
-        while(True):
-            try:
-                opcao = input("\nComo deseja selecionar o aluno? \n1 - Procurar aluno pelo CPF \n2 - Selecionar da lista de alunos \n\nEscolha uma opção: ")
-                if (opcao == "1" or opcao == "2"):
-                    break
-                else:
-                    raise OpcaoInvalidaException
-            except Exception as e:
-                self.mostrar_mensagem(str(e))
-        if (opcao == "1"):
-            return "Buscar pelo cpf"
-        if (opcao == "2"):
-            return "Selecionar da lista"
+    def listar_alunos(self, alunos):
+        lista_alunos = [f"{i + 1}. {aluno["nome"]} (CPF: {aluno["cpf"]} / Curso: {aluno["curso"]})" for i, aluno in enumerate(alunos)]
+        layout = [
+            [sg.Text("Lista de Alunos", font=("Helvetica", 14), pad=((0, 0), (10, 10)))],
+            [sg.Listbox(values=lista_alunos, size=(70, 10), enable_events=False, font=("Helvetica", 10), pad=((5, 0), (5, 0)))],
+            [sg.Button("Voltar", size=(10, 1), pad=((5, 0), (15, 15)))]
+        ]
+        self.__window = sg.Window("Lista Alunos", layout)
+        while True:
+            button, values = self.open()
+            if button in (None, "Voltar"):
+                self.close()
+                break
 
     def selecionar_aluno_na_lista(self, lista_alunos, mensagem):
         nomes_alunos = [aluno["nome"] for aluno in lista_alunos]
@@ -281,35 +277,30 @@ class TelaAluno():
             except OpcaoInvalidaException as e:
                 self.mostrar_mensagem(str(e))
 
-    def buscar_aluno_pelo_cpf(self):
-        while(True):
-            try:
-                cpf = input("\nInforme o número do CPF do aluno que deseja selecionar: ")
-                if cpf.isdigit() and len(cpf) == 11:
-                    return int(cpf)
-                else:
-                    raise CpfInvalidoException
-            except Exception as e:
-                self.mostrar_mensagem(str(e))
-
     def mostrar_aluno(self, aluno):
-        print("\n---------------------- ALUNO(A) --------------------")
-        print("NOME: ", aluno["nome"])
-        print("CPF: ", aluno["cpf"])
-        print("TELEFONE: ", aluno["telefone"])
-        print("EMAIL: ", aluno["email"])
-        print("USUÁRIO: ", aluno["usuario"])
-        print("RUA: ", aluno["rua"])
-        print("NÚMERO: ", aluno["num_residencia"])
-        print("BAIRRO: ", aluno["bairro"])
-        print("CIDADE: ", aluno["cidade"])
-        print("CEP: ", aluno["cep"])
-        if (aluno["data_inicio"] is not None):
-            print("DATA INÍCIO: ", aluno["data_inicio"].strftime("%d/%m/%Y"))
-        if (aluno["data_final"] is not None):
-            print("DATA FINAL: ", aluno["data_final"].strftime("%d/%m/%Y"))
-        print("CURSO: ", aluno["curso"])
-        print("MATRÍCULA: ", aluno["codigo"])
+        layout = [
+            [sg.Text("Informações do Aluno(a)", font=("Helvetica", 16), pad=((0, 0), (10, 20)))],
+            [sg.Text("NOME:", font=("Helvetica", 10, "bold"), pad=((5, 5), (5, 5))), sg.Text(aluno["nome"], font=("Helvetica", 10))],
+            [sg.Text("CPF:", font=("Helvetica", 10, "bold"), pad=((5, 5), (5, 5))), sg.Text(aluno["cpf"], font=("Helvetica", 10))],
+            [sg.Text("TELEFONE:", font=("Helvetica", 10, "bold"), pad=((5, 5), (5, 5))), sg.Text(aluno["telefone"], font=("Helvetica", 10))],
+            [sg.Text("EMAIL:", font=("Helvetica", 10, "bold"), pad=((5, 5), (5, 5))), sg.Text(aluno["email"], font=("Helvetica", 10))],
+            [sg.Text("USUÁRIO:", font=("Helvetica", 10, "bold"), pad=((5, 5), (5, 5))), sg.Text(aluno["usuario"], font=("Helvetica", 10))],
+            [sg.Text("ENDEREÇO:", font=("Helvetica", 10, "bold"), pad=((5, 5), (5, 5))), sg.Text(f"{aluno["rua"]}, {aluno["num_residencia"]}", font=("Helvetica", 10))],
+            [sg.Text("BAIRRO:", font=("Helvetica", 10, "bold"), pad=((5, 5), (5, 5))), sg.Text(aluno["bairro"], font=("Helvetica", 10))],
+            [sg.Text("CIDADE:", font=("Helvetica", 10, "bold"), pad=((5, 5), (5, 5))), sg.Text(aluno["cidade"], font=("Helvetica", 10))],
+            [sg.Text("CEP:", font=("Helvetica", 10, "bold"), pad=((5, 5), (5, 5))), sg.Text(aluno["cep"], font=("Helvetica", 10))],
+            [sg.Text("DATA INÍCIO:", font=("Helvetica", 10, "bold"), pad=((5, 5), (5, 5))), sg.Text(aluno["data_inicio"], font=("Helvetica", 10))],
+            [sg.Text("CURSO:", font=("Helvetica", 10, "bold"), pad=((5, 5), (5, 5))), sg.Text(aluno["curso"], font=("Helvetica", 10))],
+            [sg.Text("MATRÍCULA:", font=("Helvetica", 10, "bold"), pad=((5, 5), (5, 5))), sg.Text(aluno["codigo"], font=("Helvetica", 10))],
+            [sg.Button("Voltar", size=(10, 1), pad=((5, 0), (20, 10)))]
+        ]
+        self.__window = sg.Window("Detalhes do Aluno", layout, size=(500, 550))
+
+        while True:
+            button, values = self.open()
+            if button in (None, "Voltar"):
+                self.__window.close()
+                break
 
     def nome_valido(self, nome):
         return len(nome) > 2 and all(char.isalpha() or char.isspace() for char in nome)
@@ -351,7 +342,7 @@ class TelaAluno():
         except ValueError:
             return None
 
-    def cadastrar_codigo(self):
+    """def cadastrar_codigo(self):
         while (True):
             codigo = input("CÓDIGO DE MATRÍCULA: ")
             if len(codigo) == 11 and codigo.isdigit():
@@ -365,7 +356,7 @@ class TelaAluno():
                 if (not opcao):
                     return
                 print("\n")
-        return codigo
+        return codigo """
 
     def lancar_nota_modulo(self):
         while(True):

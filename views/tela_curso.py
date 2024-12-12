@@ -55,7 +55,7 @@ class TelaCurso():
     def cadastrar_curso(self):
         sg.ChangeLookAndFeel('DarkTeal4')
         layout = [
-            [sg.Text("-------------- Dados do Curso ---------------", font=("Helvica", 20), pad=((0, 0), (0, 10)))],
+            [sg.Text("---------------- Dados do Curso -----------------", font=("Helvica", 20), pad=((0, 0), (0, 10)))],
             [sg.Text("Nome: ", size=(17, 1)), sg.InputText("", key="nome", size=(50, 1))],
             [sg.Text("Descrição: ", size=(17, 1)), sg.InputText("", key="descricao", size=(50, 1))],
             [sg.Text("Carga Horária: ", size=(17, 1)), sg.InputText("", key="carga_horaria", size=(50, 1))],
@@ -99,7 +99,7 @@ class TelaCurso():
 
     def editar_curso(self, curso):
         layout = [
-            [sg.Text("--------------- Editar Curso ----------------", font=("Helvica", 20), pad=((0, 0), (0, 10)))],
+            [sg.Text("----------------- Editar Curso -----------------", font=("Helvica", 20), pad=((0, 0), (0, 10)))],
             [sg.Text("Nome:", size=(17, 1)), sg.Input(default_text=curso["nome"], key="nome")],
             [sg.Text("Descrição:", size=(17, 1)), sg.Input(default_text=curso["descricao"], key="descricao")],
             [sg.Text("Carga Horária (h):", size=(17, 1)), sg.Input(default_text=str(curso["carga_horaria"]), key="carga_horaria")],
@@ -175,7 +175,6 @@ class TelaCurso():
             [sg.Text(f"Confirma a exclusão do CURSO: {curso["nome"]}?", font=("Helvetica", 14))],
             [sg.Button("SIM", size=(10, 1), pad=((5, 0), (10, 10))), sg.Button("NÃO", size=(10, 1), pad=((10, 0), (10, 10)))]
         ]
-        #janela = sg.Window("Confirmar Exclusão", layout, modal=True)
         self.__window = sg.Window("Confirmar Exclusão").Layout(layout)
 
         while True:
@@ -184,10 +183,8 @@ class TelaCurso():
             if button == None:
                 return False
             elif button == "SIM":
-                #self.close()
                 return True
             elif button == "NÃO":
-                #self.close()
                 return False
 
     def nome_valido(self, nome):
