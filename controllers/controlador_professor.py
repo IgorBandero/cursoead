@@ -134,4 +134,8 @@ class ControladorProfessor:
             else:
                 self.__tela_professor.mostra_mensagem("Opção inválida.")
 
-
+    def listar_todos_professores(self):
+        """
+        Retorna uma lista de todos os professores cadastrados.
+        """
+        return self.__professores# Supondo que exista um DAO para professores.

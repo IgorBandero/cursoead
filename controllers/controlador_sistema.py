@@ -68,10 +68,10 @@ class ControladorSistema:
         self.__controlador_professores.abrir_tela()
 
     def opcoes_atividade(self):
-        self.__controlador_atividade.mostrar_menu()
+        self.__controlador_atividade.abrir_tela()
 
     def opcoes_orientacao(self):
-        self.__controlador_orientacao.abre_tela()
+        self.__controlador_orientacao.abrir_tela()
 
     def opcoes_curso(self):
         self.__controlador_curso.abrir_tela()

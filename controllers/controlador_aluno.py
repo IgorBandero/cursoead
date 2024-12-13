@@ -194,10 +194,15 @@ class ControladorAluno():
                 return aluno """
 
     def buscar_aluno_pelo_cpf(self, cpf):
-        for aluno in self.__aluno_DAO.get_all():
+        alunos = self.__aluno_DAO.get_all()
+        print(f"Buscando aluno com CPF {cpf}. Alunos no DAO:", alunos)  # Log para verificar os dados no DAO
+        for aluno in alunos:
+            print(f"Verificando aluno: {aluno.nome} (CPF: {aluno.cpf})")  # Log para cada aluno iterado
             if aluno.cpf == cpf:
+                print(f"Aluno encontrado: {aluno.nome} (CPF: {aluno.cpf})")  # Log quando aluno é encontrado
                 return aluno
-        return None 
+        print(f"Aluno com CPF {cpf} não encontrado.")  # Log se aluno não for encontrado
+        return None
 
     def buscar_ex_aluno_pelo_cpf(self, cpf):
         for aluno in self.__ex_alunos:
@@ -299,6 +304,12 @@ class ControladorAluno():
 
     def voltar(self):
         self.__controlador_sistema.abrir_tela()
+
+    def listar_todos_alunos(self):
+        """
+        Retorna uma lista de todos os alunos cadastrados.
+        """
+        return self.__aluno_DAO.get_all()
 
     def abrir_tela(self):
         opcoes = {
