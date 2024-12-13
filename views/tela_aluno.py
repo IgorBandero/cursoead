@@ -147,7 +147,7 @@ class TelaAluno():
 
     def editar_aluno(self, aluno):
         layout = [
-            [sg.Text("------------------ Editar Aluno -------------------", font=("Helvica", 20),
+            [sg.Text("-------------------- Editar Aluno --------------------", font=("Helvica", 20),
             pad=((0, 0), (0, 10)))],
             [sg.Text("Nome: ", size=(20, 1)), sg.InputText(default_text=aluno["nome"], key="nome", size=(50, 1))],
             [sg.Text("CPF: ", size=(20, 1)), sg.InputText(default_text=aluno["cpf"], key="cpf", size=(50, 1))],
@@ -250,7 +250,7 @@ class TelaAluno():
         lista_alunos = [f"{i + 1}. {aluno["nome"]} (CPF: {aluno["cpf"]} / Curso: {aluno["curso"]})" for i, aluno in enumerate(alunos)]
         layout = [
             [sg.Text("Lista de Alunos", font=("Helvetica", 14), pad=((0, 0), (10, 10)))],
-            [sg.Listbox(values=lista_alunos, size=(70, 10), enable_buttons=False, font=("Helvetica", 10), pad=((5, 0), (5, 0)))],
+            [sg.Listbox(values=lista_alunos, size=(70, 10), enable_events=False, font=("Helvetica", 10), pad=((5, 0), (5, 0)))],
             [sg.Button("Voltar", size=(10, 1), pad=((5, 0), (15, 15)))]
         ]
         self.__window = sg.Window("Lista Alunos", layout)

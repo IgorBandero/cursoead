@@ -48,7 +48,7 @@ class TelaAtividadeAvaliativa:
         sg.ChangeLookAndFeel('DarkTeal4')
         layout = [
             [sg.Text("--------- Dados da Atividade Avaliativa ---------", font=("Helvetica", 20),
-                     pad=((0, 0), (0, 10)))],
+                    pad=((0, 0), (0, 10)))],
             [sg.Text("Nota Máxima:", size=(20, 1)), sg.InputText("", key="nota_maxima")],
             [sg.Text("Quantidade de Questões:", size=(20, 1)), sg.InputText("", key="quantidade_questoes")],
             [sg.Button("Confirmar", size=(10, 1)), sg.Cancel("Cancelar", size=(10, 1))]
