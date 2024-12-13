@@ -25,8 +25,8 @@ class ControladorOrientacao:
             self.__controlador_sistema.controlador_professores.listar_todos_professores()
         ]
 
-        print("Alunos disponíveis para seleção:", alunos_disponiveis)  # Verificar alunos disponíveis
-        print("Professores disponíveis para seleção:", professores_disponiveis)  # Verificar professores disponíveis
+        print("Alunos disponíveis:", alunos_disponiveis)
+        print("Professores disponíveis:", professores_disponiveis)
 
         if not alunos_disponiveis:
             self.__tela_orientacao.mostrar_mensagem("Não há alunos disponíveis.")
@@ -36,41 +36,31 @@ class ControladorOrientacao:
             self.__tela_orientacao.mostrar_mensagem("Não há professores disponíveis.")
             return
 
-        # Selecionar aluno
-        cpf_aluno = self.__tela_orientacao.selecionar_aluno(alunos_disponiveis)
-        if not cpf_aluno:
+        # Selecionar aluno diretamente
+        aluno_selecionado = self.__controlador_sistema.controlador_alunos.selecionar_aluno("Selecione o aluno:")
+        if not aluno_selecionado:
             self.__tela_orientacao.mostrar_mensagem("Seleção de aluno cancelada.")
             return
 
-        # Selecionar professor
-        cpf_professor = self.__tela_orientacao.selecionar_professor(professores_disponiveis)
-        if not cpf_professor:
+        # Selecionar professor diretamente
+        professor_selecionado_dados = self.__tela_orientacao.selecionar_professor(professores_disponiveis)
+        if not professor_selecionado_dados:
             self.__tela_orientacao.mostrar_mensagem("Seleção de professor cancelada.")
             return
 
-        # Debug: Verificar CPFs
-        print(f"Aluno CPF selecionado: {cpf_aluno}")
-        print(f"Professor CPF selecionado: {cpf_professor}")
-
-        aluno = self.__controlador_sistema.controlador_alunos.buscar_aluno_pelo_cpf(cpf_aluno)
-        professor = self.__controlador_sistema.controlador_professores.buscar_professor_por_cpf(cpf_professor)
-
-        # Verificar se aluno e professor foram encontrados
-        if not aluno:
-            self.__tela_orientacao.mostrar_mensagem("Aluno não encontrado.")
+        # Buscar a instância do professor pela CPF
+        professor_selecionado = self.__controlador_sistema.controlador_professores.buscar_professor_por_cpf(
+            professor_selecionado_dados["cpf"]
+        )
+        if not professor_selecionado:
+            self.__tela_orientacao.mostrar_mensagem("Erro ao encontrar a instância do professor.")
             return
 
-        if not professor:
-            self.__tela_orientacao.mostrar_mensagem("Professor não encontrado.")
-            return
+        print(f"Aluno selecionado: {aluno_selecionado.nome}")
+        print(f"Professor selecionado: {professor_selecionado.nome}")
 
-        # Verificar se já existe a orientação
-        for orientacao in self.__orientacoes:
-            if orientacao.aluno.cpf == aluno.cpf and orientacao.professor.cpf == professor.cpf:
-                self.__tela_orientacao.mostrar_mensagem("Orientação já cadastrada para este aluno e professor.")
-                return
-
-        nova_orientacao = Orientacao(aluno, professor)
+        # Criar e cadastrar a orientação
+        nova_orientacao = Orientacao(aluno_selecionado, professor_selecionado)
         self.__orientacoes.append(nova_orientacao)
         self.__tela_orientacao.mostrar_mensagem("Orientação cadastrada com sucesso!")
 
@@ -90,18 +80,42 @@ class ControladorOrientacao:
             self.__tela_orientacao.listar_orientacoes(orientacoes)
 
     def editar_orientacao(self):
-        cpf_aluno = self.__tela_orientacao.selecionar_orientacao()
-        orientacao = self.buscar_orientacao_por_cpf_aluno(cpf_aluno)
+        # Selecionar aluno da lista
+        aluno = self.__controlador_sistema.controlador_alunos.selecionar_aluno(
+            "Selecione o aluno cuja orientação deseja editar:")
+        if not aluno:
+            self.__tela_orientacao.mostrar_mensagem("Seleção de aluno cancelada ou aluno não encontrado.")
+            return
+
+        # Buscar a orientação pelo CPF do aluno selecionado
+        orientacao = self.buscar_orientacao_por_cpf_aluno(aluno.cpf)
 
         if orientacao:
-            novo_cpf_professor = self.__tela_orientacao.selecionar_orientacao("Digite o CPF do novo professor:")
-            professor = self.__controlador_sistema.controlador_professores.buscar_professor_por_cpf(novo_cpf_professor)
+            # Selecionar o novo professor da lista
+            professores_disponiveis = [
+                {"cpf": professor.cpf, "nome": professor.nome} for professor in
+                self.__controlador_sistema.controlador_professores.listar_todos_professores()
+            ]
 
-            if professor:
-                orientacao.professor = professor
-                self.__tela_orientacao.mostrar_mensagem("Orientação atualizada com sucesso!")
-            else:
+            if not professores_disponiveis:
+                self.__tela_orientacao.mostrar_mensagem("Não há professores disponíveis para seleção.")
+                return
+
+            novo_professor_dados = self.__tela_orientacao.selecionar_professor(professores_disponiveis)
+            if not novo_professor_dados:
+                self.__tela_orientacao.mostrar_mensagem("Seleção de professor cancelada.")
+                return
+
+            # Buscar a instância do novo professor pelo CPF selecionado
+            novo_professor = self.__controlador_sistema.controlador_professores.buscar_professor_por_cpf(
+                novo_professor_dados["cpf"])
+            if not novo_professor:
                 self.__tela_orientacao.mostrar_mensagem("Erro: Professor não encontrado.")
+                return
+
+            # Atualizar a orientação com o novo professor
+            orientacao.professor = novo_professor
+            self.__tela_orientacao.mostrar_mensagem("Orientação atualizada com sucesso!")
         else:
             self.__tela_orientacao.mostrar_mensagem("Erro: Orientação não encontrada.")
 
@@ -116,18 +130,38 @@ class ControladorOrientacao:
             self.__tela_orientacao.mostrar_mensagem("Erro: Orientação não encontrada.")
 
     def listar_orientandos_do_professor(self):
-        cpf_professor = self.__tela_orientacao.selecionar_orientacao("Digite o CPF do professor:")
-        orientandos = [
-            {"nome_aluno": o.aluno.nome, "cpf_aluno": o.aluno.cpf}
-            for o in self.__orientacoes
-            if o.professor.cpf == cpf_professor
+        # Obter a lista de professores disponíveis
+        professores_disponiveis = [
+            {"cpf": professor.cpf, "nome": professor.nome}
+            for professor in self.__controlador_sistema.controlador_professores.listar_todos_professores()
         ]
 
-        if orientandos:
-            for orientando in orientandos:
-                self.__tela_orientacao.mostrar_orientacao(orientando)
-        else:
+        if not professores_disponiveis:
+            self.__tela_orientacao.mostrar_mensagem("Não há professores disponíveis para seleção.")
+            return
+
+        # Selecionar professor
+        professor_selecionado = self.__tela_orientacao.selecionar_professor(professores_disponiveis)
+        if not professor_selecionado:
+            self.__tela_orientacao.mostrar_mensagem("Seleção de professor cancelada.")
+            return
+
+        # Obter os orientandos do professor selecionado
+        orientandos = [
+            {"nome": orientacao.aluno.nome, "cpf": orientacao.aluno.cpf}
+            for orientacao in self.__orientacoes
+            if orientacao.professor.cpf == professor_selecionado["cpf"]
+        ]
+
+        if not orientandos:
             self.__tela_orientacao.mostrar_mensagem("Nenhum orientando encontrado para este professor.")
+            return
+
+        # Exibir a lista de orientandos
+        orientandos_formatados = [
+            f"Nome: {orientando['nome']} | CPF: {orientando['cpf']}" for orientando in orientandos
+        ]
+        self.__tela_orientacao.mostrar_lista_orientandos(orientandos_formatados)
 
     def voltar(self):
         self.__controlador_sistema.abrir_tela()

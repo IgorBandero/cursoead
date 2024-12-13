@@ -114,30 +114,94 @@ class TelaOrientacao:
         self.close()
 
     def selecionar_professor(self, lista_professores):
-        """Permite selecionar um professor de uma lista."""
-        professores_formatados = [f"CPF: {professor['cpf']} | Nome: {professor['nome']}" for professor in
-                                  lista_professores]
-        layout = [
-            [sg.Text("Selecione um Professor", font=("Helvetica", 20))],
-            [sg.Listbox(values=professores_formatados, size=(50, 10), key="professor_selecionado")],
-            [sg.Button("Confirmar"), sg.Button("Cancelar")]
+        """
+        Permite selecionar um professor a partir de uma lista.
+        :param lista_professores: Lista de dicionários com dados dos professores.
+        :return: Dicionário do professor selecionado ou None.
+        """
+        sg.ChangeLookAndFeel('DarkTeal4')
+        professores_formatados = [
+            f"CPF: {p['cpf']} | Nome: {p['nome']}" for p in lista_professores
         ]
-        self.__window = sg.Window("Selecionar Professor", layout)
+
+        layout = [
+            [sg.Text("Selecione o Professor", font=("Helvetica", 20))],
+            [sg.Listbox(values=professores_formatados, size=(50, 10), key="professor_selecionado")],
+            [sg.Button("Confirmar"), sg.Cancel("Cancelar")]
+        ]
+
+        self.__window = sg.Window("Selecionar Professor").Layout(layout)
 
         while True:
-            event, values = self.__window.read()
-            if event in (None, "Cancelar"):
+            button, values = self.__window.read()
+            if button in (None, "Cancelar"):
                 self.close()
                 return None
-            if event == "Confirmar":
+            if button == "Confirmar":
                 try:
-                    professor_selecionado = values["professor_selecionado"][0]
-                    cpf_professor = professor_selecionado.split("CPF: ")[1].split(" |")[0].strip()
+                    if not values["professor_selecionado"]:
+                        raise ValueError("Nenhum professor selecionado.")
+                    # Obter o índice do professor selecionado
+                    index = professores_formatados.index(values["professor_selecionado"][0])
                     self.close()
-                    return cpf_professor
-                except IndexError:
-                    sg.popup("Selecione um professor!")
-        self.close()
+                    return lista_professores[index]  # Retorna o dicionário do professor selecionado
+                except Exception as e:
+                    sg.Popup(f"Erro: {e}")
+
+    def selecionar_orientando(self, lista_orientandos):
+        """
+        Permite selecionar um orientando de uma lista.
+        :param lista_orientandos: Lista de dicionários com informações dos orientandos.
+        :return: Dicionário com o orientando selecionado ou None se cancelado.
+        """
+        orientandos_formatados = [
+            f"Nome: {o['nome']} | CPF: {o['cpf']}" for o in lista_orientandos
+        ]
+        layout = [
+            [sg.Text("Selecione um Orientando", font=("Helvetica", 20))],
+            [sg.Listbox(values=orientandos_formatados, size=(60, 15), key="orientando_selecionado")],
+            [sg.Button("Confirmar"), sg.Button("Cancelar")]
+        ]
+        self.__window = sg.Window("Selecionar Orientando").Layout(layout)
+
+        while True:
+            button, values = self.__window.read()
+            if button in (None, "Cancelar"):
+                self.close()
+                return None
+            if button == "Confirmar":
+                if not values["orientando_selecionado"]:
+                    sg.popup("Nenhum orientando selecionado. Por favor, selecione um orientando.")
+                    continue
+                selecionado = values["orientando_selecionado"][0]
+                cpf_orientando = selecionado.split("CPF: ")[1].strip()
+                self.close()
+                return next(o for o in lista_orientandos if str(o["cpf"]) == cpf_orientando)
+
+    def mostrar_lista_orientandos(self, orientandos_formatados):
+        """
+        Exibe a lista de orientandos de forma somente leitura com cores ajustadas para melhor visibilidade.
+        """
+        layout = [
+            [sg.Text("Orientandos do Professor", font=("Helvetica", 20))],
+            [sg.Listbox(
+                values=orientandos_formatados,
+                size=(60, 15),
+                disabled=True,
+                key="orientandos",
+                text_color="black",  # Cor do texto (alterada para melhor visibilidade)
+                background_color="white",  # Cor de fundo mais clara
+                font=("Helvetica", 12)
+            )],
+            [sg.Button("Fechar")]
+        ]
+        self.__window = sg.Window("Lista de Orientandos").Layout(layout)
+
+        while True:
+            button, _ = self.__window.read()
+            if button in (None, "Fechar"):
+                self.close()
+                break
 
     def close(self):
         if self.__window:
