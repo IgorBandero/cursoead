@@ -70,23 +70,46 @@ class TelaOrientacao:
             self.__window.read()
             self.close()
 
-    def selecionar_orientacao(self, mensagem="Digite o CPF do aluno:"):
-        layout = [
-            [sg.Text(mensagem, font=("Helvetica", 15))],
-            [sg.InputText(key="cpf_aluno")],
-            [sg.Button("Confirmar"), sg.Cancel("Cancelar")],
+    def selecionar_orientacao(self, orientacoes):
+        """
+        Exibe uma lista de orientações e permite ao usuário selecionar uma para exclusão.
+        :param orientacoes: Lista de dicionários com informações das orientações.
+        :return: O dicionário da orientação selecionada ou None se cancelado.
+        """
+        sg.ChangeLookAndFeel('DarkTeal4')
+
+        # Formatar orientações para exibição
+        orientacoes_formatadas = [
+            f"Aluno: {o['aluno_nome']} | CPF Aluno: {o['aluno_cpf']} | Professor: {o['professor_nome']} | CPF Professor: {o['professor_cpf']}"
+            for o in orientacoes
         ]
-        self.__window = sg.Window("Selecionar Orientação", layout)
 
-        button, values = self.__window.read()
-        if button in (None, "Cancelar"):
-            self.close()
-            return None
-        self.close()
-        return values["cpf_aluno"]
+        layout = [
+            [sg.Text("Selecione uma Orientação", font=("Helvetica", 20))],
+            [sg.Listbox(values=orientacoes_formatadas, size=(60, 15), key="orientacao_selecionada",
+                        font=("Helvetica", 12))],
+            [sg.Button("Confirmar"), sg.Button("Cancelar")]
+        ]
 
-    def mostrar_mensagem(self, mensagem):
-        sg.Popup(mensagem)
+        self.__window = sg.Window("Selecionar Orientação").Layout(layout)
+
+        while True:
+            button, values = self.__window.read()
+            if button in (None, "Cancelar"):
+                self.__window.close()
+                return None
+            if button == "Confirmar":
+                try:
+                    # Verificar se uma orientação foi selecionada
+                    selecionada = values["orientacao_selecionada"]
+                    if not selecionada:
+                        raise ValueError("Nenhuma orientação selecionada!")
+                    # Encontrar o dicionário da orientação com base na seleção
+                    index = orientacoes_formatadas.index(selecionada[0])
+                    self.__window.close()
+                    return orientacoes[index]
+                except Exception as e:
+                    sg.popup_error(f"Erro: {str(e)}")
 
     def selecionar_aluno(self, lista_alunos):
         """Permite selecionar um aluno de uma lista."""
@@ -206,3 +229,10 @@ class TelaOrientacao:
     def close(self):
         if self.__window:
             self.__window.close()
+
+    def mostrar_mensagem(self, mensagem):
+        """
+        Exibe uma mensagem em um popup.
+        :param mensagem: Texto da mensagem a ser exibida.
+        """
+        sg.popup("Mensagem", mensagem, font=("Helvetica", 14))

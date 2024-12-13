@@ -113,11 +113,40 @@ class ControladorOrientacao:
             self.__tela_orientacao.mostrar_mensagem("Erro: Orientação não encontrada.")
 
     def excluir_orientacao(self):
-        cpf_aluno = self.__tela_orientacao.selecionar_orientacao()
-        orientacao = self.buscar_orientacao_por_cpf_aluno(cpf_aluno)
+        # Obter todas as orientações do DAO
+        orientacoes = self.__orientacao_dao.get_all()
 
-        if orientacao:
-            self.__orientacao_dao.remove(orientacao)
+        if not orientacoes:
+            self.__tela_orientacao.mostrar_mensagem("Nenhuma orientação cadastrada.")
+            return
+
+        # Criar uma lista formatada para exibição
+        lista_orientacoes = [
+            {
+                "aluno_nome": orientacao.aluno.nome,
+                "aluno_cpf": orientacao.aluno.cpf,
+                "professor_nome": orientacao.professor.nome,
+                "professor_cpf": orientacao.professor.cpf,
+            }
+            for orientacao in orientacoes
+        ]
+
+        # Exibir a lista e obter a seleção
+        selecionada = self.__tela_orientacao.selecionar_orientacao(lista_orientacoes)
+        if not selecionada:
+            self.__tela_orientacao.mostrar_mensagem("Seleção cancelada.")
+            return
+
+        # Localizar a orientação selecionada na lista original
+        orientacao_selecionada = next(
+            (o for o in orientacoes if
+             o.aluno.cpf == selecionada["aluno_cpf"] and o.professor.cpf == selecionada["professor_cpf"]),
+            None,
+        )
+
+        if orientacao_selecionada:
+            # Remover a orientação selecionada do DAO
+            self.__orientacao_dao.remove(orientacao_selecionada)
             self.__tela_orientacao.mostrar_mensagem("Orientação excluída com sucesso!")
         else:
             self.__tela_orientacao.mostrar_mensagem("Erro: Orientação não encontrada.")
