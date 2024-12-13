@@ -47,11 +47,16 @@ class ControladorCurso():
                                                     "min_semestres": curso.min_semestres, "max_semestres": curso.max_semestres, "mensalidade": curso.mensalidade})
                 if curso_atualizado:
                     if curso.nome != curso_atualizado["nome"]:
-                        self.__curso_DAO.remove(curso.nome)
-                        curso_novo = Curso(curso_atualizado["nome"], curso_atualizado["descricao"], curso_atualizado["carga_horaria"],
-                                        curso_atualizado["min_semestres"], curso_atualizado["max_semestres"], curso_atualizado["mensalidade"],
-                                        curso.modulos)
-                        self.__curso_DAO.add(curso_novo)
+                        try:
+                            if self.buscar_curso_pelo_nome(curso_atualizado["nome"]) is not None:
+                                raise NomeCursoJaRegistradoException
+                            self.__curso_DAO.remove(curso.nome)
+                            curso_novo = Curso(curso_atualizado["nome"], curso_atualizado["descricao"], curso_atualizado["carga_horaria"],
+                                            curso_atualizado["min_semestres"], curso_atualizado["max_semestres"], curso_atualizado["mensalidade"],
+                                            curso.modulos)
+                            self.__curso_DAO.add(curso_novo)
+                        except NomeCursoJaRegistradoException as e:
+                            self.__tela_modulo.mostrar_mensagem(str(e))
                     else:
                         for item in self.__curso_DAO.get_all():
                             if(item.nome == curso.nome):

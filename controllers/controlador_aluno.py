@@ -12,7 +12,6 @@ from daos.aluno_dao import AlunoDAO
 class ControladorAluno():
 
     def __init__(self, controlador_sistema, controlador_curso, controlador_modulo):
-        #self.__alunos = []
         self.__ex_alunos = []
         self.__tela_aluno = TelaAluno()
         self.__tela_modulo = TelaModulo()
@@ -59,9 +58,9 @@ class ControladorAluno():
                 if aluno_atualizado:
                     if aluno.cpf != aluno_atualizado["cpf"]:
                         try:
-                            self.__aluno_DAO.remove(aluno.cpf)
                             if self.buscar_aluno_pelo_cpf(aluno_atualizado["cpf"]) is not None:
                                 raise CpfAlunoJaRegistradoException
+                            self.__aluno_DAO.remove(aluno.cpf)
                             aluno_novo = Aluno(aluno_atualizado["nome"], aluno_atualizado["cpf"], aluno_atualizado["telefone"], aluno_atualizado["email"],
                                                 aluno_atualizado["usuario"], aluno_atualizado["senha"], aluno_atualizado["rua"], aluno_atualizado["num_residencia"], 
                                                 aluno_atualizado["bairro"], aluno_atualizado["cidade"], aluno_atualizado["cep"], aluno.matricula.curso,
@@ -192,13 +191,13 @@ class ControladorAluno():
         if (cpf is not None):
             aluno = self.buscar_aluno_pelo_cpf(cpf)
             if(aluno is not None):
-                return aluno
+                return aluno """
 
     def buscar_aluno_pelo_cpf(self, cpf):
         for aluno in self.__aluno_DAO.get_all():
             if aluno.cpf == cpf:
                 return aluno
-        return None """
+        return None 
 
     def buscar_ex_aluno_pelo_cpf(self, cpf):
         for aluno in self.__ex_alunos:
