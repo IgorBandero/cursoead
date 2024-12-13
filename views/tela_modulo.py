@@ -83,7 +83,7 @@ class TelaModulo:
     def editar_modulo(self, modulo):
         layout = [
             [sg.Text("----------------- Editar Módulo -----------------", font=("Helvica", 20), pad=((0, 0), (0, 10)))],
-            [sg.Text("Código:", size=(17, 1)), sg.Input(default_text=modulo["codigo"], key="codigo")],
+            [sg.Text("Código:", size=(17, 1)), sg.Input(default_text=modulo["codigo"], key="codigo", disabled=True)],
             [sg.Text("Nome:", size=(17, 1)), sg.Input(default_text=modulo["nome"], key="nome")],
             [sg.Text("Área:", size=(17, 1)), sg.Input(default_text=modulo["area"], key="area")],
             [sg.Text("Carga Horária (h):", size=(17, 1)), sg.Input(default_text=str(modulo["carga_horaria"]), key="carga_horaria")],
@@ -166,7 +166,7 @@ class TelaModulo:
                 self.close()
                 break
 
-    def selecionar_modulo(self, modulos, mensagem):
+    """def selecionar_modulo(self, modulos, mensagem):
 
         if num_opcoes == 0:
             sg.Popup("Nenhum módulo cadastrado.")
@@ -183,7 +183,7 @@ class TelaModulo:
             return self.buscar_modulo_pelo_codigo()
         elif event == "Selecionar da Lista":
             return self.selecionar_modulo_na_lista(num_opcoes)
-        self.close()
+        self.close() """
 
     def buscar_modulo_pelo_codigo(self):
         layout = [[sg.Text("Informe o código do módulo que deseja selecionar: "), sg.InputText(key="codigo")],

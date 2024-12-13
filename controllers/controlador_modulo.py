@@ -33,25 +33,13 @@ class ControladorModulo:
             if modulo is not None:
                 modulo_atualizado = self.__tela_modulo.editar_modulo({"codigo": modulo.codigo, "nome": modulo.nome, "area": modulo.area, "carga_horaria": modulo.carga_horaria})
                 if modulo_atualizado:
-                    if modulo.codigo != modulo_atualizado["codigo"]:
-                        try:
-                            if self.buscar_modulo_por_codigo(modulo_atualizado["codigo"]) is not None:
-                                raise CodigoModuloJaRegistradoException
-                            self.__modulo_DAO.remove(modulo.codigo)
-                            modulo_novo = Modulo(modulo_atualizado["codigo"], modulo_atualizado["nome"], modulo_atualizado["area"], modulo_atualizado["carga_horaria"])
-                            self.__modulo_DAO.add(modulo_novo)
-                        except CodigoModuloJaRegistradoException as e:
-                            self.__tela_modulo.mostrar_mensagem(str(e))
-                    else:
-                        for item in self.__modulo_DAO.get_all():
-                            if(item.codigo == modulo_atualizado["codigo"]):
-                                item.nome = modulo_atualizado["nome"]
-                                item.area = modulo_atualizado["area"]
-                                item.carga_horaria = modulo_atualizado["carga_horaria"]
-                                self.__modulo_DAO.update(item)
+                    modulo.nome = modulo_atualizado["nome"]
+                    modulo.area = modulo_atualizado["area"]
+                    modulo.carga_horaria = modulo_atualizado["carga_horaria"]
+                    self.__modulo_DAO.update(modulo)
                     self.__tela_modulo.mostrar_mensagem(f"Módulo {modulo.nome} atualizado com sucesso!\n")
-            else:
-                raise EdicaoModuloException
+                else:
+                    raise EdicaoModuloException
         except Exception as e:
             self.__tela_modulo.mostrar_mensagem(str(e))
         self.abrir_tela()
@@ -170,11 +158,9 @@ class ControladorModulo:
         if modulo is not None:
             nota = self.__tela_modulo.avaliar_modulos({"nome": modulo.nome})
             if nota is not None:
-                for item in self.__modulo_DAO.get_all():
-                    if(item.codigo == modulo.codigo):
-                        item.adicionar_avaliacao(nota)
-                        self.__modulo_DAO.update(item)
-                self.__tela_modulo.mostrar_mensagem(f"Módulo {modulo.nome} avaliado com sucesso!\n")
+                modulo.adicionar_avaliacao(nota)
+                self.__modulo_DAO.update(modulo)
+                self.__tela_modulo.mostrar_mensagem(f"Módulo {modulo.nome} avaliado com sucesso!\n\nAvaliação Média do Módulo: {modulo.avaliacao_media():.2f}\n")
 
     def abrir_tela(self):
         opcoes = {

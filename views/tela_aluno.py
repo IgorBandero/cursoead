@@ -16,7 +16,7 @@ class TelaAluno():
         sg.ChangeLookAndFeel('DarkTeal4')
         layout = [
             [sg.Text("----------------------- Alunos -----------------------", font=("Helvica", 25),
-                     pad=((0, 0), (10, 15)))],
+            pad=((0, 0), (10, 15)))],
             [sg.Text("Escolha sua opção: ", font=("Helvica", 14), pad=((5, 0), (0, 10)))],
             [sg.Radio("Cadastrar Aluno", "RD1", key="1")],
             [sg.Radio("Editar Aluno", "RD1", key="2")],
@@ -30,7 +30,7 @@ class TelaAluno():
             [sg.Radio("Relatório de tempo médio de conclusão", "RD1", key="10")],
             [sg.Radio("Voltar", "RD1", key="0")],
             [sg.Button("Confirmar", size=(8, 1), pad=((10, 0), (20, 20))),
-             sg.Cancel("Cancelar", size=(8, 1), pad=((15, 0), (20, 20)))]
+            sg.Cancel("Cancelar", size=(8, 1), pad=((15, 0), (20, 20)))]
         ]
         self.__window = sg.Window("Sistema de Alunos").Layout(layout)
 
@@ -87,7 +87,7 @@ class TelaAluno():
             [sg.Text("CEP: "), sg.InputText("", key="cep", size=(50, 1))],
             [sg.Text("Data Início (DD/MM/AAAA): "), sg.InputText("", key="data_inicio", size=(30, 1))],
             [sg.Button("Confirmar", size=(8, 1), pad=((5, 0), (20, 20))),
-             sg.Cancel("Cancelar", size=(8, 1), pad=((15, 0), (20, 20)))]
+            sg.Cancel("Cancelar", size=(8, 1), pad=((15, 0), (20, 20)))]
         ]
         self.__window = sg.Window("Sistema de livros").Layout(layout)
 
@@ -149,25 +149,25 @@ class TelaAluno():
     def editar_aluno(self, aluno):
         layout = [
             [sg.Text("------------------ Editar Aluno -------------------", font=("Helvica", 20),
-                     pad=((0, 0), (0, 10)))],
+            pad=((0, 0), (0, 10)))],
             [sg.Text("Nome: ", size=(20, 1)), sg.InputText(default_text=aluno["nome"], key="nome", size=(50, 1))],
             [sg.Text("CPF: ", size=(20, 1)), sg.InputText(default_text=aluno["cpf"], key="cpf", size=(50, 1))],
             [sg.Text("Telefone: ", size=(20, 1)),
-             sg.InputText(default_text=aluno["telefone"], key="telefone", size=(50, 1))],
+            sg.InputText(default_text=aluno["telefone"], key="telefone", size=(50, 1))],
             [sg.Text("E-mail: ", size=(20, 1)), sg.InputText(default_text=aluno["email"], key="email", size=(50, 1))],
             [sg.Text("Usuário: ", size=(20, 1)),
-             sg.InputText(default_text=aluno["usuario"], key="usuario", size=(50, 1))],
+            sg.InputText(default_text=aluno["usuario"], key="usuario", size=(50, 1))],
             [sg.Text("Senha: ", size=(20, 1)), sg.InputText(default_text=aluno["senha"], key="senha", size=(50, 1))],
             [sg.Text("Rua: ", size=(20, 1)), sg.InputText(default_text=aluno["rua"], key="rua", size=(50, 1))],
             [sg.Text("Número de Residência: ", size=(20, 1)),
-             sg.InputText(default_text=aluno["num_residencia"], key="num_residencia", size=(50, 1))],
+            sg.InputText(default_text=aluno["num_residencia"], key="num_residencia", size=(50, 1))],
             [sg.Text("Bairro: ", size=(20, 1)), sg.InputText(default_text=aluno["bairro"], key="bairro", size=(50, 1))],
             [sg.Text("Cidade: ", size=(20, 1)), sg.InputText(default_text=aluno["cidade"], key="cidade", size=(50, 1))],
             [sg.Text("CEP: ", size=(20, 1)), sg.InputText(default_text=aluno["cep"], key="cep", size=(50, 1))],
             [sg.Text("Data Início (DD/MM/AAAA): ", size=(20, 1)),
-             sg.InputText(default_text=aluno["data_inicio"].strftime("%d/%m/%Y"), key="data_inicio", size=(50, 1))],
+            sg.InputText(default_text=aluno["data_inicio"].strftime("%d/%m/%Y"), key="data_inicio", size=(50, 1))],
             [sg.Button("Confirmar", size=(8, 1), pad=((5, 0), (20, 20))),
-             sg.Cancel("Cancelar", size=(8, 1), pad=((15, 0), (20, 20)))]
+            sg.Cancel("Cancelar", size=(8, 1), pad=((15, 0), (20, 20)))]
         ]
         self.__window = sg.Window("Editar Aluno").Layout(layout)
 
@@ -247,7 +247,7 @@ class TelaAluno():
 
     def mostrar_opcao_aluno(self, aluno):
         print(aluno["indice"] + 1, " - NOME: ", aluno["nome"], " | CPF: ", aluno["cpf"], " | MATRÍCULA: ",
-              aluno["matricula"], " | CURSO: ", aluno["curso"])
+            aluno["matricula"], " | CURSO: ", aluno["curso"])
 
     def selecionar_aluno(self, num_opcoes):
         if (num_opcoes == 0):
@@ -274,7 +274,7 @@ class TelaAluno():
             [sg.Text(mensagem, font=("Helvetica", 14), pad=((0, 0), (10, 10)))],
             [sg.Listbox(nomes_alunos, size=(70, 10), key="nome_aluno_selecionado", enable_events=True)],
             [sg.Button("Confirmar", size=(8, 1), pad=((5, 0), (15, 15))),
-             sg.Button("Cancelar", size=(8, 1), pad=((15, 0), (15, 15)))]
+            sg.Button("Cancelar", size=(8, 1), pad=((15, 0), (15, 15)))]
         ]
         self.__window = sg.Window('Selecionar Aluno').Layout(layout)
         while (True):
