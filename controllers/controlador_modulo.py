@@ -83,11 +83,28 @@ class ControladorModulo:
         return None
 
     def selecionar_modulos(self):
-        lista_modulos = []
+        if(len(self.__modulo_DAO.get_all()) == 0):
+            raise ListaModulosVaziaException
+        lista_modulos_disponiveis = []
+        lista_modulos_escolhidos = []
+        for modulo in self.__modulo_DAO.get_all():
+                lista_modulos_disponiveis.append({"codigo": modulo.codigo, "nome": modulo.nome, "carga_horaria": modulo.carga_horaria})
         while True:
-            self.__tela_modulo.mostrar_mensagem("\n----------------- SELECIONAR MÓDULO ----------------")
-            tipo_consulta = self.__tela_modulo.selecionar_modulo(len(self.__modulos))
-            if tipo_consulta == "Buscar pelo codigo":
+            codigo_modulo = self.__tela_modulo.selecionar_modulo_na_lista(lista_modulos_disponiveis, "Selecione o módulo para matrícula:")
+            modulo = self.buscar_modulo_por_codigo(codigo_modulo)
+            print("MODULO DO CONTROLADOR: ", modulo)
+            if modulo is not None:
+                if not (modulo in self.__modulo_DAO.get_all()):
+                    print("ENTROU NO LAÇO...")
+                    lista_modulos_escolhidos.append(modulo)
+            else:
+                raise ModuloNaoEncontradoException
+            print("MODULOS ESCOLHIDOS: ", lista_modulos_escolhidos)
+            continuar = self.__tela_modulo.continuar_registro_modulos()
+            if not continuar:
+                return lista_modulos_escolhidos
+
+            """if tipo_consulta == "Buscar pelo codigo":
                 modulo = self.selecionar_modulo_pelo_codigo()
                 if modulo and modulo not in lista_modulos:
                     self.__tela_modulo.mostrar_mensagem(f"\nCÓDIGO: {modulo.codigo} | NOME: {modulo.nome} | ÁREA: {modulo.area} | CARGA HORÁRIA: {modulo.carga_horaria}")
@@ -105,7 +122,7 @@ class ControladorModulo:
                     self.__tela_modulo.mostrar_mensagem("\nMódulo já selecionado ou não encontrado.")
             if not self.__tela_modulo.continuar_registro_modulos():
                 break
-        return lista_modulos
+        return lista_modulos """
 
     def selecionar_modulo_pelo_codigo(self):
         codigo = self.__tela_modulo.buscar_modulo_pelo_codigo()

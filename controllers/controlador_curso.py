@@ -15,7 +15,7 @@ class ControladorCurso():
 
     def cadastrar_curso(self):
         try:
-            num_modulos_disponiveis = len(self.__controlador_modulo._ControladorModulo__modulos)
+            num_modulos_disponiveis = len(self.__controlador_modulo._ControladorModulo__modulo_DAO.get_all())
             if (num_modulos_disponiveis == 0):
                 raise ListaModulosVaziaException
             curso = self.__tela_curso.cadastrar_curso()
