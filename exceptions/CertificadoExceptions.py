@@ -18,4 +18,6 @@ class CertificadoNaoEncontradoException(Exception):
     def __init__(self):
         super().__init__("CERTIFICADO NÃO ENCONTRADO!\n")
 
-
+class EdicaoCertificadoException(Exception):
+    def __init__(self):
+        super().__init__("ERRO NA EDIÇÃO DO CERTIFICADO!\n")

@@ -1,6 +1,8 @@
 from datetime import datetime
 import PySimpleGUI as sg
+import re
 from exceptions.OpcaoInvalidaException import OpcaoInvalidaException
+from exceptions.CertificadoExceptions import EdicaoCertificadoException
 class TelaCertificado():
 
     def __init__(self):
@@ -45,29 +47,88 @@ class TelaCertificado():
                 self.mostrar_mensagem(str(e))
                 self.close()
 
-    def editar_certificado(self):
-        print("\n--------------- ATRIBUTOS PARA EDITAR --------------")
-        print("1 - DATA EMISSÃO")
-        print("----------------------------------------------------")
-        while(True):
-            opcao = input("\nEscolha uma opção: ")
-            if (opcao == "1"):
-                print("\nInforme a nova data de emissão...")
-                data_emissao = self.cadastrar_data("Data de emissão (DD/MM/AAAA): ")
-                return [int(opcao), data_emissao]
-            else:
-                print("\n***** OPÇÃO INVÁLIDA! TENTE NOVAMENTE... *****")
+    def editar_certificado(self, certificado):
+        layout = [
+            [sg.Text("----------------- Editar Certificado -----------------", font=("Helvica", 20), pad=((0, 0), (0, 10)))],
+            [sg.Text("Aluno:", size=(17, 1)), sg.Input(default_text=certificado["aluno"], key="aluno")],
+            [sg.Text("Curso:", size=(17, 1)), sg.Input(default_text=certificado["curso"], key="curso")],
+            [sg.Text("Nota Final:", size=(17, 1)), sg.Input(default_text=certificado["nota_final"], key="nota_final")],
+            [sg.Text("Data da Emissão (DD/MM/AAAA):", size=(17, 1)), sg.Input(default_text=certificado["data_emissao"].strftime("%d/%m/%Y"), key="data_emissao")],
+            [sg.Button("Confirmar", size=(15, 1), pad=((5, 0), (20, 20))), sg.Button("Cancelar", size=(15, 1), pad=((15, 0), (20, 20)))]
+        ]
+        self.__window = sg.Window("Editar Certificado").Layout(layout)
 
-    def excluir_certificado(self):
-        while(True):
-            print(f"\nConfirma a exclusão do certificado? \n1 – SIM \n2 – NÃO (Cancelar)")
-            excluir = input("\nEscolha a opção: ")
-            if (excluir == "1"):
+        while True:
+            button, values = self.open()
+            if button == None or button == "Cancelar":
+                self.close()
+                return None
+            elif button == "Confirmar":
+                try:
+                    if not self.aluno_valido(values["nome"]):
+                        raise ValueError("Nome do aluno inválido! \nNome deve ser um texto com mais de 5 caracteres")
+                    if not self.curso_valido(values["curso"]):
+                        raise ValueError("Nome do curso inválido! \nNome deve ser um texto com mais de 5 caracteres")
+                    if not self.nota_valida(values["nota_final"]):
+                        raise ValueError("Nota final inválida! \nNota deve ser um número entre 0 e 10")
+                    data = self.data_valida(values["data_emissao"])
+                    if data is None:
+                        raise ValueError("Formato da data de emissão inválida! Use DD/MM/AAAA...\n")
+                    else:
+                        data_emissao = data
+
+                    certificado_atualizado = {
+                        "aluno": values["aluno"],
+                        "curso": values["curso"],
+                        "nota_final": float(values["nota_final"]),
+                        "data_emissao": data_emissao
+                    }
+                    if certificado_atualizado:
+                        self.close()
+                        return certificado_atualizado
+                    else:
+                        self.close()
+                        raise EdicaoCertificadoException
+                except Exception as e:
+                    self.mostrar_mensagem(str(e))
+
+    def aluno_valido(self, aluno):
+        return len(aluno) > 5
+
+    def curso_valido(self, curso):
+        return len(curso) > 5
+
+    def nota_valida(self, nota):
+        if re.fullmatch(r"\d+([.,]\d+)?", nota):
+            nota = float(nota.replace(",", "."))
+            if 0.00 <= nota <= 10.00:
                 return True
-            elif (excluir == "2"):
+        return False
+
+    def data_valida(self, data):
+        try:
+            data_valida = datetime.strptime(data, "%d/%m/%Y")
+            return data_valida
+        except ValueError:
+            return None
+
+
+    def excluir_certificado(self, certificado):
+        layout = [
+            [sg.Text(f"Confirma a exclusão do CERTIFICADO de: {certificado["aluno"]}?", font=("Helvetica", 14))],
+            [sg.Button("SIM", size=(10, 1), pad=((5, 0), (10, 10))), sg.Button("NÃO", size=(10, 1), pad=((10, 0), (10, 10)))]
+        ]
+        self.__window = sg.Window("Confirmar Exclusão").Layout(layout)
+
+        while True:
+            button, values = self.open()
+            self.close()
+            if button == None:
                 return False
-            else:
-                print("\n******** OPÇÃO INVÁLIDA! TENTE NOVAMENTE... ********")
+            elif button == "SIM":
+                return True
+            elif button == "NÃO":
+                return False
 
     def listar_certificados(self, certificados):
         lista_certificados = [f"{i + 1}. ALUNO: {certificado["aluno"]} / CURSO: {certificado["curso"]} / NOTA FINAL: {certificado["nota_final"]})" for i, certificado in enumerate(certificados)]
@@ -84,10 +145,11 @@ class TelaCertificado():
                 break
 
     def selecionar_certificado_na_lista(self, lista_certificados, mensagem):
-        nomes_certificados = [certificado["nome"] for certificado in lista_certificados]
+        print("ENTROU NA TELA")
+        nomes_certificados = [certificado["aluno"] for certificado in lista_certificados]
         layout = [
             [sg.Text(mensagem, font=("Helvetica", 14), pad=((0, 0), (10, 10)))],
-            [sg.Listbox(nomes_certificados, size=(70, 10), key="nome_certificado_selecionado", enable_events=True)],
+            [sg.Listbox(nomes_certificados, size=(70, 10), key="titular_certificado_selecionado", enable_events=True)],
             [sg.Button("Confirmar", size=(8, 1), pad=((5, 0), (15, 15))), sg.Button("Cancelar", size=(8, 1), pad=((15, 0), (15, 15)))]
         ]
         self.__window = sg.Window('Selecionar Certificado').Layout(layout)
@@ -98,10 +160,11 @@ class TelaCertificado():
                     self.close()
                     return None
                 if button == "Confirmar":
-                    certificado_selecionado = values["nome_certificado_selecionado"]
-                    if certificado_selecionado:
+                    dono_certificado_selecionado = values["titular_certificado_selecionado"]
+                    print(dono_certificado_selecionado)
+                    if dono_certificado_selecionado:
                         self.close()
-                        return certificado_selecionado[0]
+                        return dono_certificado_selecionado[0]
                     else:
                         raise OpcaoInvalidaException
             except OpcaoInvalidaException as e:

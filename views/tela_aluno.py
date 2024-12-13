@@ -264,25 +264,6 @@ class TelaAluno():
         print(aluno["indice"] + 1, " - NOME: ", aluno["nome"], " | CPF: ", aluno["cpf"], " | MATRÍCULA: ",
             aluno["matricula"], " | CURSO: ", aluno["curso"])
 
-    """def selecionar_aluno(self, num_opcoes):
-        if (num_opcoes == 0):
-            print("\n************** NENHUM ALUNO CADASTRADO *************")
-            return
-        while (True):
-            try:
-                opcao = input(
-                    "\nComo deseja selecionar o aluno? \n1 - Procurar aluno pelo CPF \n2 - Selecionar da lista de alunos \n\nEscolha uma opção: ")
-                if (opcao == "1" or opcao == "2"):
-                    break
-                else:
-                    raise OpcaoInvalidaException
-            except Exception as e:
-                self.mostrar_mensagem(str(e))
-        if (opcao == "1"):
-            return "Buscar pelo cpf"
-        if (opcao == "2"):
-            return "Selecionar da lista"""
-
     def selecionar_aluno_na_lista(self, lista_alunos, mensagem):
         nomes_alunos = [aluno["nome"] for aluno in lista_alunos]
         layout = [

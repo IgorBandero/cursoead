@@ -56,7 +56,7 @@ class ControladorCertificado():
             certificado = self.selecionar_certificado("Selecione o(a) titular do certificado para editar:")
             if(certificado is not None):
                 certificado_atualizado = self.__tela_certificado.editar_certificado({"aluno": certificado.aluno.nome, "curso": certificado.curso.nome,
-                                                    "cata_final": certificado.data_final, "nota_final": certificado.nota_final})
+                                                    "data_emissao": certificado.data_emissao, "nota_final": certificado.nota_final})
                 if certificado_atualizado:
                     if certificado.aluno.nome != certificado_atualizado["aluno"]:
                         self.__certificado_DAO.remove(certificado.aluno.nome)
@@ -77,14 +77,20 @@ class ControladorCertificado():
         self.abrir_tela()
 
     def excluir_certificado(self):
-        certificado = self.selecionar_certificado()
-        if(certificado is not None):
-            excluir = self.__tela_certificado.excluir_certificado()
-            if (excluir):
-                self.__certificados.remove(certificado)
-                self.__tela_certificado.mostrar_mensagem(f"\nO certificado foi removido dos registros de certificados.")
-            else:
-                self.__tela_certificado.mostrar_mensagem("\n*************** EXCLUSÃO CANCELADA *****************")
+        try:
+            if(len(self.__certificado_DAO.get_all()) == 0):
+                    raise ListaCertificadosVaziaException
+            certificado = self.selecionar_certificado("Selecione um certificado para excluir:")
+            if(certificado is not None):
+                excluir = self.__tela_certificado.excluir_certificado({"aluno": certificado.aluno.nome})
+                if (excluir):
+                    self.__certificado_DAO.remove(certificado.aluno.nome)
+                    self.__tela_certificado.mostrar_mensagem(f"Certificado removido da lista de certificados\n")
+                else:
+                    self.__tela_certificado.mostrar_mensagem("EXCLUSÃO CANCELADA!\n")
+        except Exception as e:
+            self.__tela_certificado.mostrar_mensagem(str(e))
+        self.abrir_tela()
 
     def listar_certificados(self):
         try:
@@ -116,21 +122,6 @@ class ControladorCertificado():
         except Exception as e:
             self.abrir_tela()
             self.__tela_certificado.mostrar_mensagem(str(e))
-
-
-        while (True):
-            self.__tela_certificado.mostrar_mensagem("\n-------------- SELECIONAR CERTIFICADO --------------")
-            self.listar_certificados()
-            indice_certificado_escolhido = self.__tela_certificado.selecionar_certificado(len(self.__certificados))
-            if (indice_certificado_escolhido is not None):
-                certificado = self.__certificados[indice_certificado_escolhido]
-                if(certificado is not None):
-                    return certificado
-                else:
-                    self.__tela_certificado.mostrar_mensagem("\n******* ATENÇÃO: Certificado não encontrado! *******")
-                continuar = self.__tela_certificado.continuar("Deseja tentar novamente? \n1 - SIM \n2 - NÃO (Sair)")
-                if not continuar:
-                    break
 
     def mostrar_certificado(self, certificado):
         self.__tela_certificado.mostrar_certificado({"aluno": certificado.aluno.nome, "cpf": certificado.aluno.cpf, "curso": certificado.curso.nome, "carga_horaria": certificado.curso.carga_horaria, "nota_final": certificado.nota_final, "data_emissao": certificado.data_emissao})
