@@ -37,3 +37,7 @@ class AlunoNaoConcluinteException(Exception):
 class ListaExAlunosVaziaException(Exception):
     def __init__(self):
         super().__init__("NENHUM ALUNO CONCLUINTE ATÉ O MOMENTO!\n")
+
+class AlunoSemModulosMatriculadosException(Exception):
+    def __init__(self):
+        super().__init__("ALUNO SEM MÓDULOS MATRICULADOS!\n")

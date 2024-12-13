@@ -250,7 +250,7 @@ class TelaAluno():
         lista_alunos = [f"{i + 1}. {aluno["nome"]} (CPF: {aluno["cpf"]} / Curso: {aluno["curso"]})" for i, aluno in enumerate(alunos)]
         layout = [
             [sg.Text("Lista de Alunos", font=("Helvetica", 14), pad=((0, 0), (10, 10)))],
-            [sg.Listbox(values=lista_alunos, size=(70, 10), enable_events=False, font=("Helvetica", 10), pad=((5, 0), (5, 0)))],
+            [sg.Listbox(values=lista_alunos, size=(70, 10), enable_buttons=False, font=("Helvetica", 10), pad=((5, 0), (5, 0)))],
             [sg.Button("Voltar", size=(10, 1), pad=((5, 0), (15, 15)))]
         ]
         self.__window = sg.Window("Lista Alunos", layout)
@@ -414,15 +414,35 @@ class TelaAluno():
         return codigo
 
     def lancar_nota_modulo(self):
-        while (True):
-            nota = input("\nInforme a nota do aluno no módulo: ")
-            if bool(re.fullmatch(r"\d+([.,]\d+)?", nota)):
-                if 0.00 <= float(nota) <= 10.00:
-                    return float(nota)
-                else:
-                    print("\n********* NOTA DEVE SER UM NÚMERO DE 0 A 10 ********")
-            else:
-                print("\nNOTA INVÁLIDA! Por favor, tente novamente...")
+        sg.ChangeLookAndFeel('DarkTeal4')
+        layout = [
+            [sg.Text("Informe a nota do aluno no módulo:", font=("Helvetica", 14))],
+            [sg.Input(key="nota", size=(10, 1), font=("Helvetica", 12))],
+            [sg.Button("Confirmar", size=(8, 1), pad=((5, 0), (20, 20))), sg.Button("Cancelar", size=(8, 1), pad=((5, 0), (20, 20)))]
+        ]
+
+        self.__window = sg.Window("Sistema de Alunos").Layout(layout)
+
+        while True:
+            try:
+                button, values = self.open()
+                if button in (None, "Cancelar"):
+                    self.close()
+                    return None
+
+                if button == "Confirmar":
+                    nota = values["nota"]
+                    if re.fullmatch(r"\d+([.,]\d+)?", nota):
+                        nota = float(nota.replace(",", "."))
+                        if 0.00 <= nota <= 10.00:
+                            self.close()
+                            return nota
+                        else:
+                            raise ValueError("Nota inválida! Insira um número válido entre 0 e 10")
+                    else:
+                        raise ValueError("Nota inválida! Por favor, tente novamente...")
+            except Exception as e:
+                self.mostrar_mensagem(str(e))
 
     def continuar(self, mensagem):
         while (True):

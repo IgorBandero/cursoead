@@ -3,7 +3,7 @@ from views.tela_modulo import TelaModulo
 from models.aluno import Aluno
 from models.matricula import Matricula
 from exceptions.CursoExceptions import ListaCursosVaziaException, CursoInvalidoException
-from exceptions.AlunoExceptions import AlunoJaRegistradoException, AlunoInvalidoException, CpfAlunoJaRegistradoException, UsuarioAlunoJaRegistradoException, EdicaoAlunoException, ListaAlunosVaziaException, AlunoNaoEncontradoException, AlunoNaoConcluinteException, ListaExAlunosVaziaException
+from exceptions.AlunoExceptions import AlunoInvalidoException, CpfAlunoJaRegistradoException, UsuarioAlunoJaRegistradoException, EdicaoAlunoException, ListaAlunosVaziaException, AlunoNaoEncontradoException, AlunoNaoConcluinteException, ListaExAlunosVaziaException, AlunoSemModulosMatriculadosException
 from collections import Counter
 from datetime import date
 from datetime import timedelta
@@ -168,9 +168,9 @@ class ControladorAluno():
 
     def busca_modulos_finalizados(self, aluno):
         lista_modulos = []
-        if len(aluno.matricula.modulos_atuais) > 0:
+        if len(aluno.matricula.modulos_finalizados) > 0:
             for modulo in aluno.matricula.modulos_finalizados:
-                lista_modulos.append({"codigo": modulo.codigo, "nome": modulo.nome})
+                lista_modulos.append({"codigo": modulo["codigo"], "nome": modulo["nome"]})
         return lista_modulos
 
     def matricular_aluno_modulos(self):
@@ -181,8 +181,9 @@ class ControladorAluno():
                 for item in modulos:
                     if item not in aluno.matricula.modulos_atuais:
                         aluno.matricula.adicionar_modulo_atual(item)
-                        print("MÓDULO: ", aluno.matricula.modulos_atuais[0].nome)
                         self.__aluno_DAO.update(aluno)
+                        self.__tela_aluno.mostrar_mensagem("Matrícula realizada com sucesso!\n")
+        self.abrir_tela()
 
     def buscar_aluno_pelo_cpf(self, cpf):
         for aluno in self.__aluno_DAO.get_all():
@@ -214,26 +215,36 @@ class ControladorAluno():
         return True
 
     def lancar_notas_aluno(self):
-        aluno = self.selecionar_aluno()
-        if aluno is not None:
-            self.__tela_aluno.mostrar_mensagem(f"\nALUNO(A): {aluno.nome} | CURSO: {aluno.matricula.curso.nome} | MATRÍCULA: {aluno.matricula.codigo} | CPF: {aluno.cpf}")
-            if(len(aluno.matricula.modulos_atuais) == 0):
-                self.__tela_aluno.mostrar_mensagem("\n********* ALUNO SEM MÓDULOS MATRICULADOS! **********")
-                return
-            print("\n----------------- MÓDULOS ATUAIS -------------------\n")
-            for indice, modulo in enumerate(aluno.matricula.modulos_atuais):
-                self.__tela_modulo.mostrar_opcao_modulo({"indice": indice, "codigo": modulo.codigo, "nome": modulo.nome, "area": modulo.area, "carga_horaria": modulo.carga_horaria})
-            indice_modulo = self.__tela_modulo.selecionar_modulo_na_lista(len(aluno.matricula.modulos_atuais))
-            if indice_modulo is not None:
-                nota = self.__tela_aluno.lancar_nota_modulo()
-                if nota is not None:
-                    if nota >= 7.00:
-                        registro_nota = {"modulo": aluno.matricula.modulos_atuais[indice_modulo], "nota": nota}
-                        aluno.matricula.modulos_finalizados.append(registro_nota)
-                        aluno.matricula.modulos_atuais.remove(aluno.matricula.modulos_atuais[indice_modulo])
-                    else:
-                        aluno.matricula.modulos_atuais.remove(aluno.matricula.modulos_atuais[indice_modulo])
-                    self.__tela_aluno.mostrar_mensagem("\n************ NOTA LANÇADA COM SUCESSO! *************")
+        try:
+            aluno = self.selecionar_aluno("Selecione um aluno(a) para lançar as notas:")
+            if aluno is not None:
+                if(len(aluno.matricula.modulos_atuais) == 0):
+                    raise AlunoSemModulosMatriculadosException
+                lista_modulos = []
+                for indice, modulo in enumerate(aluno.matricula.modulos_atuais):
+                    lista_modulos.append({"indice": indice, "codigo": modulo.codigo, "nome": modulo.nome, "area": modulo.area, "carga_horaria": modulo.carga_horaria})
+                codigo_modulo = self.__tela_modulo.selecionar_modulo_na_lista(lista_modulos, "Selecione um módulo para lançar a nota: ")
+                if modulo is not None:
+                    nota = self.__tela_aluno.lancar_nota_modulo()
+                    if nota is not None:
+                        modulo = self.__controlador_modulo.buscar_modulo_por_codigo(codigo_modulo)
+                        if modulo:
+                            if nota >= 7.00:
+                                registro_nota = {"codigo": modulo.codigo, "nome": modulo.nome, "modulo": modulo, "nota": nota}
+                                aluno.matricula.modulos_finalizados.append(registro_nota)
+                                if modulo in aluno.matricula.modulos_atuais:
+                                    print('MÓDULO ESTÁ DENTRO DA LISTA')
+                                    aluno.matricula.modulos_atuais.remove(modulo)
+                                    self.__aluno_DAO.update(aluno)
+                            else:
+                                aluno.matricula.modulos_atuais.remove(modulo)
+                                self.__aluno_DAO.update(aluno)
+                        else:
+                            raise ModuleNotFoundError
+                        self.__tela_aluno.mostrar_mensagem("NOTA LANÇADA COM SUCESSO!\n")
+        except Exception as e:
+            self.__tela_aluno.mostrar_mensagem(str(e))
+        self.abrir_tela()
 
     def finalizar_curso(self):
         try:
