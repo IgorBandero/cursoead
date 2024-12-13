@@ -114,7 +114,7 @@ class ControladorAluno():
                     raise ListaAlunosVaziaException
             aluno = self.selecionar_aluno("Selecione um aluno para excluir:")
             if(aluno is not None):
-                excluir = self.__tela_aluno.excluir_aluno({"nome": aluno.nome})
+                excluir = self.__tela_aluno.excluir_aluno({"nome": aluno.nome, "curso": aluno.matricula.curso.nome})
                 if (excluir):
                     self.__aluno_DAO.remove(aluno.cpf)
                     self.__tela_aluno.mostrar_mensagem(f"Aluno(a): {aluno.nome} foi removido(a) da lista de alunos da universidade\n")
@@ -149,7 +149,6 @@ class ControladorAluno():
         self.abrir_tela()
 
     def mostrar_aluno(self, aluno):
-        print(aluno.endereco.num_residencia)
         if (aluno.matricula.data_inicio is not None):
             data_inicio = aluno.matricula.data_inicio.strftime("%d/%m/%Y")
         self.__tela_aluno.mostrar_aluno({"nome": aluno.nome, "cpf": aluno.cpf, "telefone": aluno.telefone,
@@ -157,41 +156,33 @@ class ControladorAluno():
                                         "num_residencia": aluno.endereco.num_residencia, "bairro": aluno.endereco.bairro,
                                         "cidade": aluno.endereco.cidade, "cep": aluno.endereco.cep,
                                         "data_inicio": data_inicio,
-                                        "curso": aluno.matricula.curso.nome, "codigo": aluno.matricula.codigo})
+                                        "curso": aluno.matricula.curso.nome, "codigo": aluno.matricula.codigo,
+                                        "modulos_atuais": self.busca_modulos_atuais(aluno), "modulos_finalizados": self.busca_modulos_finalizados(aluno)})
 
-        """
-        if len(curso.modulos) > 0:
-            self.__tela_curso.mostrar_mensagem("\n--------------- MÓDULOS OBRIGATÓRIOS --------------")
-            for modulo in curso.modulos:
-                self.__tela_modulo.mostrar_modulo({"codigo": modulo.codigo, "nome": modulo.nome, "area": modulo.area, "carga_horaria": modulo.carga_horaria})
-
-        self.__tela_aluno.mostrar_aluno({"nome": aluno.nome, "cpf": aluno.cpf, "telefone": aluno.telefone, "email": aluno.email, "usuario": aluno.usuario, "rua": aluno.endereco.rua, "num_residencia": aluno.endereco.num_residencia, "bairro": aluno.endereco.bairro, "cidade": aluno.endereco.cidade, "cep": aluno.endereco.cep, "data_inicio": aluno.matricula.data_inicio, "data_final": aluno.matricula.data_final, "curso": aluno.matricula.curso.nome, "codigo": aluno.matricula.codigo, "data_inicio": aluno.matricula.data_inicio})
+    def busca_modulos_atuais(self, aluno):
+        lista_modulos = []
         if len(aluno.matricula.modulos_atuais) > 0:
-            self.__tela_aluno.mostrar_mensagem("\n------------------ MÓDULOS ATUAIS -----------------")
             for modulo in aluno.matricula.modulos_atuais:
-                self.__tela_modulo.mostrar_modulo({"codigo": modulo.codigo, "nome": modulo.nome, "area": modulo.area, "carga_horaria": modulo.carga_horaria})
-        if len(aluno.matricula.modulos_finalizados) > 0:
-            self.__tela_aluno.mostrar_mensagem("\n--------------- MÓDULOS FINALIZADOS ---------------")
+                lista_modulos.append({"codigo": modulo.codigo, "nome": modulo.nome})
+        return lista_modulos
+
+    def busca_modulos_finalizados(self, aluno):
+        lista_modulos = []
+        if len(aluno.matricula.modulos_atuais) > 0:
             for modulo in aluno.matricula.modulos_finalizados:
-                print(modulo["modulo"].nome)
-                self.__tela_modulo.mostrar_modulo_finalizado({"codigo": modulo["modulo"].codigo, "nome": modulo["modulo"].nome, "area": modulo["modulo"].area, "carga_horaria": modulo["modulo"].carga_horaria, "nota": modulo["nota"]})
-        """
+                lista_modulos.append({"codigo": modulo.codigo, "nome": modulo.nome})
+        return lista_modulos
 
     def matricular_aluno_modulos(self):
-        aluno = self.selecionar_aluno("Selecione um aluno(a) para ver os detalhes:")
+        aluno = self.selecionar_aluno("Selecione um aluno(a) para fazer a matrícula:")
         if aluno is not None:
-            modulos = self.__controlador_modulo.selecionar_modulos()
+            modulos = self.__controlador_modulo.selecionar_modulos("Selecione um módulo para a matrícula")
             if (modulos is not None):
                 for item in modulos:
                     if item not in aluno.matricula.modulos_atuais:
                         aluno.matricula.adicionar_modulo_atual(item)
-
-    """def selecionar_aluno_pelo_cpf(self):
-        cpf = self.__tela_aluno.buscar_aluno_pelo_cpf()
-        if (cpf is not None):
-            aluno = self.buscar_aluno_pelo_cpf(cpf)
-            if(aluno is not None):
-                return aluno """
+                        print("MÓDULO: ", aluno.matricula.modulos_atuais[0].nome)
+                        self.__aluno_DAO.update(aluno)
 
     def buscar_aluno_pelo_cpf(self, cpf):
         for aluno in self.__aluno_DAO.get_all():
