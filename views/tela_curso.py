@@ -55,7 +55,7 @@ class TelaCurso():
     def cadastrar_curso(self):
         sg.ChangeLookAndFeel('DarkTeal4')
         layout = [
-            [sg.Text("-------------- Dados do Curso ---------------", font=("Helvica", 20), pad=((0, 0), (0, 10)))],
+            [sg.Text("---------------- Dados do Curso -----------------", font=("Helvica", 20), pad=((0, 0), (0, 10)))],
             [sg.Text("Nome: ", size=(17, 1)), sg.InputText("", key="nome", size=(50, 1))],
             [sg.Text("Descrição: ", size=(17, 1)), sg.InputText("", key="descricao", size=(50, 1))],
             [sg.Text("Carga Horária: ", size=(17, 1)), sg.InputText("", key="carga_horaria", size=(50, 1))],
@@ -99,7 +99,7 @@ class TelaCurso():
 
     def editar_curso(self, curso):
         layout = [
-            [sg.Text("--------------- Editar Curso ----------------", font=("Helvica", 20), pad=((0, 0), (0, 10)))],
+            [sg.Text("----------------- Editar Curso -----------------", font=("Helvica", 20), pad=((0, 0), (0, 10)))],
             [sg.Text("Nome:", size=(17, 1)), sg.Input(default_text=curso["nome"], key="nome")],
             [sg.Text("Descrição:", size=(17, 1)), sg.Input(default_text=curso["descricao"], key="descricao")],
             [sg.Text("Carga Horária (h):", size=(17, 1)), sg.Input(default_text=str(curso["carga_horaria"]), key="carga_horaria")],
@@ -172,11 +172,9 @@ class TelaCurso():
 
     def excluir_curso(self, curso):
         layout = [
-            [sg.Text(f'Confirma a exclusão do CURSO: {curso["nome"]}?', font=("Helvetica", 14))],
-            [sg.Button("SIM", size=(10, 1), pad=((5, 0), (10, 10))),
-             sg.Button("NÃO", size=(10, 1), pad=((10, 0), (10, 10)))]
+            [sg.Text(f"Confirma a exclusão do CURSO: {curso["nome"]}?", font=("Helvetica", 14))],
+            [sg.Button("SIM", size=(10, 1), pad=((5, 0), (10, 10))), sg.Button("NÃO", size=(10, 1), pad=((10, 0), (10, 10)))]
         ]
-        #janela = sg.Window("Confirmar Exclusão", layout, modal=True)
         self.__window = sg.Window("Confirmar Exclusão").Layout(layout)
 
         while True:
@@ -185,14 +183,12 @@ class TelaCurso():
             if button == None:
                 return False
             elif button == "SIM":
-                #self.close()
                 return True
             elif button == "NÃO":
-                #self.close()
                 return False
 
     def nome_valido(self, nome):
-        return len(nome) >= 5
+        return len(nome) >= 5 
 
     def descricao_valida(self, descricao):
         return len(descricao) >= 10
@@ -208,10 +204,7 @@ class TelaCurso():
         return False
 
     def listar_cursos(self, cursos):
-        lista_cursos = [
-            f"{i + 1}. {curso['nome']} (Carga Horária: {curso['carga_horaria']}h / Mensalidade: R${curso['mensalidade']})"
-            for i, curso in enumerate(cursos)
-        ]
+        lista_cursos = [f"{i + 1}. {curso["nome"]} (Carga Horária: {curso["carga_horaria"]}h / Mensalidade: R${curso["mensalidade"]})" for i, curso in enumerate(cursos)]
         layout = [
             [sg.Text("Lista de Cursos", font=("Helvetica", 14), pad=((0, 0), (10, 10)))],
             [sg.Listbox(values=lista_cursos, size=(70, 10), key="curso_selecionado", enable_events=False, font=("Helvetica", 10), pad=((5, 0), (5, 0)))],
@@ -244,10 +237,7 @@ class TelaCurso():
                 break
 
     def mostrar_avaliacoes(self, avaliacoes):
-        lista_avaliacoes = [
-            f" CURSO: {curso['nome']} | AVALIAÇÃO MÉDIA: {curso['avaliacao']}"
-            for curso in avaliacoes
-        ]
+        lista_avaliacoes = [f" CURSO: {curso["nome"]} | AVALIAÇÃO MÉDIA: {curso["avaliacao"]}" for curso in avaliacoes]
         layout = [
             [sg.Text("Avaliações Médias dos Cursos", font=("Helvetica", 14), pad=((0, 0), (10, 10)))],
             [sg.Listbox(values=lista_avaliacoes, size=(70, 10), key="curso", enable_events=False, font=("Helvetica", 10), pad=((5, 0), (5, 0)))],
