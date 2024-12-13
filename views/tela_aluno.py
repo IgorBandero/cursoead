@@ -455,6 +455,20 @@ class TelaAluno():
             except Exception as e:
                 self.mostrar_mensagem(str(e))
 
+    def mostrar_cursos_populares(self, lista_cursos_populares):
+        sg.ChangeLookAndFeel('DarkTeal4')
+        layout = [
+            [sg.Text("Cursos Mais Populares", font=("Helvetica", 14), pad=(0, 10))],
+            [sg.Listbox(values=lista_cursos_populares, size=(50, 15), key="lista", font=("Helvetica", 12), enable_events=False)],
+            [sg.Button("Voltar", size=(10, 1))]
+        ]
+        self.__window = sg.Window("Cursos Populares").Layout(layout)
+        while True:
+            button, values = self.open()
+            if button in (None, "Voltar"):
+                break
+        self.close()
+
     def continuar(self, mensagem):
         while (True):
             print("\n----------------------------------------------------")

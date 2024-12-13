@@ -271,12 +271,11 @@ class ControladorAluno():
             return False
 
     def cursos_populares(self):
-        cursos = [aluno.matricula.curso for aluno in self.__alunos]
-        contador_cursos = Counter(cursos)
-        cursos_mais_populares = contador_cursos.most_common()
-        print("\n-------------- CURSOS MAIS POPULARES ---------------")
-        for curso, frequencia in cursos_mais_populares:
-            self.__tela_aluno.mostrar_mensagem(f"CURSO: {curso.nome} | ALUNOS: {frequencia}")
+        cursos = [aluno.matricula.curso for aluno in self.__aluno_DAO.get_all()]
+        contador_cursos = Counter(curso.nome for curso in cursos)
+        cursos_ordenados = dict(sorted(contador_cursos.items(), key=lambda item: item[1], reverse=True))
+        [f"CURSO: {curso} | ALUNOS: {quantidade}" for curso, quantidade in cursos_ordenados.items()]
+        self.__tela_aluno.mostrar_cursos_populares([f"CURSO: {curso} | ALUNOS: {quantidade}" for curso, quantidade in cursos_ordenados.items()])
 
     def tempo_medio_conclusao(self):
         try:
