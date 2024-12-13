@@ -3,11 +3,11 @@ from views.tela_professor import TelaProfessor
 from exceptions.ListaProfessoresVaziaException import ListaProfessoresVaziaException
 from exceptions.ProfessorNaoEncontradoException import ProfessorNaoEncontradoException
 from exceptions.ProfessorJaRegistradoException import ProfessorJaRegistradoException
-
+from daos.professor_dao import ProfessorDAO  # DAO importado
 
 class ControladorProfessor:
     def __init__(self, controlador_sistema):
-        self.__professores = []
+        self.__professor_dao = ProfessorDAO()  # Usando o DAO para persistência
         self.__tela_professor = TelaProfessor()
         self.__controlador_sistema = controlador_sistema
 
@@ -17,7 +17,7 @@ class ControladorProfessor:
             if dados_professor:
                 if not self.buscar_professor_por_cpf(dados_professor["cpf"]):
                     professor = Professor(**dados_professor)
-                    self.__professores.append(professor)
+                    self.__professor_dao.add(professor)  # Persistindo com o DAO
                     self.__tela_professor.mostra_mensagem("Professor cadastrado com sucesso!")
                 else:
                     raise ProfessorJaRegistradoException
@@ -26,7 +26,8 @@ class ControladorProfessor:
 
     def listar_professores(self):
         try:
-            if not self.__professores:
+            professores = self.__professor_dao.get_all()  # Recupera todos do DAO
+            if not professores:
                 raise ListaProfessoresVaziaException
             lista_dados_professores = [
                 {
@@ -43,21 +44,18 @@ class ControladorProfessor:
                     "cidade": professor.endereco.cidade,
                     "cep": professor.endereco.cep
                 }
-                for professor in self.__professores
+                for professor in professores
             ]
             self.__tela_professor.listar_professores(lista_dados_professores)
         except ListaProfessoresVaziaException as e:
             self.__tela_professor.mostra_mensagem(str(e))
 
     def buscar_professor_por_cpf(self, cpf: int):
-        for professor in self.__professores:
-            if professor.cpf == cpf:
-                return professor
-        return None
+        return self.__professor_dao.get(cpf)  # Busca no DAO
 
     def selecionar_professor(self):
         try:
-            professores = [{"nome": prof.nome, "cpf": prof.cpf} for prof in self.__professores]
+            professores = [{"nome": prof.nome, "cpf": prof.cpf} for prof in self.__professor_dao.get_all()]
             if not professores:
                 raise ListaProfessoresVaziaException
             cpf = self.__tela_professor.seleciona_professor(professores)
@@ -102,6 +100,7 @@ class ControladorProfessor:
                 professor.endereco.bairro = dados_atualizados["bairro"]
                 professor.endereco.cidade = dados_atualizados["cidade"]
                 professor.endereco.cep = dados_atualizados["cep"]
+                self.__professor_dao.update(professor)  # Atualiza no DAO
                 self.__tela_professor.mostra_mensagem("Dados do professor atualizados com sucesso!")
 
     def remover_professor(self):
@@ -109,7 +108,7 @@ class ControladorProfessor:
         if professor:
             confirmacao = self.__tela_professor.excluir_professor({"nome": professor.nome, "cpf": professor.cpf})
             if confirmacao:
-                self.__professores.remove(professor)
+                self.__professor_dao.remove(professor.cpf)  # Remove no DAO
                 self.__tela_professor.mostra_mensagem("Professor removido com sucesso!")
 
     def voltar(self):
@@ -135,7 +134,4 @@ class ControladorProfessor:
                 self.__tela_professor.mostra_mensagem("Opção inválida.")
 
     def listar_todos_professores(self):
-        """
-        Retorna uma lista de todos os professores cadastrados.
-        """
-        return self.__professores# Supondo que exista um DAO para professores.
+        return self.__professor_dao.get_all()  # Retorna todos do DAO
