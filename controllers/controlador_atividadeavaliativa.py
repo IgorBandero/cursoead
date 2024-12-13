@@ -135,31 +135,55 @@ class ControladorAtividadeAvaliativa:
                 self.__tela_atividade.mostra_mensagem("Atividade removida com sucesso!")
 
     def adicionar_nota_para_aluno(self):
-        dados_nota = self.__tela_atividade.pega_dados_nota()
+        # Obter a lista de alunos disponíveis
+        lista_alunos = [
+            {"cpf": aluno.cpf, "nome": aluno.nome} for aluno in self.__controlador_aluno.listar_todos_alunos()
+        ]
+
+        if not lista_alunos:
+            self.__tela_atividade.mostra_mensagem("Não há alunos disponíveis para atribuir nota.")
+            return
+
+        # Obter os dados da nota
+        dados_nota = self.__tela_atividade.pega_dados_nota(lista_alunos)
         if not dados_nota:
             return
 
+        # Busca a atividade pelo ID
         atividade = self.buscar_atividade_por_id(dados_nota["atividade_id"])
-        aluno = self.__controlador_aluno.buscar_aluno_pelo_cpf(dados_nota["aluno_cpf"])
+        if not atividade:
+            self.__tela_atividade.mostra_mensagem(f"Atividade com ID {dados_nota['atividade_id']} não encontrada.")
+            return
 
-        if atividade and aluno:
-            if dados_nota["nota"] <= atividade.nota_maxima:
-                if atividade.id not in self.__notas_atividade:
-                    self.__notas_atividade[atividade.id] = {}
+        # Verifica se a nota é válida
+        if dados_nota["nota"] > atividade.nota_maxima:
+            self.__tela_atividade.mostra_mensagem("Nota excede a nota máxima da atividade.")
+            return
 
-                # Adicionar a nota para o aluno na atividade
-                self.__notas_atividade[atividade.id][aluno.cpf] = dados_nota["nota"]
-                self.__tela_atividade.mostra_mensagem("Nota adicionada com sucesso!")
-            else:
-                self.__tela_atividade.mostra_mensagem("Nota excede a nota máxima da atividade.")
-        else:
-            if not atividade:
-                self.__tela_atividade.mostra_mensagem(f"Atividade com ID {dados_nota['atividade_id']} não encontrada.")
-            if not aluno:
-                self.__tela_atividade.mostra_mensagem(f"Aluno com CPF {dados_nota['aluno_cpf']} não encontrado.")
+        # Adiciona a nota para o aluno na atividade
+        if atividade.id not in self.__notas_atividade:
+            self.__notas_atividade[atividade.id] = {}
+
+        self.__notas_atividade[atividade.id][dados_nota["aluno_cpf"]] = dados_nota["nota"]
+        self.__tela_atividade.mostra_mensagem("Nota adicionada com sucesso!")
 
     def gerar_relatorio_atividade(self):
-        id_atividade = self.__tela_atividade.seleciona_atividade()
+        # Obter a lista de atividades disponíveis
+        lista_atividades = [
+            {"id": atividade.id, "nota_maxima": atividade.nota_maxima}
+            for atividade in self.__atividades
+        ]
+
+        if not lista_atividades:
+            self.__tela_atividade.mostra_mensagem("Não há atividades cadastradas para gerar relatório.")
+            return
+
+        # Selecionar a atividade para gerar o relatório
+        id_atividade = self.__tela_atividade.seleciona_atividade(lista_atividades)
+        if not id_atividade:
+            return
+
+        # Buscar a atividade pelo ID selecionado
         atividade = self.buscar_atividade_por_id(id_atividade)
 
         if atividade:
@@ -169,14 +193,14 @@ class ControladorAtividadeAvaliativa:
                     "nota_maxima": max(notas),
                     "nota_minima": min(notas),
                     "quantidade_alunos": len(notas),
-                    "nota_media": sum(notas) / len(notas)
+                    "nota_media": sum(notas) / len(notas),
                 }
             else:
                 dados_relatorio = {
                     "nota_maxima": 0,
                     "nota_minima": 0,
                     "quantidade_alunos": 0,
-                    "nota_media": 0
+                    "nota_media": 0,
                 }
             self.__tela_atividade.mostrar_relatorio(dados_relatorio)
         else:

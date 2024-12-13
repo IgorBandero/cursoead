@@ -200,15 +200,18 @@ class TelaAtividadeAvaliativa:
                 except Exception as e:
                     self.mostra_mensagem(str(e))
 
-    def pega_dados_nota(self):
+    def pega_dados_nota(self, lista_alunos):
         """
-        Coleta os dados necessários para adicionar uma nota a uma atividade.
+        Coleta os dados necessários para adicionar uma nota a uma atividade, permitindo a seleção do aluno.
         """
         sg.ChangeLookAndFeel('DarkTeal4')
+        # Formatar a lista de alunos para exibição
+        alunos_formatados = [f"CPF: {aluno['cpf']} | Nome: {aluno['nome']}" for aluno in lista_alunos]
         layout = [
             [sg.Text("Adicionar Nota para Aluno", font=("Helvetica", 20))],
             [sg.Text("ID da Atividade:", size=(20, 1)), sg.InputText("", key="atividade_id")],
-            [sg.Text("CPF do Aluno:", size=(20, 1)), sg.InputText("", key="aluno_cpf")],
+            [sg.Text("Selecione o Aluno:", size=(20, 1))],
+            [sg.Listbox(values=alunos_formatados, size=(50, 10), key="aluno_selecionado")],
             [sg.Text("Nota:", size=(20, 1)), sg.InputText("", key="nota")],
             [sg.Button("Confirmar"), sg.Cancel("Cancelar")]
         ]
@@ -222,14 +225,39 @@ class TelaAtividadeAvaliativa:
             if button == "Confirmar":
                 try:
                     atividade_id = int(values["atividade_id"])
-                    aluno_cpf = values["aluno_cpf"]
+                    aluno_selecionado = values["aluno_selecionado"]
                     nota = float(values["nota"])
+                    if not aluno_selecionado:
+                        raise ValueError("Nenhum aluno foi selecionado!")
                     if nota < 0:
                         raise ValueError("A nota deve ser um número positivo.")
+                    # Obter o CPF do aluno selecionado
+                    aluno_cpf = aluno_selecionado[0].split("CPF: ")[1].split(" |")[0].strip()
                     self.close()
                     return {"atividade_id": atividade_id, "aluno_cpf": aluno_cpf, "nota": nota}
                 except ValueError as e:
                     self.mostra_mensagem(f"Erro nos dados fornecidos: {e}")
+
+    def mostrar_relatorio(self, dados_relatorio):
+        """
+        Exibe o relatório gerado para uma atividade.
+        """
+        sg.ChangeLookAndFeel('DarkTeal4')
+        layout = [
+            [sg.Text("Relatório da Atividade", font=("Helvetica", 20))],
+            [sg.Text(f"Nota Máxima: {dados_relatorio['nota_maxima']}", font=("Helvetica", 14))],
+            [sg.Text(f"Nota Mínima: {dados_relatorio['nota_minima']}", font=("Helvetica", 14))],
+            [sg.Text(f"Quantidade de Alunos: {dados_relatorio['quantidade_alunos']}", font=("Helvetica", 14))],
+            [sg.Text(f"Nota Média: {dados_relatorio['nota_media']:.2f}", font=("Helvetica", 14))],
+            [sg.Button("Fechar")]
+        ]
+        self.__window = sg.Window("Relatório da Atividade", layout)
+
+        while True:
+            button, _ = self.__window.read()
+            if button in (None, "Fechar"):
+                self.__window.close()
+                break
 
     def mostra_mensagem(self, mensagem: str):
         sg.Popup("Alerta!", mensagem)
