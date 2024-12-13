@@ -6,7 +6,7 @@ from daos.modulo_dao import ModuloDAO
 class ControladorModulo:
 
     def __init__(self, controlador_sistema):
-        self.__modulos = []
+        # self.__modulos = []
         self.__controlador_sistema = controlador_sistema
         self.__tela_modulo = TelaModulo()
         self.__modulo_DAO = ModuloDAO()
