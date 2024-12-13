@@ -1,12 +1,11 @@
 from models.Modulo import Modulo
 from views.tela_modulo import TelaModulo
-from exceptions.ModulosExceptions import CodigoModuloJaRegistradoException, ListaModulosVaziaException, EdicaoModuloException, ModuloNaoEncontradoException
+from exceptions.ModulosExceptions import CodigoModuloJaRegistradoException, ListaModulosVaziaException, EdicaoModuloException, ModuloNaoEncontradoException, ModuloInvalidoException, ModuloJaCadastradoNoCurso
 from daos.modulo_dao import ModuloDAO
 
 class ControladorModulo:
 
     def __init__(self, controlador_sistema):
-        self.__modulos = []
         self.__controlador_sistema = controlador_sistema
         self.__tela_modulo = TelaModulo()
         self.__modulo_DAO = ModuloDAO()
@@ -14,12 +13,15 @@ class ControladorModulo:
     def cadastrar_modulo(self):
         try:
             dados_modulo = self.__tela_modulo.pega_dados_modulo()
-            if self.buscar_modulo_por_codigo(dados_modulo["codigo"]) is None:
-                novo_modulo = Modulo(dados_modulo["codigo"], dados_modulo["nome"], dados_modulo["area"], dados_modulo["carga_horaria"])
-                self.__modulo_DAO.add(novo_modulo)
-                self.__tela_modulo.mostrar_mensagem("Módulo cadastrado com sucesso!")
+            if dados_modulo:
+                if self.buscar_modulo_por_codigo(dados_modulo["codigo"]) is None:
+                    novo_modulo = Modulo(dados_modulo["codigo"], dados_modulo["nome"], dados_modulo["area"], dados_modulo["carga_horaria"])
+                    self.__modulo_DAO.add(novo_modulo)
+                    self.__tela_modulo.mostrar_mensagem("Módulo cadastrado com sucesso!")
+                else:
+                    raise CodigoModuloJaRegistradoException
             else:
-                raise CodigoModuloJaRegistradoException
+                raise ModuloInvalidoException
         except Exception as e:
             self.__tela_modulo.mostrar_mensagem(str(e))
 
@@ -27,7 +29,7 @@ class ControladorModulo:
         try:
             if(len(self.__modulo_DAO.get_all()) == 0):
                 raise ListaModulosVaziaException
-            modulo = self.selecionar_modulo("Selecione um modulo para editar:")
+            modulo = self.selecionar_modulo("Selecione um módulo para editar:")
             if modulo is not None:
                 modulo_atualizado = self.__tela_modulo.editar_modulo({"codigo": modulo.codigo, "nome": modulo.nome, "area": modulo.area, "carga_horaria": modulo.carga_horaria})
                 if modulo_atualizado:
@@ -55,6 +57,21 @@ class ControladorModulo:
         self.abrir_tela()
 
     def excluir_modulo(self):
+        try:
+            if(len(self.__modulo_DAO.get_all()) == 0):
+                    raise ListaModulosVaziaException
+            modulo = self.selecionar_modulo("Selecione um módulo para excluir:")
+            if(modulo is not None):
+                excluir = self.__tela_modulo.excluir_modulo({"nome": modulo.nome})
+                if (excluir):
+                    self.__modulo_DAO.remove(modulo.codigo)
+                    self.__tela_modulo.mostrar_mensagem(f"Módulo: {modulo.nome} foi removido da lista de módulos\n")
+                else:
+                    self.__tela_modulo.mostrar_mensagem("EXCLUSÃO CANCELADA!\n")
+        except Exception as e:
+            self.__tela_modulo.mostrar_mensagem(str(e))
+        self.abrir_tela()
+
         self.listar_modulos()
         indice_modulo = self.__tela_modulo.selecionar_modulo_na_lista(len(self.__modulos))
         if indice_modulo is not None:
@@ -82,7 +99,7 @@ class ControladorModulo:
                 return modulo
         return None
 
-    def selecionar_modulos(self):
+    def selecionar_modulos(self, mensagem):
         if(len(self.__modulo_DAO.get_all()) == 0):
             raise ListaModulosVaziaException
         lista_modulos_disponiveis = []
@@ -90,19 +107,21 @@ class ControladorModulo:
         for modulo in self.__modulo_DAO.get_all():
                 lista_modulos_disponiveis.append({"codigo": modulo.codigo, "nome": modulo.nome, "carga_horaria": modulo.carga_horaria})
         while True:
-            codigo_modulo = self.__tela_modulo.selecionar_modulo_na_lista(lista_modulos_disponiveis, "Selecione o módulo para matrícula:")
-            modulo = self.buscar_modulo_por_codigo(codigo_modulo)
-            print("MODULO DO CONTROLADOR: ", modulo)
-            if modulo is not None:
-                if not (modulo in self.__modulo_DAO.get_all()):
-                    print("ENTROU NO LAÇO...")
-                    lista_modulos_escolhidos.append(modulo)
-            else:
-                raise ModuloNaoEncontradoException
-            print("MODULOS ESCOLHIDOS: ", lista_modulos_escolhidos)
-            continuar = self.__tela_modulo.continuar_registro_modulos()
-            if not continuar:
-                return lista_modulos_escolhidos
+            try:
+                codigo_modulo = self.__tela_modulo.selecionar_modulo_na_lista(lista_modulos_disponiveis, mensagem)
+                modulo = self.buscar_modulo_por_codigo(codigo_modulo)
+                if modulo is not None:
+                    if modulo not in lista_modulos_escolhidos:
+                        lista_modulos_escolhidos.append(modulo)
+                    else:
+                        raise ModuloJaCadastradoNoCurso
+                else:
+                    raise ModuloNaoEncontradoException
+                continuar = self.__tela_modulo.continuar_registro_modulos()
+                if not continuar:
+                    return lista_modulos_escolhidos
+            except Exception as e:
+                self.__tela_modulo.mostrar_mensagem(str(e))
 
             """if tipo_consulta == "Buscar pelo codigo":
                 modulo = self.selecionar_modulo_pelo_codigo()
@@ -147,12 +166,15 @@ class ControladorModulo:
             self.__tela_modulo.mostrar_mensagem(str(e))
 
     def avaliar_modulos(self):
-        modulos = self.selecionar_modulos()
-        if modulos is not None:
-            for modulo in modulos:
-                nota = self.__tela_modulo.avaliar_modulos({"modulo": modulo.nome})
-                if nota is not None:
-                    modulo.adicionar_avaliacao(nota)
+        modulo = self.selecionar_modulo("Selecione o módulo para avaliar:")
+        if modulo is not None:
+            nota = self.__tela_modulo.avaliar_modulos({"nome": modulo.nome})
+            if nota is not None:
+                for item in self.__modulo_DAO.get_all():
+                    if(item.codigo == modulo.codigo):
+                        item.adicionar_avaliacao(nota)
+                        self.__modulo_DAO.update(item)
+                self.__tela_modulo.mostrar_mensagem(f"Módulo {modulo.nome} avaliado com sucesso!\n")
 
     def abrir_tela(self):
         opcoes = {

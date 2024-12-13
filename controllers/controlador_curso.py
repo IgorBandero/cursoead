@@ -20,7 +20,7 @@ class ControladorCurso():
                 raise ListaModulosVaziaException
             curso = self.__tela_curso.cadastrar_curso()
             if (curso is not None):
-                modulos = self.__controlador_modulo.selecionar_modulos()
+                modulos = self.__controlador_modulo.selecionar_modulos("Selecione um módulo para o curso:")
                 if (modulos is not None):
                     curso_cadastrado = self.buscar_curso_pelo_nome(curso["nome"])
                     if curso_cadastrado is None:

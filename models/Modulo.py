@@ -79,14 +79,14 @@ class Modulo:
     def lista_avaliacoes(self) -> list:
         return self.__lista_avaliacoes
     
-    @lista_avaliacoes.setter
+    """@lista_avaliacoes.setter
     def lista_avaliacoes(self, lista_avaliacoes: list):
         if not isinstance(lista_avaliacoes, list):
             raise TypeError("Lista de avaliações deve ser uma lista de números (floats ou inteiros).")
         for avaliacao in lista_avaliacoes:
             if not isinstance(avaliacao, (float, int)):
                 raise TypeError("Cada avaliação deve ser um número (float ou int).")
-        self.__lista_avaliacoes = lista_avaliacoes
+        self.__lista_avaliacoes = lista_avaliacoes """
 
     def adicionar_avaliacao(self, avaliacao: float):
         if not isinstance(avaliacao, (float, int)):

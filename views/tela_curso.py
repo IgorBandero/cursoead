@@ -237,7 +237,7 @@ class TelaCurso():
                 break
 
     def mostrar_avaliacoes(self, avaliacoes):
-        lista_avaliacoes = [f" CURSO: {curso["nome"]} | AVALIAÇÃO MÉDIA: {curso["avaliacao"]}" for curso in avaliacoes]
+        lista_avaliacoes = [f" CURSO: {curso["nome"]} | AVALIAÇÃO MÉDIA: {curso["avaliacao"]:.2f}" for curso in avaliacoes]
         layout = [
             [sg.Text("Avaliações Médias dos Cursos", font=("Helvetica", 14), pad=((0, 0), (10, 10)))],
             [sg.Listbox(values=lista_avaliacoes, size=(70, 10), key="curso", enable_events=False, font=("Helvetica", 10), pad=((5, 0), (5, 0)))],

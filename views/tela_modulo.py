@@ -1,6 +1,7 @@
 import PySimpleGUI as sg
 from exceptions.ModulosExceptions import EdicaoModuloException
 from exceptions.OpcaoInvalidaException import OpcaoInvalidaException
+import re
 
 class TelaModulo:
 
@@ -11,7 +12,7 @@ class TelaModulo:
     def init_components(self):
         sg.ChangeLookAndFeel('DarkTeal4')
         layout = [
-            [sg.Text('--------------------- MÓDULOS ---------------------', font=("Helvica", 25))],
+            [sg.Text('--------------------- MÓDULOS ---------------------', font=("Helvica", 25), pad=((0, 0), (10, 15)))],
             [sg.Text('Escolha a opção:', font=("Helvica", 15))],
             [sg.Radio('Cadastrar Módulo', "RD1", key='1')],
             [sg.Radio('Editar Módulo', "RD1", key='2')],
@@ -19,7 +20,7 @@ class TelaModulo:
             [sg.Radio('Listar Módulos', "RD1", key='4')],
             [sg.Radio('Avaliar Módulos', "RD1", key='5')],
             [sg.Radio('Voltar', "RD1", key='0')],
-            [sg.Button('Confirmar'), sg.Cancel('Cancelar')]
+            [sg.Button('Confirmar', size=(8, 1), pad=((10, 0), (20, 20))), sg.Cancel('Cancelar', size=(8, 1), pad=((10, 0), (20, 20)))]
         ]
         self.__window = sg.Window('Sistema de Módulos', layout)
 
@@ -27,7 +28,9 @@ class TelaModulo:
         self.init_components()
         button, values = self.__window.Read() 
         opcao = 0
-        if values['1']:
+        if values['0'] or button in (None, 'Cancelar'):
+            opcao = 0
+        elif values['1']:
             opcao = 1
         elif values['2']:
             opcao = 2
@@ -37,8 +40,6 @@ class TelaModulo:
             opcao = 4
         elif values['5']:
             opcao = 5
-        elif values['0'] or button in (None, 'Cancelar'):
-            opcao = 0
         self.close()
         return opcao
 
@@ -52,24 +53,32 @@ class TelaModulo:
         ]
         self.__window = sg.Window("Cadastro de Módulo", layout)
 
-        event, values = self.__window.Read()
-
-        if event in (None, "Cancelar"):
-            self.close()
-            return None
-
-        if event == "Confirmar":
+        while (True):
             try:
-                carga_horaria = int(values["carga_horaria"])
-                if carga_horaria <= 0:
-                    sg.Popup("Carga horária deve ser maior que zero.")
+                event, values = self.__window.Read()
+
+                if event in (None, "Cancelar"):
+                    self.close()
                     return None
-                return {"codigo": values["codigo"], "nome": values["nome"], "area": values["area"], "carga_horaria": carga_horaria}
-            except ValueError:
-                sg.Popup("Carga horária deve ser um número válido.")
-                return None
-        self.close()
-        return None
+
+                if event == "Confirmar":
+                    codigo = (values["codigo"])
+                    if not self.codigo_valido(codigo):
+                        raise ValueError("Código inválido! \nCódigo deve ser um texto com mais de 3 caracteres\n")
+                    nome = (values["nome"])
+                    if not self.nome_valido(nome):
+                        raise ValueError("Nome inválido! \nNome deve ser um texto com mais de 5 caracteres\n")
+                    area = (values["area"])
+                    if not self.area_valida(area):
+                        raise ValueError("Área inválida! \nÁrea deve ser um texto com mais de 5 caracteres\n")
+                    carga_horaria = (values["carga_horaria"])
+                    if not self.carga_horaria_valida(carga_horaria):
+                        raise ValueError("Carga horária inválida! \nCarga horária deve ser um número maior que zero\n")
+                    self.close()
+                    return {"codigo": codigo, "nome": nome, "area": area, "carga_horaria": int(carga_horaria)}
+                    
+            except ValueError as e:
+                self.mostrar_mensagem(str(e))
 
     def editar_modulo(self, modulo):
         layout = [
@@ -112,6 +121,23 @@ class TelaModulo:
                 except Exception as e:
                     self.mostrar_mensagem(str(e))
 
+    def excluir_modulo(self, modulo):
+        layout = [
+            [sg.Text(f"Confirma a exclusão do MÓDULO: {modulo["nome"]}?", font=("Helvetica", 14))],
+            [sg.Button("SIM", size=(10, 1), pad=((5, 0), (10, 10))), sg.Button("NÃO", size=(10, 1), pad=((10, 0), (10, 10)))]
+        ]
+        self.__window = sg.Window("Confirmar Exclusão").Layout(layout)
+
+        while True:
+            button, values = self.open()
+            self.close()
+            if button == None:
+                return False
+            elif button == "SIM":
+                return True
+            elif button == "NÃO":
+                return False
+
     def codigo_valido(self, codigo):
         return len(codigo) > 3
 
@@ -127,17 +153,18 @@ class TelaModulo:
         return False
 
     def listar_modulos(self, modulos):
-        if not modulos:
-            sg.Popup("Nenhum módulo cadastrado.")
-        else:
-            modulo_list = [
-                f"{indice + 1} - CÓDIGO: {modulo.codigo}, NOME: {modulo.nome}, ÁREA: {modulo.area}, CARGA HORÁRIA: {modulo.carga_horaria}"
-                for indice, modulo in enumerate(modulos)
-            ]
-            layout = [[sg.Text("\n".join(modulo_list))], [sg.Button("Voltar")]]
-            self.__window = sg.Window("Lista de Módulos", layout)
-            self.__window.Read()
-            self.close()
+        lista_modulos = [f"{i + 1}. {modulo["codigo"]} - {modulo["nome"]} / Carga Horária: {modulo["carga_horaria"]}h" for i, modulo in enumerate(modulos)]
+        layout = [
+            [sg.Text("Lista de Modulos", font=("Helvetica", 14), pad=((0, 0), (10, 10)))],
+            [sg.Listbox(values=lista_modulos, size=(70, 10), enable_events=False, font=("Helvetica", 10), pad=((5, 0), (5, 0)))],
+            [sg.Button("Voltar", size=(10, 1), pad=((5, 0), (15, 15)))]
+        ]
+        self.__window = sg.Window("Lista Módulos", layout)
+        while True:
+            button, values = self.open()
+            if button in (None, "Voltar"):
+                self.close()
+                break
 
     def selecionar_modulo(self, modulos, mensagem):
 
@@ -214,12 +241,35 @@ class TelaModulo:
             self.close()
             return False
 
-    def close(self):
-        if self.__window:
-            self.__window.close()
-
     def mostrar_modulo(self, modulo):
         sg.Popup(f"CÓDIGO: {modulo.codigo} | NOME: {modulo.nome} | ÁREA: {modulo.area} | CARGA HORÁRIA: {modulo.carga_horaria}")
+
+    def avaliar_modulos(self, modulo):
+        while True:
+            try:
+                layout = [
+                    [sg.Text(f"Informe a nota para o módulo {modulo["nome"]} (de 0 a 10):", font=("Helvetica", 14), pad=((0, 0), (10, 10)))],
+                    [sg.InputText(key="nota", size=(10, 1))],
+                    [sg.Button("Confirmar", size=(8, 1), pad=((5, 0), (15, 15))), sg.Button("Cancelar", size=(8, 1), pad=((5, 0), (15, 15)))]
+                ]
+
+                self.__window = sg.Window("Avaliar Módulo").Layout(layout)
+
+                button, values = self.open()
+                self.close()
+
+                if button in (None, "Cancelar"):
+                    return None
+                nota = values["nota"]
+
+                if bool(re.fullmatch(r"\d+([.,]\d+)?", nota)):
+                    nota = float(nota.replace(",", "."))
+                    if 0.00 <= nota <= 10.00:
+                        return nota
+                else:
+                    raise ValueError("Nota inválida! Insira um número entre 0 e 10")
+            except Exception as e:
+                self.mostrar_mensagem(str(e))
 
     def mostrar_mensagem(self, msg):
         sg.Popup(msg)
