@@ -397,22 +397,6 @@ class TelaAluno():
         except ValueError:
             return None
 
-    def cadastrar_codigo(self):
-        while (True):
-            codigo = input("CÓDIGO DE MATRÍCULA: ")
-            if len(codigo) == 11 and codigo.isdigit():
-                break
-            else:
-                if len(codigo) < 11 or len(codigo) > 11:
-                    print("\n****** CÓDIGO DE MATRÍCULA DEVE TER 11 DÍGITOS *****")
-                else:
-                    print("\n********** CÓDIGO DEVE TER SOMENTE NÚMEROS *********")
-                opcao = self.continuar("\nTENTAR NOVAMENTE? \n1 - SIM \n2 - NÃO (Cancelar)")
-                if (not opcao):
-                    return
-                print("\n")
-        return codigo
-
     def lancar_nota_modulo(self):
         sg.ChangeLookAndFeel('DarkTeal4')
         layout = [
@@ -441,6 +425,33 @@ class TelaAluno():
                             raise ValueError("Nota inválida! Insira um número válido entre 0 e 10")
                     else:
                         raise ValueError("Nota inválida! Por favor, tente novamente...")
+            except Exception as e:
+                self.mostrar_mensagem(str(e))
+
+    def cadastrar_data(self):
+        sg.ChangeLookAndFeel('DarkTeal4')
+        layout = [
+            [sg.Text("Data de conclusão (DD/MM/AAAA): ", font=("Helvetica", 14))],
+            [sg.Input(key="data_final", size=(30, 1), font=("Helvetica", 10))],
+            [sg.Button("Confirmar", size=(8, 1), pad=((5, 0), (20, 20))), sg.Button("Cancelar", size=(8, 1), pad=((5, 0), (20, 20)))]
+        ]
+
+        self.__window = sg.Window("Sistema de Alunos").Layout(layout)
+
+        while True:
+            try:
+                button, values = self.open()
+                if button in (None, "Cancelar"):
+                    self.close()
+                    return None
+
+                if button == "Confirmar":
+                    data_final = values["data_final"]
+                    data = self.data_valida(data_final)
+                    if data is None:
+                        raise ValueError("Formato da data inválida! Use DD/MM/AAAA...\n")
+                    else:
+                        return data
             except Exception as e:
                 self.mostrar_mensagem(str(e))
 
