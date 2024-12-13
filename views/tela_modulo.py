@@ -217,7 +217,7 @@ class TelaModulo:
                     codigo_modulo = modulo_selecionado[0].split(" - ")[0]
                     if modulo_selecionado:
                         self.close()
-                        return codigo_modulo
+                        return codigo_modulo.strip()
                     else:
                         raise OpcaoInvalidaException
             except OpcaoInvalidaException as e:

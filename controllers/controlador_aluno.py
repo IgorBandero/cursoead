@@ -4,6 +4,7 @@ from models.aluno import Aluno
 from models.matricula import Matricula
 from exceptions.CursoExceptions import ListaCursosVaziaException, CursoInvalidoException
 from exceptions.AlunoExceptions import AlunoInvalidoException, CpfAlunoJaRegistradoException, UsuarioAlunoJaRegistradoException, EdicaoAlunoException, ListaAlunosVaziaException, AlunoNaoEncontradoException, AlunoNaoConcluinteException, ListaExAlunosVaziaException, AlunoSemModulosMatriculadosException
+from exceptions.ModulosExceptions import ModuloNaoEncontradoException
 from collections import Counter
 from datetime import date
 from datetime import timedelta
@@ -150,6 +151,10 @@ class ControladorAluno():
         self.abrir_tela()
 
     def mostrar_aluno(self, aluno):
+        finalizados = []
+        for item in aluno.matricula.modulos_finalizados:
+            finalizados.append({"codigo": item["codigo"], "nome": item["nome"]})
+            #finalizados + f"{item["codigo"]} - {item["nome"]}\n"
         if (aluno.matricula.data_inicio is not None):
             data_inicio = aluno.matricula.data_inicio.strftime("%d/%m/%Y")
         self.__tela_aluno.mostrar_aluno({"nome": aluno.nome, "cpf": aluno.cpf, "telefone": aluno.telefone,
@@ -158,21 +163,21 @@ class ControladorAluno():
                                         "cidade": aluno.endereco.cidade, "cep": aluno.endereco.cep,
                                         "data_inicio": data_inicio,
                                         "curso": aluno.matricula.curso.nome, "codigo": aluno.matricula.codigo,
-                                        "modulos_atuais": self.busca_modulos_atuais(aluno), "modulos_finalizados": self.busca_modulos_finalizados(aluno)})
+                                        "modulos_atuais": self.busca_modulos_atuais(aluno), "modulos_finalizados": finalizados})
 
     def busca_modulos_atuais(self, aluno):
-        lista_modulos = []
+        lista_modulos_atuais = []
         if len(aluno.matricula.modulos_atuais) > 0:
             for modulo in aluno.matricula.modulos_atuais:
-                lista_modulos.append({"codigo": modulo.codigo, "nome": modulo.nome})
-        return lista_modulos
+                lista_modulos_atuais.append({"codigo": modulo.codigo, "nome": modulo.nome})
+        return lista_modulos_atuais
 
     def busca_modulos_finalizados(self, aluno):
-        lista_modulos = []
+        lista_modulos_finalizados = []
         if len(aluno.matricula.modulos_finalizados) > 0:
             for modulo in aluno.matricula.modulos_finalizados:
-                lista_modulos.append({"codigo": modulo["codigo"], "nome": modulo["nome"]})
-        return lista_modulos
+                lista_modulos_finalizados.append({"codigo": modulo["codigo"], "nome": modulo["nome"]})
+        return lista_modulos_finalizados
 
     def busca_modulos_atuais(self, aluno):
         lista_modulos = []
@@ -199,7 +204,6 @@ class ControladorAluno():
                         self.__aluno_DAO.update(aluno)
                         self.__tela_aluno.mostrar_mensagem("Matrícula realizada com sucesso!\n")
         self.abrir_tela()
-                    
 
     def buscar_aluno_pelo_cpf(self, cpf):
         for aluno in self.__aluno_DAO.get_all():
@@ -240,33 +244,28 @@ class ControladorAluno():
                 for indice, modulo in enumerate(aluno.matricula.modulos_atuais):
                     lista_modulos.append({"indice": indice, "codigo": modulo.codigo, "nome": modulo.nome, "area": modulo.area, "carga_horaria": modulo.carga_horaria})
                 codigo_modulo = self.__tela_modulo.selecionar_modulo_na_lista(lista_modulos, "Selecione um módulo para lançar a nota: ")
+                modulo = self.__controlador_modulo.buscar_modulo_por_codigo(codigo_modulo)
                 if modulo is not None:
                     nota = self.__tela_aluno.lancar_nota_modulo()
                     if nota is not None:
-                        modulo = self.__controlador_modulo.buscar_modulo_por_codigo(codigo_modulo)
-                        if modulo:
-                            if nota >= 7.00:
-                                registro_nota = {"codigo": modulo.codigo, "nome": modulo.nome, "modulo": modulo, "nota": nota}
-                                aluno.matricula.modulos_finalizados.append(registro_nota)
-                                if modulo in aluno.matricula.modulos_atuais:
-                                    print('MÓDULO ESTÁ DENTRO DA LISTA')
-                                    aluno.matricula.modulos_atuais.remove(modulo)
-                                    self.__aluno_DAO.update(aluno)
-                            else:
-                                aluno.matricula.modulos_atuais.remove(modulo)
-                                self.__aluno_DAO.update(aluno)
-                        else:
-                            raise ModuleNotFoundError
+                        if nota >= 7.00:
+                            registro_nota = {"codigo": modulo.codigo, "nome": modulo.nome, "modulo": modulo, "nota": nota}
+                            aluno.matricula.modulos_finalizados.append(registro_nota)
+                        for item in aluno.matricula.modulos_atuais:
+                            if item.codigo == modulo.codigo:
+                                aluno.matricula.modulos_atuais = [mod for mod in aluno.matricula.modulos_atuais if mod.codigo != modulo.codigo]
+                        self.__aluno_DAO.update(aluno)
                         self.__tela_aluno.mostrar_mensagem("NOTA LANÇADA COM SUCESSO!\n")
+                else:
+                    raise ModuloNaoEncontradoException
         except Exception as e:
             self.__tela_aluno.mostrar_mensagem(str(e))
         self.abrir_tela()
 
     def finalizar_curso(self):
         try:
-            aluno = self.selecionar_aluno()
+            aluno = self.selecionar_aluno("Selecione o aluno(a) para finalizar o curso: ")
             if aluno is not None:
-                self.__tela_aluno.mostrar_mensagem(f"\nALUNO(A): {aluno.nome} | CURSO: {aluno.matricula.curso.nome} | MATRÍCULA: {aluno.matricula.codigo} | CPF: {aluno.cpf}")
                 if self.aluno_concluinte(aluno):
                     aluno.matricula.data_final = self.__tela_aluno.cadastrar_data("Data de conclusão (DD/MM/AAAA): ")
                     self.__ex_alunos.append(aluno)

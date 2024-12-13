@@ -339,9 +339,9 @@ class TelaAluno():
             [sg.Text("DATA INÍCIO:", font=("Helvetica", 10, "bold"), pad=((5, 5), (5, 5))), sg.Text(aluno["data_inicio"], font=("Helvetica", 10))],
             [sg.Text("CURSO:", font=("Helvetica", 10, "bold"), pad=((5, 5), (5, 5))), sg.Text(aluno["curso"], font=("Helvetica", 10))],
             [sg.Text("MATRÍCULA:", font=("Helvetica", 10, "bold"), pad=((5, 5), (5, 5))), sg.Text(aluno["codigo"], font=("Helvetica", 10))],
-            [sg.Text("MÓDULOS MATRICULADOS:", font=("Helvetica", 10, "bold"), pad=((5, 5), (5, 5)))],
+            [sg.Text("MÓDULOS MATRICULADOS:", font=("Helvetica", 10, "bold"), pad=((5, 5), (15, 5)))],
             [sg.Listbox(values=listar_modulos_atuais, size=(80, 5), enable_events=False, font=("Helvetica", 10, "bold"), pad=((5, 5), (5, 5)))],
-            [sg.Text("MÓDULOS FINALIZADOS:", font=("Helvetica", 10, "bold"), pad=((5, 5), (5, 5)))],
+            [sg.Text("MÓDULOS FINALIZADOS:", font=("Helvetica", 10, "bold"), pad=((5, 5), (15, 5)))],
             [sg.Listbox(values=listar_modulos_finalizados, size=(80, 5), enable_events=False, font=("Helvetica", 10, "bold"), pad=((5, 5), (5, 5)))],
             [sg.Button("Voltar", size=(10, 1), pad=((5, 0), (20, 10)))]
         ]
