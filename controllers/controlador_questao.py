@@ -1,14 +1,15 @@
 from views.telaquestao import TelaQuestao
 from models.questao import Questao
+from daos.questao_dao import QuestaoDAO  # Importa o DAO
 
 class ControladorQuestao:
     def __init__(self, controlador_sistema):
-        self.__questoes = []
+        self.__questao_DAO = QuestaoDAO()  # Inicializa o DAO
         self.__tela_questao = TelaQuestao()
         self.__controlador_sistema = controlador_sistema
 
     def pega_questao_por_id(self, id):
-        for questao in self.__questoes:
+        for questao in self.__questao_DAO.get_all():
             if questao.id == id:
                 return questao
         return None
@@ -19,7 +20,7 @@ class ControladorQuestao:
             questao_existente = self.pega_questao_por_id(dados_questao["id"])
             if questao_existente is None:
                 questao = Questao(**dados_questao)
-                self.__questoes.append(questao)
+                self.__questao_DAO.add(questao)  # Salva no DAO
                 self.__tela_questao.mostra_mensagem("Questão adicionada com sucesso!")
             else:
                 self.__tela_questao.mostra_mensagem("ID já existe!")
@@ -33,30 +34,26 @@ class ControladorQuestao:
                 "alternativas": questao.alternativas,
                 "respostas_corretas": questao.respostas_corretas
             }
-            for questao in self.__questoes
+            for questao in self.__questao_DAO.get_all()
         ]
 
     def get_lista_questoes(self):
         """
-        Retorna a lista de objetos Questao armazenados no controlador.
+        Retorna a lista de objetos Questao armazenados no DAO.
         """
-        return self.__questoes
+        return self.__questao_DAO.get_all()
 
     def editar_questao(self):
-        # Obtém a lista de questões disponíveis para seleção
         questoes_disponiveis = [
             {
                 "id": questao.id,
                 "enunciado": questao.enunciado
-            } for questao in self.__questoes
+            } for questao in self.__questao_DAO.get_all()
         ]
-
-        # Solicita ao usuário que selecione uma questão
         id_questao = self.__tela_questao.seleciona_questao(questoes_disponiveis)
         questao = self.pega_questao_por_id(id_questao)
 
         if questao:
-            # Abre o formulário com os dados da questão selecionada
             dados_atualizados = self.__tela_questao.pega_dados_questao({
                 "id": questao.id,
                 "enunciado": questao.enunciado,
@@ -64,10 +61,10 @@ class ControladorQuestao:
                 "respostas_corretas": questao.respostas_corretas
             })
             if dados_atualizados:
-                # Atualiza os dados da questão
                 questao.enunciado = dados_atualizados["enunciado"]
                 questao.alternativas = dados_atualizados["alternativas"]
                 questao.respostas_corretas = dados_atualizados["respostas_corretas"]
+                self.__questao_DAO.update(questao)  # Atualiza no DAO
                 self.__tela_questao.mostra_mensagem("Questão editada com sucesso!")
             else:
                 self.__tela_questao.mostra_mensagem("Edição cancelada pelo usuário.")
@@ -75,12 +72,11 @@ class ControladorQuestao:
             self.__tela_questao.mostra_mensagem("Questão não encontrada.")
 
     def excluir_questao(self):
-        # Lista as questões disponíveis para seleção
         questoes_disponiveis = [
             {
                 "id": questao.id,
                 "enunciado": questao.enunciado
-            } for questao in self.__questoes
+            } for questao in self.__questao_DAO.get_all()
         ]
         id_questao = self.__tela_questao.seleciona_questao(questoes_disponiveis)
         questao = self.pega_questao_por_id(id_questao)
@@ -91,7 +87,7 @@ class ControladorQuestao:
                 "enunciado": questao.enunciado
             })
             if confirmacao:
-                self.__questoes.remove(questao)
+                self.__questao_DAO.remove(questao.id)  # Remove no DAO
                 self.__tela_questao.mostra_mensagem("Questão excluída com sucesso!")
             else:
                 self.__tela_questao.mostra_mensagem("Exclusão cancelada pelo usuário.")
@@ -119,4 +115,3 @@ class ControladorQuestao:
 
     def voltar(self):
         self.__controlador_sistema.abrir_tela()
-
