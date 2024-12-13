@@ -10,17 +10,18 @@ from datetime import date
 from datetime import timedelta
 import random
 from daos.aluno_dao import AlunoDAO
+from daos.ex_aluno_dao import ExAlunoDAO
 
 class ControladorAluno():
 
     def __init__(self, controlador_sistema, controlador_curso, controlador_modulo):
-        self.__ex_alunos = []
         self.__tela_aluno = TelaAluno()
         self.__tela_modulo = TelaModulo()
         self.__controlador_curso = controlador_curso
         self.__controlador_modulo = controlador_modulo
         self.__controlador_sistema = controlador_sistema
         self.__aluno_DAO = AlunoDAO()
+        self.__ex_aluno_DAO = ExAlunoDAO()
 
     def cadastrar_aluno(self):
         try:
@@ -246,7 +247,7 @@ class ControladorAluno():
             if aluno is not None:
                 if self.aluno_concluinte(aluno):
                     aluno.matricula.data_final = self.__tela_aluno.cadastrar_data()
-                    self.__ex_alunos.append(aluno)
+                    self.__ex_aluno_DAO.add(aluno)
                     self.__aluno_DAO.remove(aluno.cpf)
                     self.__tela_aluno.mostrar_mensagem("CURSO FINALIZADO COM SUCESSO!\n")
                 else:
@@ -279,18 +280,18 @@ class ControladorAluno():
 
     def tempo_medio_conclusao(self):
         try:
-            if (len(self.__ex_alunos) == 0):
+            if (len(self.__ex_aluno_DAO.get_all()) == 0):
                 raise ListaExAlunosVaziaException
             else:
                 duracoes = []
-                for aluno in self.__ex_alunos:
+                for aluno in self.__ex_aluno_DAO.get_all():
                     data_inicio = aluno.matricula.data_inicio
                     data_final = aluno.matricula.data_final
                     duracao = (data_final - data_inicio).days
                     duracoes.append(duracao)
                 media_duracao = sum(duracoes) / len(duracoes) if duracoes else 0
                 media_duracao_timedelta = timedelta(days=media_duracao)
-                self.__tela_aluno.mostrar_mensagem(f"\nTEMPO MÉDIO PARA CONCLUSÃO: {media_duracao_timedelta.days} DIAS")
+                self.__tela_aluno.mostrar_mensagem(f"\nTEMPO MÉDIO PARA CONCLUSÃO: {media_duracao_timedelta.days} DIAS\n")
         except Exception as e:
             self.__tela_aluno.mostrar_mensagem(str(e))
 

@@ -451,9 +451,11 @@ class TelaAluno():
                     if data is None:
                         raise ValueError("Formato da data inválida! Use DD/MM/AAAA...\n")
                     else:
+                        self.close()
                         return data
             except Exception as e:
                 self.mostrar_mensagem(str(e))
+                self.close()
 
     def mostrar_cursos_populares(self, lista_cursos_populares):
         sg.ChangeLookAndFeel('DarkTeal4')
