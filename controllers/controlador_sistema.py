@@ -9,6 +9,7 @@ from controllers.controlador_modulo import ControladorModulo
 from views.tela_sistema import TelaSistema
 from exceptions.OpcaoInvalidaException import OpcaoInvalidaException
 
+
 class ControladorSistema:
     def __init__(self):
         self.__tela_sistema = TelaSistema()
@@ -18,13 +19,14 @@ class ControladorSistema:
         self.__controlador_modulo = ControladorModulo(self)
         self.__controlador_curso = ControladorCurso(self, self.__controlador_modulo)  # Inicializa ControladorCurso
         self.__controlador_alunos = ControladorAluno(self, self.__controlador_curso, self.__controlador_modulo)
-        self.__controlador_atividade = ControladorAtividadeAvaliativa(self.__controlador_questoes, self.__controlador_alunos)
-        self.__controlador_certificado = ControladorCertificado(self,  self.__controlador_alunos)
+        self.__controlador_atividade = ControladorAtividadeAvaliativa(self.__controlador_questoes,
+                                                                      self.__controlador_alunos)
+        self.__controlador_certificado = ControladorCertificado(self, self.__controlador_alunos)
 
     @property
     def controlador_alunos(self):
         return self.__controlador_alunos
-    
+
     @property
     def controlador_questoes(self):
         return self.__controlador_questoes
@@ -83,7 +85,7 @@ class ControladorSistema:
     def encerrar_sistema(self):
         print("\nEncerrando o sistema...")
         exit(0)
-        
+
     def abrir_tela(self):
         opcoes = {
             1: self.opcoes_aluno,

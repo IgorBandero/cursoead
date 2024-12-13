@@ -4,34 +4,135 @@ from views.TelaAtividadeAvaliativa import TelaAtividadeAvaliativa
 from controllers.controlador_questao import ControladorQuestao
 
 class ControladorAtividadeAvaliativa:
-    def __init__(self, controlador_questao, controlador_aluno):
+    def __init__(self, controlador_questao, controlador_aluno, controlador_sistema):
         self.__atividades = []
         self.__tela_atividade = TelaAtividadeAvaliativa()
         self.__controlador_questao = controlador_questao
         self.__controlador_aluno = controlador_aluno  # Atribui o controlador de alunos
+        self.__controlador_sistema = controlador_sistema  # Atribui o controlador do sistema
         self.__id_atual = 1
-        self.__notas_atividade = {}  # Inicializa o dicionário para armazenar as notas
+        self.__notas_atividade = {}
 
     def gerar_id(self):
-        """Gera um ID único para cada nova atividade e incrementa o contador."""
+        """Gera um ID único para cada atividade."""
         id_gerado = self.__id_atual
         self.__id_atual += 1
         return id_gerado
 
-    def adicionar_atividade(self):
+    def cadastrar_atividade(self):
         dados_atividade = self.__tela_atividade.pega_dados_atividade()
-        nota_maxima = dados_atividade["nota_maxima"]
-        quantidade_questoes = dados_atividade["quantidade_questoes"]
 
-        questoes = self.selecionar_questoes_existentes(quantidade_questoes)
+        if dados_atividade:
+            quantidade_questoes = dados_atividade.get("quantidade_questoes", 0)
 
-        if questoes:
-            id_atividade = self.gerar_id()
-            atividade = AtividadeAvaliativa(id_atividade, questoes, nota_maxima)
+            if quantidade_questoes <= 0:
+                self.__tela_atividade.mostra_mensagem("Quantidade de questões inválida.")
+                return
+
+            # Selecionar as questões para a atividade
+            questoes_selecionadas = self.selecionar_questoes_existentes(quantidade_questoes)
+
+            if not questoes_selecionadas:
+                self.__tela_atividade.mostra_mensagem("Atividade não pode ser criada sem questões.")
+                return
+
+            # Criar a nova atividade
+            atividade = AtividadeAvaliativa(
+                id=self.gerar_id(),
+                questoes=questoes_selecionadas,
+                nota_maxima=dados_atividade["nota_maxima"]
+            )
             self.__atividades.append(atividade)
-            self.__tela_atividade.mostra_mensagem("Atividade Avaliativa adicionada com sucesso!")
-        else:
-            self.__tela_atividade.mostra_mensagem("Nenhuma questão foi adicionada à atividade.")
+            self.__tela_atividade.mostra_mensagem("Atividade cadastrada com sucesso!")
+
+    def listar_atividades(self):
+        try:
+            if not self.__atividades:
+                raise ListaAtividadesVaziaException
+            lista_dados_atividades = [
+                {
+                    "id": atividade.id,
+                    "nota_maxima": atividade.nota_maxima,
+                    "questoes": [
+                        {
+                            "enunciado": questao.enunciado,
+                            "alternativas": questao.alternativas,
+                            "respostas_corretas": questao.respostas_corretas
+                        }
+                        for questao in atividade.questoes
+                    ]
+                }
+                for atividade in self.__atividades
+            ]
+            self.__tela_atividade.listar_atividades(lista_dados_atividades)
+        except ListaAtividadesVaziaException as e:
+            self.__tela_atividade.mostra_mensagem(str(e))
+
+    def selecionar_atividade(self):
+        try:
+            atividades = [{"id": a.id, "nota_maxima": a.nota_maxima} for a in self.__atividades]
+            if not atividades:
+                raise ListaAtividadesVaziaException
+            id_atividade = self.__tela_atividade.seleciona_atividade(atividades)
+            atividade = next((a for a in self.__atividades if a.id == id_atividade), None)
+            if atividade:
+                return atividade
+            else:
+                raise ValueError("Atividade não encontrada.")
+        except ListaAtividadesVaziaException as e:
+            self.__tela_atividade.mostra_mensagem(str(e))
+        except Exception as e:
+            self.__tela_atividade.mostra_mensagem(str(e))
+        return None
+
+    def editar_atividade(self):
+        atividade = self.selecionar_atividade()
+        if atividade:
+            dados_atividade = {
+                "nota_maxima": atividade.nota_maxima,
+                "questoes": [
+                    {
+                        "id": q.id,
+                        "enunciado": q.enunciado,
+                        "alternativas": q.alternativas,
+                        "respostas_corretas": q.respostas_corretas
+                    }
+                    for q in atividade.questoes
+                ]
+            }
+
+            dados_atualizados = self.__tela_atividade.editar_atividade(dados_atividade)
+
+            if dados_atualizados:
+                atividade.nota_maxima = dados_atualizados["nota_maxima"]
+
+                # Atualizar questões selecionadas
+                questoes_atualizadas = [
+                    Questao(
+                        id=questao["id"],
+                        enunciado=questao["enunciado"],
+                        alternativas=questao["alternativas"],
+                        respostas_corretas=questao["respostas_corretas"]
+                    )
+                    for questao in dados_atualizados["questoes"]
+                ]
+                atividade.questoes = questoes_atualizadas
+
+                self.__tela_atividade.mostra_mensagem("Atividade atualizada com sucesso!")
+
+    def buscar_atividade_por_id(self, id_atividade):
+        for atividade in self.__atividades:
+            if atividade.id == id_atividade:
+                return atividade
+        return None
+
+    def remover_atividade(self):
+        atividade = self.selecionar_atividade()
+        if atividade:
+            confirmacao = self.__tela_atividade.excluir_atividade({"id": atividade.id})
+            if confirmacao:
+                self.__atividades.remove(atividade)
+                self.__tela_atividade.mostra_mensagem("Atividade removida com sucesso!")
 
     def adicionar_nota_para_aluno(self):
         dados_nota = self.__tela_atividade.pega_dados_nota()
@@ -46,17 +147,21 @@ class ControladorAtividadeAvaliativa:
                 if atividade.id not in self.__notas_atividade:
                     self.__notas_atividade[atividade.id] = {}
 
+                # Adicionar a nota para o aluno na atividade
                 self.__notas_atividade[atividade.id][aluno.cpf] = dados_nota["nota"]
                 self.__tela_atividade.mostra_mensagem("Nota adicionada com sucesso!")
             else:
                 self.__tela_atividade.mostra_mensagem("Nota excede a nota máxima da atividade.")
         else:
-            self.__tela_atividade.mostra_mensagem("Atividade ou Aluno não encontrados.")
-    
+            if not atividade:
+                self.__tela_atividade.mostra_mensagem(f"Atividade com ID {dados_nota['atividade_id']} não encontrada.")
+            if not aluno:
+                self.__tela_atividade.mostra_mensagem(f"Aluno com CPF {dados_nota['aluno_cpf']} não encontrado.")
+
     def gerar_relatorio_atividade(self):
         id_atividade = self.__tela_atividade.seleciona_atividade()
         atividade = self.buscar_atividade_por_id(id_atividade)
-        
+
         if atividade:
             notas = list(self.__notas_atividade.get(id_atividade, {}).values())
             if notas:
@@ -77,85 +182,57 @@ class ControladorAtividadeAvaliativa:
         else:
             self.__tela_atividade.mostra_mensagem("Atividade não encontrada.")
 
-    def buscar_atividade_por_id(self, atividade_id):
-        for atividade in self.__atividades:
-            if atividade.id == atividade_id:
-                return atividade
-        return None
-
     def selecionar_questoes_existentes(self, quantidade):
-        questoes_selecionadas = []
+        # Obter as questões disponíveis como dicionários
+        questoes_disponiveis = self.__controlador_questao.listar_questoes_disponiveis()
 
-        # Obter as questões do controlador de questões
-        questoes_existentes = self.__controlador_questao.listar_questoes_disponiveis()
+        if not questoes_disponiveis:
+            self.__tela_atividade.mostra_mensagem("Nenhuma questão disponível.")
+            return []
 
-        if questoes_existentes:
-            while len(questoes_selecionadas) < quantidade:
-                try:
-                    id_questao = int(input("Informe o ID da questão para adicionar à atividade (0 para finalizar): "))
-                    if id_questao == 0:
-                        break  
-                    questao_selecionada = self.__controlador_questao.pega_questao_por_id(id_questao)
-                    if questao_selecionada:
-                        questoes_selecionadas.append(questao_selecionada)
-                        print(f"Questão {id_questao} adicionada.")
-                    else:
-                        print("Questão não encontrada.")
-                except ValueError:
-                    print("ID inválido. Tente novamente.")
-        else:
-            self.__tela_atividade.mostra_mensagem("Nenhuma questão disponível para seleção.")
-        
+        # Permitir a seleção de múltiplas questões
+        ids_selecionados = self.__tela_atividade.selecionar_multiplos_itens(questoes_disponiveis)
+
+        if not ids_selecionados or len(ids_selecionados) < quantidade:
+            self.__tela_atividade.mostra_mensagem("Número insuficiente de questões selecionadas.")
+            return []
+
+        # Converter IDs selecionados para objetos Questao
+        questoes_selecionadas = [
+            Questao(
+                id=questao["id"],
+                enunciado=questao["enunciado"],
+                alternativas=questao["alternativas"],
+                respostas_corretas=questao["respostas_corretas"]
+            )
+            for questao in questoes_disponiveis if questao["id"] in ids_selecionados
+        ]
+
         return questoes_selecionadas
 
-    def listar_atividades(self):
-        if not self.__atividades:
-            self.__tela_atividade.mostra_mensagem("Nenhuma atividade avaliativa cadastrada.")
-        else:
-            for atividade in self.__atividades:
-                dados_atividade = {
-                    "id": atividade.id,  
-                    "nota_maxima": atividade.nota_maxima,
-                    "questoes": [
-                        {
-                            "enunciado": questao.enunciado,
-                            "alternativas": questao.alternativas,
-                            "respostas_corretas": questao.respostas_corretas  # Exibe como lista completa
-                        }
-                        for questao in atividade.questoes
-                    ]
-                }
-                self.__tela_atividade.mostra_atividade(dados_atividade)
+    def voltar(self):
+        self.__controlador_sistema.abrir_tela()
 
-    def remover_atividade(self):
-        self.listar_atividades()
-        id_atividade = self.__tela_atividade.seleciona_atividade()
-        
-        atividade_para_remover = next((a for a in self.__atividades if a.id == id_atividade), None)
-        
-        if atividade_para_remover:
-            self.__atividades.remove(atividade_para_remover)
-            self.__tela_atividade.mostra_mensagem("Atividade Avaliativa removida com sucesso!")
-        else:
-            self.__tela_atividade.mostra_mensagem("ID de atividade inválido.")
-
-    def mostrar_menu(self):
-        lista_opcoes = {
-            1: self.adicionar_atividade,
-            2: self.remover_atividade,
-            3: self.listar_atividades,
-            4: self.adicionar_nota_para_aluno,
-            5: self.gerar_relatorio_atividade
+    def abrir_tela(self):
+        """
+        Exibe o menu principal de atividades avaliativas e gerencia as opções selecionadas.
+        """
+        opcoes = {
+            1: self.cadastrar_atividade,
+            2: self.editar_atividade,
+            3: self.remover_atividade,
+            4: self.listar_atividades,
+            5: self.adicionar_nota_para_aluno,
+            6: self.gerar_relatorio_atividade,
         }
-        
+
         while True:
             opcao = self.__tela_atividade.mostrar_menu_opcoes()
-            funcao_escolhida = lista_opcoes.get(opcao)
-            
+            if opcao == 0:  # Opção "Voltar"
+                self.voltar()
+                break
+            funcao_escolhida = opcoes.get(opcao)
             if funcao_escolhida:
                 funcao_escolhida()
-            elif opcao == 0:
-                self.__tela_atividade.mostra_mensagem("Voltando...")
-                break
             else:
                 self.__tela_atividade.mostra_mensagem("Opção inválida.")

@@ -4,6 +4,7 @@ from exceptions.ListaProfessoresVaziaException import ListaProfessoresVaziaExcep
 from exceptions.ProfessorNaoEncontradoException import ProfessorNaoEncontradoException
 from exceptions.ProfessorJaRegistradoException import ProfessorJaRegistradoException
 
+
 class ControladorProfessor:
     def __init__(self, controlador_sistema):
         self.__professores = []
@@ -13,12 +14,13 @@ class ControladorProfessor:
     def cadastrar_professor(self):
         try:
             dados_professor = self.__tela_professor.pega_dados_professor()
-            if not self.buscar_professor_por_cpf(dados_professor["cpf"]):
-                professor = Professor(**dados_professor)
-                self.__professores.append(professor)
-                self.__tela_professor.mostra_mensagem("Professor cadastrado com sucesso!")
-            else:
-                raise ProfessorJaRegistradoException
+            if dados_professor:
+                if not self.buscar_professor_por_cpf(dados_professor["cpf"]):
+                    professor = Professor(**dados_professor)
+                    self.__professores.append(professor)
+                    self.__tela_professor.mostra_mensagem("Professor cadastrado com sucesso!")
+                else:
+                    raise ProfessorJaRegistradoException
         except ProfessorJaRegistradoException as e:
             self.__tela_professor.mostra_mensagem(str(e))
 
@@ -26,48 +28,54 @@ class ControladorProfessor:
         try:
             if not self.__professores:
                 raise ListaProfessoresVaziaException
-            else:
-                for professor in self.__professores:
-                    dados_professor = {
-                        "nome": professor.nome,
-                        "cpf": professor.cpf,
-                        "especialidade": professor.especialidade,
-                        "formacao": professor.formacao,
-                        "telefone": professor.telefone,
-                        "email": professor.email,
-                        "usuario": professor.usuario,
-                        "rua": professor.endereco.rua,
-                        "num_residencia": professor.endereco.num_residencia,
-                        "bairro": professor.endereco.bairro,
-                        "cidade": professor.endereco.cidade,
-                        "cep": professor.endereco.cep
-                    }
-                    self.__tela_professor.mostrar_professor(dados_professor)
+            lista_dados_professores = [
+                {
+                    "nome": professor.nome,
+                    "cpf": professor.cpf,
+                    "telefone": professor.telefone,
+                    "email": professor.email,
+                    "usuario": professor.usuario,
+                    "formacao": professor.formacao,
+                    "especialidade": professor.especialidade,
+                    "rua": professor.endereco.rua,
+                    "num_residencia": professor.endereco.num_residencia,
+                    "bairro": professor.endereco.bairro,
+                    "cidade": professor.endereco.cidade,
+                    "cep": professor.endereco.cep
+                }
+                for professor in self.__professores
+            ]
+            self.__tela_professor.listar_professores(lista_dados_professores)
         except ListaProfessoresVaziaException as e:
             self.__tela_professor.mostra_mensagem(str(e))
 
     def buscar_professor_por_cpf(self, cpf: int):
         for professor in self.__professores:
-            if professor.cpf == cpf:  
+            if professor.cpf == cpf:
                 return professor
         return None
-    
+
     def selecionar_professor(self):
         try:
-            cpf = self.__tela_professor.seleciona_professor()
+            professores = [{"nome": prof.nome, "cpf": prof.cpf} for prof in self.__professores]
+            if not professores:
+                raise ListaProfessoresVaziaException
+            cpf = self.__tela_professor.seleciona_professor(professores)
             professor = self.buscar_professor_por_cpf(cpf)
             if professor:
                 return professor
             else:
                 raise ProfessorNaoEncontradoException
+        except ListaProfessoresVaziaException as e:
+            self.__tela_professor.mostra_mensagem(str(e))
         except ProfessorNaoEncontradoException as e:
             self.__tela_professor.mostra_mensagem(str(e))
-            return None
+        return None
 
     def editar_professor(self):
         professor = self.selecionar_professor()
         if professor:
-            self.__tela_professor.mostrar_professor({
+            dados_atualizados = self.__tela_professor.editar_professor({
                 "nome": professor.nome,
                 "cpf": professor.cpf,
                 "telefone": professor.telefone,
@@ -81,50 +89,28 @@ class ControladorProfessor:
                 "cidade": professor.endereco.cidade,
                 "cep": professor.endereco.cep
             })
-            while True:
-                campo, info_atualizada = self.__tela_professor.editar_professor()
-                if info_atualizada is not None:
-                    if campo == 1:
-                        professor.nome = info_atualizada
-                    elif campo == 2:
-                        professor.cpf = info_atualizada
-                    elif campo == 3:
-                        professor.telefone = info_atualizada
-                    elif campo == 4:
-                        professor.email = info_atualizada
-                    elif campo == 5:
-                        professor.usuario = info_atualizada
-                    elif campo == 6:
-                        professor.senha = info_atualizada
-                    elif campo == 7:
-                        professor.formacao = info_atualizada
-                    elif campo == 8:
-                        professor.especialidade = info_atualizada
-                    elif campo == 9:
-                        professor.endereco.rua = info_atualizada
-                    elif campo == 10:
-                        professor.endereco.num_residencia = info_atualizada
-                    elif campo == 11:
-                        professor.endereco.bairro = info_atualizada
-                    elif campo == 12:
-                        professor.endereco.cidade = info_atualizada
-                    elif campo == 13:
-                        professor.endereco.cep = info_atualizada
-                continuar = self.__tela_professor.continuar_edicao()
-                if not continuar:
-                    break
+            if dados_atualizados:
+                professor.nome = dados_atualizados["nome"]
+                professor.telefone = dados_atualizados["telefone"]
+                professor.email = dados_atualizados["email"]
+                professor.usuario = dados_atualizados["usuario"]
+                professor.senha = dados_atualizados["senha"] if dados_atualizados["senha"] else professor.senha
+                professor.formacao = dados_atualizados["formacao"]
+                professor.especialidade = dados_atualizados["especialidade"]
+                professor.endereco.rua = dados_atualizados["rua"]
+                professor.endereco.num_residencia = int(dados_atualizados["num_residencia"])
+                professor.endereco.bairro = dados_atualizados["bairro"]
+                professor.endereco.cidade = dados_atualizados["cidade"]
+                professor.endereco.cep = dados_atualizados["cep"]
+                self.__tela_professor.mostra_mensagem("Dados do professor atualizados com sucesso!")
 
     def remover_professor(self):
-        try:
-            cpf = self.__tela_professor.seleciona_professor()
-            professor = self.buscar_professor_por_cpf(cpf)
-            if professor:
+        professor = self.selecionar_professor()
+        if professor:
+            confirmacao = self.__tela_professor.excluir_professor({"nome": professor.nome, "cpf": professor.cpf})
+            if confirmacao:
                 self.__professores.remove(professor)
                 self.__tela_professor.mostra_mensagem("Professor removido com sucesso!")
-            else:
-                raise ProfessorNaoEncontradoException
-        except ProfessorNaoEncontradoException as e:
-            self.__tela_professor.mostra_mensagem(str(e))
 
     def voltar(self):
         self.__controlador_sistema.abrir_tela()
@@ -147,4 +133,5 @@ class ControladorProfessor:
                 funcao_escolhida()
             else:
                 self.__tela_professor.mostra_mensagem("Opção inválida.")
+
 

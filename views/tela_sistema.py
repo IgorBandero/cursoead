@@ -1,5 +1,7 @@
 import PySimpleGUI as sg
 from exceptions.OpcaoInvalidaException import OpcaoInvalidaException
+
+
 class TelaSistema:
 
     def __init__(self):
@@ -7,7 +9,7 @@ class TelaSistema:
         self.mostrar_menu_opcoes()
 
     def mostrar_menu_opcoes(self):
-        sg.ChangeLookAndFeel('DarkTeal4')
+        sg.theme('DarkTeal4')
         layout = [
             [sg.Text("-------------- Sistema de Cursos EAD ---------------", font=("Helvica",25), pad=((0, 0), (10, 15)))],
             [sg.Text("Escolha sua opção:", font=("Helvica",14), pad=((5, 0), (0, 10)))],
@@ -22,46 +24,45 @@ class TelaSistema:
             [sg.Radio("Finalizar Sistema", "RD1", key="0")],
             [sg.Button("Confirmar", size=(8, 1), pad=((10, 0), (20, 20))), sg.Cancel("Cancelar", size=(8, 1), pad=((15, 0), (20, 20)))],
         ]
-        self.__window = sg.Window("Sistema de Cursos EAD").Layout(layout)
+        self.__window = sg.Window("Sistema de Cursos EAD").layout(layout)
 
     def menu_opcoes(self):
-        while(True):
+        while True:
             self.mostrar_menu_opcoes()
-            button, values = self.__window.Read()
-            opcao = 0
-            try:
-                if values["1"]:
-                    opcao = 1
-                elif values["2"]:
-                    opcao = 2
-                elif values["3"]:
-                    opcao = 3
-                elif values["4"]:
-                    opcao = 4
-                elif values["5"]:
-                    opcao = 5
-                elif values["6"]:
-                    opcao = 6
-                elif values["7"]:
-                    opcao = 7
-                elif values["8"]:
-                    opcao = 8
-                elif values["0"] or button in (None, "Cancelar"):
-                    opcao = 0
-                else:
-                    raise OpcaoInvalidaException
-                self.close()
-                return opcao
-            except OpcaoInvalidaException as e:
-                self.mostra_mensagem(str(e))
-                self.close()
+            button, values = self.__window.read()
+
+            if values.get("1"):
+                opcao = 1
+            elif values.get("2"):
+                opcao = 2
+            elif values.get("3"):
+                opcao = 3
+            elif values.get("4"):
+                opcao = 4
+            elif values.get("5"):
+                opcao = 5
+            elif values.get("6"):
+                opcao = 6
+            elif values.get("7"):
+                opcao = 7
+            elif values.get("8"):
+                opcao = 8
+            elif values.get("0") or button in (None, "Cancelar"):
+                opcao = 0
+            else:
+                self.mostra_mensagem("Opção inválida.")
+                self.__window.close()
+                continue
+
+            self.__window.close()
+            return opcao
 
     def mostra_mensagem(self, mensagem: str):
-        sg.Popup("Alerta!", mensagem)
+        sg.popup("Alerta!", mensagem)
 
     def open(self):
-        button, values = self.__window.Read()
+        button, values = self.__window.read()
         return button, values
 
     def close(self):
-        self.__window.Close()
+        self.__window.close()

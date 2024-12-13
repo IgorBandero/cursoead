@@ -1,223 +1,319 @@
+import PySimpleGUI as sg
+
 class TelaProfessor:
+    def __init__(self):
+        self.__window = None
+
     def mostrar_menu_opcoes(self):
-        print("\n---------------------- PROFESSORES ----------------------")
-        print("Escolha a opção:")
-        print("---------------------------------------------------------")
-        print("1 - Cadastrar Professor")
-        print("2 - Editar Professor")
-        print("3 - Excluir Professor")
-        print("4 - Listar Professores")
-        print("0 - Voltar")
-        print("---------------------------------------------------------")
-        opcao = input("Escolha a opção: ")
-        if (opcao == "1" or opcao == "2" or opcao == "3" or opcao == "4" or  opcao == "5" or opcao == "0"):
-            return int(opcao)
-        else:
-            print("\n***** OPÇÃO INVÁLIDA! TENTE NOVAMENTE... *****")
-    
-    def continuar_edicao(self):
+        sg.ChangeLookAndFeel('DarkTeal4')
+        layout = [
+            [sg.Text("---------------------- PROFESSORES ----------------------", font=("Helvetica", 25),
+                     pad=((0, 0), (10, 15)))],
+            [sg.Text("Escolha a opção:", font=("Helvetica", 14), pad=((5, 0), (0, 10)))],
+            [sg.Radio("Cadastrar Professor", "RD1", key="1")],
+            [sg.Radio("Editar Professor", "RD1", key="2")],
+            [sg.Radio("Excluir Professor", "RD1", key="3")],
+            [sg.Radio("Listar Professores", "RD1", key="4")],
+            [sg.Radio("Voltar", "RD1", key="0")],
+            [sg.Button("Confirmar", size=(8, 1), pad=((10, 0), (20, 20))),
+             sg.Cancel("Cancelar", size=(8, 1), pad=((15, 0), (20, 20)))]
+        ]
+        self.__window = sg.Window("Sistema de Professores").Layout(layout)
+
         while True:
-            print("\n----------------------------------------------------")
-            print("Deseja editar outro campo? \n1 - SIM \n2 - NÃO (Sair)")
-            opcao = input("\nEscolha a opção: ")
-            if opcao == "1":
-                return True
-            elif opcao == "2":
-                return False
+            button, values = self.open()
+            if button in (None, "Cancelar"):
+                opcao = 0
+            elif values.get("1"):
+                opcao = 1
+            elif values.get("2"):
+                opcao = 2
+            elif values.get("3"):
+                opcao = 3
+            elif values.get("4"):
+                opcao = 4
+            elif values.get("0"):
+                opcao = 0
             else:
-                print("\n***** OPÇÃO INVÁLIDA! TENTE NOVAMENTE... *****")
+                self.mostra_mensagem("Opção inválida.")
+                continue
+
+            self.close()
+            return opcao
+
+    def pega_dados_professor(self):
+        sg.ChangeLookAndFeel('DarkTeal4')
+        layout = [
+            [sg.Text("Cadastro de Professor", font=("Helvetica", 20), pad=((0, 0), (0, 10)))],
+            [sg.Text("Nome:", size=(15, 1)), sg.InputText("", key="nome")],
+            [sg.Text("CPF:", size=(15, 1)), sg.InputText("", key="cpf")],
+            [sg.Text("Telefone:", size=(15, 1)), sg.InputText("", key="telefone")],
+            [sg.Text("Email:", size=(15, 1)), sg.InputText("", key="email")],
+            [sg.Text("Usuário:", size=(15, 1)), sg.InputText("", key="usuario")],
+            [sg.Text("Senha:", size=(15, 1)), sg.InputText("", key="senha", password_char="*")],
+            [sg.Text("Formação:", size=(15, 1)), sg.InputText("", key="formacao")],
+            [sg.Text("Especialidade:", size=(15, 1)), sg.InputText("", key="especialidade")],
+            [sg.Text("Rua:", size=(15, 1)), sg.InputText("", key="rua")],
+            [sg.Text("Número Residência:", size=(15, 1)), sg.InputText("", key="num_residencia")],
+            [sg.Text("Bairro:", size=(15, 1)), sg.InputText("", key="bairro")],
+            [sg.Text("Cidade:", size=(15, 1)), sg.InputText("", key="cidade")],
+            [sg.Text("CEP:", size=(15, 1)), sg.InputText("", key="cep")],
+            [sg.Button("Confirmar", size=(8, 1), pad=((5, 0), (20, 20))),
+             sg.Cancel("Cancelar", size=(8, 1), pad=((15, 0), (20, 20)))]
+        ]
+        self.__window = sg.Window("Dados do Professor").Layout(layout)
+
+        while True:
+            button, values = self.open()
+            if button in (None, "Cancelar"):
+                self.close()
+                return None
+            try:
+                # Conversões e validações
+                values["cpf"] = self.validar_e_converter_cpf(values["cpf"])
+                values["telefone"] = self.validar_telefone(values["telefone"])
+                values["num_residencia"] = self.validar_numero_residencia(values["num_residencia"])
+                values["cep"] = self.validar_cep(values["cep"])
+
+                # Valida campos textuais
+                self.validar_texto(values["nome"], "Nome", 3)
+                self.validar_email(values["email"])
+                self.validar_texto(values["usuario"], "Usuário", 8)
+                self.validar_senha(values["senha"])
+                self.validar_texto(values["formacao"], "Formação", 3)
+                self.validar_texto(values["especialidade"], "Especialidade", 3)
+                self.validar_texto(values["rua"], "Rua", 5)
+                self.validar_texto(values["bairro"], "Bairro", 5)
+                self.validar_texto(values["cidade"], "Cidade", 5)
+
+                self.close()
+                return values
+            except ValueError as e:
+                self.mostra_mensagem(f"Erro: {str(e)}")
+
+    def validar_e_converter_cpf(self, cpf):
+        if not cpf.isdigit() or len(cpf) != 11:
+            raise ValueError("CPF inválido! Deve conter exatamente 11 dígitos numéricos.")
+        return int(cpf)
+
+    def validar_telefone(self, telefone):
+        if not telefone.isdigit() or len(telefone) < 8:
+            raise ValueError("Telefone inválido! Deve conter pelo menos 8 dígitos numéricos.")
+        return telefone
+
+    def validar_numero_residencia(self, num_residencia):
+        if not num_residencia.isdigit():
+            raise ValueError("Número da residência inválido! Deve ser um valor numérico.")
+        return int(num_residencia)
+
+    def validar_cep(self, cep):
+        if not cep.isdigit() or len(cep) < 8:
+            raise ValueError("CEP inválido! Deve conter pelo menos 8 dígitos numéricos.")
+        return cep
+
+    def validar_texto(self, texto, campo, tamanho_minimo):
+        if len(texto) < tamanho_minimo:
+            raise ValueError(f"{campo} inválido! Deve ter pelo menos {tamanho_minimo} caracteres.")
+        return texto
+
+    def validar_email(self, email):
+        if "@" not in email or "." not in email:
+            raise ValueError("Email inválido! Deve conter '@' e '.' em formato válido.")
+        return email
+
+    def validar_senha(self, senha):
+        if len(senha) < 8 or not any(char.isalpha() for char in senha) or not any(char.isdigit() for char in senha):
+            raise ValueError("Senha inválida! Deve ter pelo menos 8 caracteres, incluindo letras e números.")
+        return senha
+
+    def valida_campos_professor(self, values):
+        if len(values["nome"]) < 3:
+            raise ValueError("Nome deve ter pelo menos 3 caracteres.")
+        if not values["cpf"].isdigit() or len(values["cpf"]) != 11:
+            raise ValueError("CPF deve ter 11 dígitos numéricos.")
+        if not values["telefone"].isdigit() or len(values["telefone"]) < 8:
+            raise ValueError("Telefone deve ter pelo menos 8 dígitos.")
+        if "@" not in values["email"] or "." not in values["email"]:
+            raise ValueError("Email inválido.")
+        if len(values["usuario"]) < 8:
+            raise ValueError("Usuário deve ter pelo menos 8 caracteres.")
+        if len(values["senha"]) < 8 or not any(char.isdigit() for char in values["senha"]):
+            raise ValueError("Senha deve ter pelo menos 8 caracteres e incluir números.")
+        if len(values["formacao"]) < 3:
+            raise ValueError("Formação deve ter pelo menos 3 caracteres.")
+        if len(values["especialidade"]) < 3:
+            raise ValueError("Especialidade deve ter pelo menos 3 caracteres.")
+        if len(values["rua"]) < 5:
+            raise ValueError("Rua deve ter pelo menos 5 caracteres.")
+        if not values["num_residencia"].isdigit():
+            raise ValueError("Número da residência deve ser um número.")
+        if len(values["bairro"]) < 5:
+            raise ValueError("Bairro deve ter pelo menos 5 caracteres.")
+        if len(values["cidade"]) < 5:
+            raise ValueError("Cidade deve ter pelo menos 5 caracteres.")
+        if not values["cep"].isdigit() or len(values["cep"]) < 8:
+            raise ValueError("CEP deve ter pelo menos 8 dígitos numéricos.")
 
     def mostrar_professor(self, dados_professor):
-        print("\n---------------------- PROFESSOR(A) --------------------")
-        print(f"NOME: {dados_professor['nome']}")
-        print(f"CPF: {dados_professor['cpf']}")
-        print(f"TELEFONE: {dados_professor['telefone']}")
-        print(f"EMAIL: {dados_professor['email']}")
-        print(f"USUÁRIO: {dados_professor['usuario']}")
-        print(f"FORMAÇÃO: {dados_professor['formacao']}")
-        print(f"ESPECIALIDADE: {dados_professor['especialidade']}")
-        print(f"RUA: {dados_professor['rua']}")
-        print(f"NÚMERO: {dados_professor['num_residencia']}")
-        print(f"BAIRRO: {dados_professor['bairro']}")
-        print(f"CIDADE: {dados_professor['cidade']}")
-        print(f"CEP: {dados_professor['cep']}")
-        print("---------------------------------------------------------\n")
-    
-    def pega_dados_professor(self):
-        print("Cadastro de Professor")
-        
-        nome = self.cadastrar_nome()
-        cpf = self.cadastrar_cpf()
-        telefone = self.cadastrar_telefone()
-        email = self.cadastrar_email()
-        usuario = self.cadastrar_usuario()
-        senha = self.cadastrar_senha()
-        formacao = input("Formação: ")
-        especialidade = input("Especialidade: ")
-        rua = self.cadastrar_rua()
-        num_residencia = self.cadastrar_num_residencia()
-        bairro = self.cadastrar_bairro()
-        cidade = self.cadastrar_cidade()
-        cep = self.cadastrar_cep()
-        
-        return {
-            "nome": nome,
-            "cpf": cpf,
-            "telefone": telefone,
-            "email": email,
-            "usuario": usuario,
-            "senha": senha,
-            "formacao": formacao,
-            "especialidade": especialidade,
-            "rua": rua,
-            "num_residencia": num_residencia,
-            "bairro": bairro,
-            "cidade": cidade,
-            "cep": cep
-        }
+        layout = [
+            [sg.Text("Informações do Professor", font=("Helvetica", 20), pad=((0, 0), (0, 10)))],
+            [sg.Text(f"NOME: {dados_professor['nome']}", font=("Helvetica", 14))],
+            [sg.Text(f"CPF: {dados_professor['cpf']}", font=("Helvetica", 14))],
+            [sg.Text(f"TELEFONE: {dados_professor['telefone']}", font=("Helvetica", 14))],
+            [sg.Text(f"EMAIL: {dados_professor['email']}", font=("Helvetica", 14))],
+            [sg.Text(f"USUÁRIO: {dados_professor['usuario']}", font=("Helvetica", 14))],
+            [sg.Text(f"FORMAÇÃO: {dados_professor['formacao']}", font=("Helvetica", 14))],
+            [sg.Text(f"ESPECIALIDADE: {dados_professor['especialidade']}", font=("Helvetica", 14))],
+            [sg.Text(f"RUA: {dados_professor['rua']}", font=("Helvetica", 14))],
+            [sg.Text(f"NÚMERO: {dados_professor['num_residencia']}", font=("Helvetica", 14))],
+            [sg.Text(f"BAIRRO: {dados_professor['bairro']}", font=("Helvetica", 14))],
+            [sg.Text(f"CIDADE: {dados_professor['cidade']}", font=("Helvetica", 14))],
+            [sg.Text(f"CEP: {dados_professor['cep']}", font=("Helvetica", 14))],
+            [sg.Button("Voltar", size=(10, 1), pad=((5, 0), (20, 20)))]
+        ]
+        self.__window = sg.Window("Detalhes do Professor").Layout(layout)
 
-    def editar_professor(self):
-        print("\n--------------- ATRIBUTOS PARA EDITAR --------------")
-        print("1 - NOME")
-        print("2 - CPF")
-        print("3 - TELEFONE")
-        print("4 - EMAIL")
-        print("5 - USUÁRIO")
-        print("6 - SENHA")
-        print("7 - FORMAÇÃO")
-        print("8 - ESPECIALIDADE")
-        print("9 - RUA")
-        print("10 - NÚMERO DE RESIDÊNCIA")
-        print("11 - BAIRRO")
-        print("12 - CIDADE")
-        print("13 - CEP")
-        print("----------------------------------------------------")
-        
         while True:
-            opcao = input("\nEscolha uma opção para editar ou 0 para sair: ")
-            if opcao == "0":
-                return None, None
-            elif opcao == "1":
-                return int(opcao), self.cadastrar_nome()
-            elif opcao == "2":
-                return int(opcao), self.cadastrar_cpf()
-            elif opcao == "3":
-                return int(opcao), self.cadastrar_telefone()
-            elif opcao == "4":
-                return int(opcao), self.cadastrar_email()
-            elif opcao == "5":
-                return int(opcao), self.cadastrar_usuario()
-            elif opcao == "6":
-                return int(opcao), self.cadastrar_senha()
-            elif opcao == "7":
-                return int(opcao), input("Nova Formação: ")
-            elif opcao == "8":
-                return int(opcao), input("Nova Especialidade: ")
-            elif opcao == "9":
-                return int(opcao), self.cadastrar_rua()
-            elif opcao == "10":
-                return int(opcao), self.cadastrar_num_residencia()
-            elif opcao == "11":
-                return int(opcao), self.cadastrar_bairro()
-            elif opcao == "12":
-                return int(opcao), self.cadastrar_cidade()
-            elif opcao == "13":
-                return int(opcao), self.cadastrar_cep()
-            else:
-                print("\n***** OPÇÃO INVÁLIDA! TENTE NOVAMENTE... *****")
+            button, values = self.open()
+            if button in (None, "Voltar"):
+                self.close()
+                break
+
+    def listar_professores(self, lista_dados_professores):
+        """
+        Exibe uma lista de professores em uma janela, cada professor é mostrado com seus dados básicos.
+        :param lista_dados_professores: Lista de dicionários contendo dados dos professores.
+        """
+        sg.ChangeLookAndFeel('DarkTeal4')
+        lista_exibicao = [
+            f"{prof['nome']} | CPF: {prof['cpf']} | Especialidade: {prof['especialidade']} | Formação: {prof['formacao']}"
+            for prof in lista_dados_professores
+        ]
+        layout = [
+            [sg.Text("Lista de Professores", font=("Helvetica", 20), pad=((0, 0), (10, 15)))],
+            [sg.Listbox(values=lista_exibicao, size=(80, 15), key="professores", enable_events=False,
+                        font=("Helvetica", 12))],
+            [sg.Button("Voltar", size=(10, 1), pad=((5, 0), (15, 15)))]
+        ]
+        self.__window = sg.Window("Professores Cadastrados").Layout(layout)
+
+        while True:
+            button, _ = self.open()
+            if button in (None, "Voltar"):
+                self.close()
+                break
+
+    def seleciona_professor(self, lista_professores):
+        """
+        Permite que o usuário selecione um professor a partir de uma lista de professores exibida.
+        :param lista_professores: Lista de dicionários contendo informações dos professores (nome e CPF).
+        :return: CPF do professor selecionado.
+        """
+        sg.ChangeLookAndFeel('DarkTeal4')
+        lista_exibicao = [
+            f"{prof['nome']} | CPF: {prof['cpf']}" for prof in lista_professores
+        ]
+        layout = [
+            [sg.Text("Selecione um Professor", font=("Helvetica", 20), pad=((0, 0), (10, 15)))],
+            [sg.Listbox(values=lista_exibicao, size=(80, 15), key="professor_selecionado", enable_events=True,
+                        font=("Helvetica", 12))],
+            [sg.Button("Confirmar", size=(10, 1), pad=((5, 0), (15, 15))),
+             sg.Button("Cancelar", size=(10, 1), pad=((15, 0), (15, 15)))]
+        ]
+        self.__window = sg.Window("Selecionar Professor").Layout(layout)
+
+        while True:
+            button, values = self.open()
+            if button in (None, "Cancelar"):
+                self.close()
+                return None
+            if button == "Confirmar":
+                try:
+                    if not values["professor_selecionado"]:
+                        raise ValueError("Nenhum professor selecionado!")
+                    # Extrai o CPF do professor selecionado
+                    professor_selecionado = values["professor_selecionado"][0]
+                    cpf = int(professor_selecionado.split("| CPF: ")[1].strip())
+                    self.close()
+                    return cpf
+                except Exception as e:
+                    self.mostra_mensagem(str(e))
+
+    def editar_professor(self, dados_professor):
+        """
+        Exibe um formulário para editar os dados de um professor.
+        :param dados_professor: Dicionário contendo os dados atuais do professor.
+        :return: Dicionário com os dados atualizados ou None se a edição for cancelada.
+        """
+        sg.ChangeLookAndFeel('DarkTeal4')
+        layout = [
+            [sg.Text("Editar Dados do Professor", font=("Helvetica", 20), pad=((0, 0), (0, 10)))],
+            [sg.Text("Nome:", size=(15, 1)), sg.InputText(dados_professor["nome"], key="nome")],
+            [sg.Text("CPF:", size=(15, 1)), sg.InputText(dados_professor["cpf"], key="cpf", disabled=True)],
+            # CPF não deve ser editado
+            [sg.Text("Telefone:", size=(15, 1)), sg.InputText(dados_professor["telefone"], key="telefone")],
+            [sg.Text("Email:", size=(15, 1)), sg.InputText(dados_professor["email"], key="email")],
+            [sg.Text("Usuário:", size=(15, 1)), sg.InputText(dados_professor["usuario"], key="usuario")],
+            [sg.Text("Senha:", size=(15, 1)), sg.InputText("", key="senha", password_char="*")],
+            # Limpa o campo senha para nova entrada
+            [sg.Text("Formação:", size=(15, 1)), sg.InputText(dados_professor["formacao"], key="formacao")],
+            [sg.Text("Especialidade:", size=(15, 1)),
+             sg.InputText(dados_professor["especialidade"], key="especialidade")],
+            [sg.Text("Rua:", size=(15, 1)), sg.InputText(dados_professor["rua"], key="rua")],
+            [sg.Text("Número Residência:", size=(15, 1)),
+             sg.InputText(dados_professor["num_residencia"], key="num_residencia")],
+            [sg.Text("Bairro:", size=(15, 1)), sg.InputText(dados_professor["bairro"], key="bairro")],
+            [sg.Text("Cidade:", size=(15, 1)), sg.InputText(dados_professor["cidade"], key="cidade")],
+            [sg.Text("CEP:", size=(15, 1)), sg.InputText(dados_professor["cep"], key="cep")],
+            [sg.Button("Salvar", size=(10, 1), pad=((5, 0), (20, 20))),
+             sg.Button("Cancelar", size=(10, 1), pad=((15, 0), (20, 20)))]
+        ]
+        self.__window = sg.Window("Editar Professor").Layout(layout)
+
+        while True:
+            button, values = self.open()
+            if button in (None, "Cancelar"):
+                self.close()
+                return None
+            if button == "Salvar":
+                try:
+                    # Validações podem ser aplicadas aqui
+                    values["cpf"] = int(dados_professor["cpf"])  # Mantém o CPF inalterado
+                    self.close()
+                    return values
+                except ValueError as e:
+                    self.mostra_mensagem(f"Erro: {str(e)}")
 
     def excluir_professor(self, dados_professor):
+        """
+        Exibe uma janela para confirmar a exclusão de um professor.
+        :param dados_professor: Dicionário contendo os dados do professor a ser excluído (nome e CPF).
+        :return: True se a exclusão for confirmada, False caso contrário.
+        """
+        sg.ChangeLookAndFeel('DarkTeal4')
+        layout = [
+            [sg.Text(f"Confirma a exclusão do professor: {dados_professor['nome']} (CPF: {dados_professor['cpf']})?",
+                     font=("Helvetica", 14), pad=((0, 0), (10, 15)))],
+            [sg.Button("Sim", size=(10, 1), pad=((5, 10), (10, 10))),
+             sg.Button("Não", size=(10, 1), pad=((10, 0), (10, 10)))]
+        ]
+        self.__window = sg.Window("Excluir Professor").Layout(layout)
+
         while True:
-            print(f"\nConfirma a exclusão do(a) PROFESSOR(A): {dados_professor['nome']} (CPF: {dados_professor['cpf']})? \n1 - SIM \n2 - NÃO (Cancelar)")
-            opcao = input("\nEscolha a opção: ")
-            if opcao == "1":
+            button, _ = self.open()
+            if button == "Sim":
+                self.close()
                 return True
-            elif opcao == "2":
+            elif button in (None, "Não"):
+                self.close()
                 return False
-            else:
-                print("\n***** OPÇÃO INVÁLIDA! TENTE NOVAMENTE... *****")
 
-    def mostra_mensagem(self, msg: str):
-        print(msg)
-    
-    def seleciona_professor(self):
-        return self.cadastrar_cpf()
+    def mostra_mensagem(self, mensagem: str):
+        sg.Popup("Alerta!", mensagem)
 
-    def cadastrar_nome(self):
-        while True:
-            nome = input("Nome: ")
-            if len(nome) >= 3 and all(char.isalpha() or char.isspace() for char in nome):
-                return nome
-            print("\n******* NOME DEVE TER PELO MENOS 3 CARACTERES E APENAS LETRAS OU ESPAÇOS *******")
+    def open(self):
+        button, values = self.__window.Read()
+        return button, values
 
-    def cadastrar_cpf(self):
-        while True:
-            cpf = input("CPF: ")
-            if cpf.isdigit() and len(cpf) == 11:
-                return int(cpf)
-            print("\n******* CPF INVÁLIDO! DEVE TER 11 DÍGITOS NUMÉRICOS *******")
-
-    def cadastrar_telefone(self):
-        while True:
-            telefone = input("Telefone: ")
-            if telefone.isdigit() and len(telefone) >= 8:
-                return telefone
-            print("\n******* TELEFONE INVÁLIDO! DEVE TER PELO MENOS 8 DÍGITOS *******")
-
-    def cadastrar_email(self):
-        while True:
-            email = input("Email: ")
-            if "@" in email and "." in email and len(email) >= 5:
-                return email
-            print("\n******* EMAIL INVÁLIDO! INSIRA UM EMAIL VÁLIDO COM '@' E '.' *******")
-
-    def cadastrar_usuario(self):
-        while True:
-            usuario = input("Usuário: ")
-            if len(usuario) >= 8:
-                return usuario
-            print("\n******* USUÁRIO INVÁLIDO! DEVE TER PELO MENOS 8 CARACTERES *******")
-
-    def cadastrar_senha(self):
-        while True:
-            senha = input("Senha: ")
-            if len(senha) >= 8 and any(char.isalpha() for char in senha) and any(char.isdigit() for char in senha):
-                return senha
-            print("\n******* SENHA INVÁLIDA! DEVE TER PELO MENOS 8 CARACTERES, CONTENDO LETRAS E NÚMEROS *******")
-
-    def cadastrar_rua(self):
-        while True:
-            rua = input("Rua: ")
-            if len(rua) >= 5:
-                return rua
-            print("\n******* RUA INVÁLIDA! DEVE TER PELO MENOS 5 CARACTERES *******")
-
-    def cadastrar_num_residencia(self):
-        while True:
-            num_residencia = input("Número da Residência: ")
-            if num_residencia.isdigit():
-                return int(num_residencia)
-            print("\n******* NÚMERO DA RESIDÊNCIA INVÁLIDO! INSIRA SOMENTE NÚMEROS *******")
-
-    def cadastrar_bairro(self):
-        while True:
-            bairro = input("Bairro: ")
-            if len(bairro) >= 5 and all(char.isalpha() or char.isspace() for char in bairro):
-                return bairro
-            print("\n******* BAIRRO INVÁLIDO! DEVE TER PELO MENOS 5 CARACTERES E APENAS LETRAS OU ESPAÇOS *******")
-
-    def cadastrar_cidade(self):
-        while True:
-            cidade = input("Cidade: ")
-            if len(cidade) >= 5 and all(char.isalpha() or char.isspace() for char in cidade):
-                return cidade
-            print("\n******* CIDADE INVÁLIDA! DEVE TER PELO MENOS 5 CARACTERES E APENAS LETRAS OU ESPAÇOS *******")
-
-    def cadastrar_cep(self):
-        while True:
-            cep = input("CEP: ")
-            if cep.isdigit() and len(cep) >= 8:
-                return cep
-            print("\n******* CEP INVÁLIDO! DEVE TER PELO MENOS 8 DÍGITOS *******")
-
-
+    def close(self):
+        self.__window.Close()
