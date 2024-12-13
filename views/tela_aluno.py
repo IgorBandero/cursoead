@@ -88,7 +88,7 @@ class TelaAluno():
             [sg.Text("Data Início (DD/MM/AAAA): ", size=(20, 1)), sg.InputText("", key="data_inicio", size=(45, 1))],
             [sg.Button("Confirmar", size=(8, 1), pad=((5, 0), (20, 20))), sg.Cancel("Cancelar", size=(8, 1), pad=((15, 0), (20, 20)))]
         ]
-        self.__window = sg.Window("Sistema de livros").Layout(layout)
+        self.__window = sg.Window("Sistema de Alunos").Layout(layout)
 
         while(True):
             try:
@@ -264,7 +264,7 @@ class TelaAluno():
         print(aluno["indice"] + 1, " - NOME: ", aluno["nome"], " | CPF: ", aluno["cpf"], " | MATRÍCULA: ",
             aluno["matricula"], " | CURSO: ", aluno["curso"])
 
-    def selecionar_aluno(self, num_opcoes):
+    """def selecionar_aluno(self, num_opcoes):
         if (num_opcoes == 0):
             print("\n************** NENHUM ALUNO CADASTRADO *************")
             return
@@ -281,7 +281,7 @@ class TelaAluno():
         if (opcao == "1"):
             return "Buscar pelo cpf"
         if (opcao == "2"):
-            return "Selecionar da lista"
+            return "Selecionar da lista"""
 
     def selecionar_aluno_na_lista(self, lista_alunos, mensagem):
         nomes_alunos = [aluno["nome"] for aluno in lista_alunos]
@@ -311,13 +311,28 @@ class TelaAluno():
                 self.mostrar_mensagem(str(e))
 
     def buscar_aluno_pelo_cpf(self):
-        while (True):
+        layout = [
+            [sg.Text("Informe o CPF do aluno (11 dígitos):", font=("Helvetica", 14))],
+            [sg.Input(key="cpf", size=(20, 1), font=("Helvetica", 12))],
+            [sg.Button("Buscar", size=(8, 1), pad=((15, 0), (20, 20))), sg.Button("Cancelar", size=(8, 1), pad=((15, 0), (20, 20)))]
+        ]
+
+        self.__window = sg.Window("Sistema de Alunos").Layout(layout)
+
+        while True:
             try:
-                cpf = input("\nInforme o número do CPF do aluno que deseja selecionar: ")
-                if cpf.isdigit() and len(cpf) == 11:
-                    return int(cpf)
-                else:
-                    raise CpfInvalidoException
+                button, values = self.open()
+                if button == None or button == "Cancelar":
+                    self.close()
+                    return None
+                if button == "Buscar":
+                    cpf = values["cpf"]
+                    if cpf.isdigit() and len(cpf) == 11:
+                        self.close()
+                        return int(cpf)
+                    else:
+                        self.close()
+                        raise CpfInvalidoException
             except Exception as e:
                 self.mostrar_mensagem(str(e))
 

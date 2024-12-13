@@ -191,9 +191,9 @@ class ControladorAluno():
         return None
 
     def buscar_ex_aluno_pelo_cpf(self, cpf):
-        for aluno in self.__ex_alunos:
-            if aluno.cpf == cpf:
-                return aluno
+        for ex_aluno in self.__ex_aluno_DAO.get_all():
+            if ex_aluno.cpf == cpf:
+                return ex_aluno
         return None
 
     def gerar_codigo_matricula(self):
