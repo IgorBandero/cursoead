@@ -25,6 +25,7 @@ class ControladorQuestao:
                 self.__tela_questao.mostra_mensagem("ID já existe!")
 
     def listar_questoes_disponiveis(self):
+        # Retorna uma lista de dicionários representando as questões disponíveis
         return [
             {
                 "id": questao.id,
