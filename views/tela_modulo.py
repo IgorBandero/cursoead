@@ -166,25 +166,6 @@ class TelaModulo:
                 self.close()
                 break
 
-    """def selecionar_modulo(self, modulos, mensagem):
-
-        if num_opcoes == 0:
-            sg.Popup("Nenhum módulo cadastrado.")
-            return None
-
-        layout = [
-            [sg.Text("Como deseja selecionar o módulo?")],
-            [sg.Button("Buscar pelo Código"), sg.Button("Selecionar da Lista")]
-        ]
-        self.__window = sg.Window("Seleção de Módulo", layout)
-        event, values = self.__window.Read()
-
-        if event == "Buscar pelo Código":
-            return self.buscar_modulo_pelo_codigo()
-        elif event == "Selecionar da Lista":
-            return self.selecionar_modulo_na_lista(num_opcoes)
-        self.close() """
-
     def buscar_modulo_pelo_codigo(self):
         layout = [[sg.Text("Informe o código do módulo que deseja selecionar: "), sg.InputText(key="codigo")],
                 [sg.Button("Confirmar"), sg.Cancel("Cancelar")]]

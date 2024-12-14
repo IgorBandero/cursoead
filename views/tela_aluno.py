@@ -260,10 +260,6 @@ class TelaAluno():
                 self.close()
                 break
 
-    def mostrar_opcao_aluno(self, aluno):
-        print(aluno["indice"] + 1, " - NOME: ", aluno["nome"], " | CPF: ", aluno["cpf"], " | MATRÍCULA: ",
-            aluno["matricula"], " | CURSO: ", aluno["curso"])
-
     def selecionar_aluno_na_lista(self, lista_alunos, mensagem):
         nomes_alunos = [aluno["nome"] for aluno in lista_alunos]
         layout = [
@@ -457,8 +453,8 @@ class TelaAluno():
         sg.ChangeLookAndFeel('DarkTeal4')
         layout = [
             [sg.Text("Cursos Mais Populares", font=("Helvetica", 14), pad=(0, 10))],
-            [sg.Listbox(values=lista_cursos_populares, size=(50, 15), key="lista", font=("Helvetica", 12), enable_events=False)],
-            [sg.Button("Voltar", size=(10, 1))]
+            [sg.Listbox(values=lista_cursos_populares, size=(50, 15), key="lista", font=("Helvetica", 10), enable_events=False)],
+            [sg.Button("Voltar", size=(10, 1),  pad=((5, 0), (20, 10)))]
         ]
         self.__window = sg.Window("Cursos Populares").Layout(layout)
         while True:
@@ -466,18 +462,6 @@ class TelaAluno():
             if button in (None, "Voltar"):
                 break
         self.close()
-
-    def continuar(self, mensagem):
-        while (True):
-            print("\n----------------------------------------------------")
-            print(mensagem)
-            opcao = input("\nEscolha a opção: ")
-            if (opcao == "1"):
-                return True
-            elif (opcao == "2"):
-                return False
-            else:
-                print("\n******** OPÇÃO INVÁLIDA! TENTE NOVAMENTE... ********")
 
     def mostrar_mensagem(self, mensagem: str):
         sg.Popup("Alerta!", mensagem)

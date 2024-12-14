@@ -58,19 +58,11 @@ class ControladorCertificado():
                 certificado_atualizado = self.__tela_certificado.editar_certificado({"aluno": certificado.aluno.nome, "curso": certificado.curso.nome,
                                                     "data_emissao": certificado.data_emissao, "nota_final": certificado.nota_final})
                 if certificado_atualizado:
-                    if certificado.aluno.nome != certificado_atualizado["aluno"]:
-                        self.__certificado_DAO.remove(certificado.aluno.nome)
-                        certificado_novo = Certificado(certificado_atualizado["aluno"], certificado_atualizado["curso"],
-                                                    certificado_atualizado["nota_final"], certificado_atualizado["data_emissao"])
-                        self.__certificado_DAO.add(certificado_novo)
-                    else:
-                        for item in self.__certificado_DAO.get_all():
-                            if(item.aluno.nome == certificado.aluno.nome):
-                                item.aluno = certificado_atualizado["aluno"]
-                                item.curso = certificado_atualizado["curso"]
-                                item.nota_final = certificado_atualizado["nota_final"]
-                                item.data_emissao = certificado_atualizado["data_emissao"]
-                                self.__certificado_DAO.update(item)
+                    for item in self.__certificado_DAO.get_all():
+                        if item.aluno.nome == certificado.aluno.nome:
+                            item.nota_final = certificado_atualizado["nota_final"]
+                            item.data_emissao = certificado_atualizado["data_emissao"]
+                            self.__certificado_DAO.update(item)
                     self.__tela_certificado.mostrar_mensagem(f"Certificado atualizado com sucesso!\n")
         except Exception as e:
             self.__tela_certificado.mostrar_mensagem(str(e))
@@ -115,8 +107,8 @@ class ControladorCertificado():
             titular_certificado_escolhido = self.__tela_certificado.selecionar_certificado_na_lista(lista_certificados, mensagem)
             if (titular_certificado_escolhido is not None):
                 try:
-                    curso = self.__certificado_DAO.get(titular_certificado_escolhido)
-                    return curso
+                    certificado = self.__certificado_DAO.get(titular_certificado_escolhido)
+                    return certificado
                 except CertificadoNaoEncontradoException:
                     return
         except Exception as e:

@@ -277,6 +277,7 @@ class ControladorAluno():
         cursos_ordenados = dict(sorted(contador_cursos.items(), key=lambda item: item[1], reverse=True))
         [f"CURSO: {curso} | ALUNOS: {quantidade}" for curso, quantidade in cursos_ordenados.items()]
         self.__tela_aluno.mostrar_cursos_populares([f"CURSO: {curso} | ALUNOS: {quantidade}" for curso, quantidade in cursos_ordenados.items()])
+        self.abrir_tela()
 
     def tempo_medio_conclusao(self):
         try:

@@ -50,8 +50,8 @@ class TelaCertificado():
     def editar_certificado(self, certificado):
         layout = [
             [sg.Text("----------------- Editar Certificado -----------------", font=("Helvica", 20), pad=((0, 0), (0, 10)))],
-            [sg.Text("Aluno:", size=(17, 1)), sg.Input(default_text=certificado["aluno"], key="aluno")],
-            [sg.Text("Curso:", size=(17, 1)), sg.Input(default_text=certificado["curso"], key="curso")],
+            [sg.Text("Aluno:", size=(17, 1)), sg.Input(default_text=certificado["aluno"], key="aluno", disabled=True)],
+            [sg.Text("Curso:", size=(17, 1)), sg.Input(default_text=certificado["curso"], key="curso", disabled=True)],
             [sg.Text("Nota Final:", size=(17, 1)), sg.Input(default_text=certificado["nota_final"], key="nota_final")],
             [sg.Text("Data da Emissão (DD/MM/AAAA):", size=(17, 1)), sg.Input(default_text=certificado["data_emissao"].strftime("%d/%m/%Y"), key="data_emissao")],
             [sg.Button("Confirmar", size=(15, 1), pad=((5, 0), (20, 20))), sg.Button("Cancelar", size=(15, 1), pad=((15, 0), (20, 20)))]
@@ -65,10 +65,6 @@ class TelaCertificado():
                 return None
             elif button == "Confirmar":
                 try:
-                    if not self.aluno_valido(values["nome"]):
-                        raise ValueError("Nome do aluno inválido! \nNome deve ser um texto com mais de 5 caracteres")
-                    if not self.curso_valido(values["curso"]):
-                        raise ValueError("Nome do curso inválido! \nNome deve ser um texto com mais de 5 caracteres")
                     if not self.nota_valida(values["nota_final"]):
                         raise ValueError("Nota final inválida! \nNota deve ser um número entre 0 e 10")
                     data = self.data_valida(values["data_emissao"])
@@ -78,8 +74,6 @@ class TelaCertificado():
                         data_emissao = data
 
                     certificado_atualizado = {
-                        "aluno": values["aluno"],
-                        "curso": values["curso"],
                         "nota_final": float(values["nota_final"]),
                         "data_emissao": data_emissao
                     }
@@ -91,12 +85,6 @@ class TelaCertificado():
                         raise EdicaoCertificadoException
                 except Exception as e:
                     self.mostrar_mensagem(str(e))
-
-    def aluno_valido(self, aluno):
-        return len(aluno) > 5
-
-    def curso_valido(self, curso):
-        return len(curso) > 5
 
     def nota_valida(self, nota):
         if re.fullmatch(r"\d+([.,]\d+)?", nota):
@@ -111,7 +99,6 @@ class TelaCertificado():
             return data_valida
         except ValueError:
             return None
-
 
     def excluir_certificado(self, certificado):
         layout = [
@@ -145,7 +132,6 @@ class TelaCertificado():
                 break
 
     def selecionar_certificado_na_lista(self, lista_certificados, mensagem):
-        print("ENTROU NA TELA")
         nomes_certificados = [certificado["aluno"] for certificado in lista_certificados]
         layout = [
             [sg.Text(mensagem, font=("Helvetica", 14), pad=((0, 0), (10, 10)))],
@@ -170,19 +156,6 @@ class TelaCertificado():
             except OpcaoInvalidaException as e:
                 self.mostrar_mensagem(str(e))
 
-    """def selecionar_certificado(self, num_opcoes):
-        if (num_opcoes == 0):
-            return
-        while(True):
-            indice_certificado = int(input("\nInforme o número da opção do certificado que deseja selecionar: "))
-            if 1 <= indice_certificado < num_opcoes+1 :
-                return indice_certificado - 1
-            else:
-                print("Opção inválida. Por favor, digite o número da opção de certificado desejada.") """
-
-    def mostrar_opcao_certificado(self, certificado):
-        print(certificado["indice"]+1, " - Aluno(a): ", certificado["aluno"], " | Curso: ", certificado["curso"], " | MÉDIA FINAL: ", certificado["nota_final"], " | DATA DE EMISSÃO: ", certificado["data_emissao"].strftime("%d/%m/%Y"))
-
     def mostrar_certificado(self, certificado):
         layout = [
             [sg.Text("Informações do Certificado", font=("Helvetica", 16), pad=((0, 0), (10, 20)))],
@@ -201,18 +174,6 @@ class TelaCertificado():
                 self.close()
                 break
         self.close()
-
-    def continuar(self, mensagem):
-        while(True):
-            print("\n----------------------------------------------------")
-            print(mensagem)
-            opcao = input("\nEscolha a opção: ")
-            if (opcao == "1"):
-                return True
-            elif (opcao == "2"):
-                return False
-            else:
-                print("\n******** OPÇÃO INVÁLIDA! TENTE NOVAMENTE... ********")
 
     def cadastrar_data(self, mensagem):
         while(True):
